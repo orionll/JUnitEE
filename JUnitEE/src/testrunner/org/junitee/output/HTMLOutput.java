@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.17 2003-01-29 21:58:55 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.18 2003-01-30 21:04:01 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestRunnerListener;
@@ -23,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -43,16 +44,18 @@ public class HTMLOutput extends AbstractOutput {
   protected PrintWriter pw;
   private HttpServletResponse response;
   private String queryString;
+  private HttpServletRequest request;
 
 
   /**
    */
-  public HTMLOutput(TestRunnerResults results, HttpServletResponse response, String servletPath, String queryString, boolean filterTrace) throws IOException {
+  public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace) throws IOException {
     super(results, filterTrace);
     this.pw = response.getWriter();
     this.response = response;
-    this.servletPath = servletPath;
-    this.queryString = queryString;
+    this.servletPath = request.getContextPath() + request.getServletPath();
+    this.queryString = request.getQueryString();
+    this.request = request;
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -164,7 +167,23 @@ public class HTMLOutput extends AbstractOutput {
     if (isStopped() && !isFinished()) {
       pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
     } else {
-      pw.println("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td></tr>");
+      pw.print("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td>");
+      Enumeration enum = request.getParameterNames();
+
+      while (enum.hasMoreElements()) {
+        String name = (String)enum.nextElement();
+        String[] values = request.getParameterValues(name);
+
+        for (int i = 0; i < values.length; i++) {
+          pw.print("<td><input type=\"hidden\" name=\"");
+          pw.print(name);
+          pw.print("\" value=\"");
+          pw.print(values[i]);
+          pw.print("\"></td>");
+        }
+      }
+      pw.println("</tr>");
+
     }
     pw.println("<tr><td>&nbsp;</td></tr>");
     pw.println("</tbody>");

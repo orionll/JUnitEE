@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.23 2003-01-30 08:48:43 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.24 2003-01-30 21:04:13 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -202,7 +202,7 @@ public class JUnitEEServlet extends HttpServlet {
     // Set up the response
     response.setHeader("Cache-Control", "no-cache");
 
-    OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), request.getQueryString(), xsl, filterTrace);
+    OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), request, response, xsl, filterTrace);
 
     if (output != null) {
       output.render();
@@ -380,13 +380,16 @@ public class JUnitEEServlet extends HttpServlet {
   /**
    * Answer the output producer for the given output format.
    *
-   * @param outputParam required output format
-   * @param response  response object of the current servlet request
-   * @param servletPath path of this servlet
-   * @return  output producer
+   * @param results
+   * @param outputParam
+   * @param request
+   * @param response
+   * @param xsl
+   * @param filterTrace
+   * @return
    * @throws IOException
    */
-  protected OutputProducer getOutputProducer(TestRunnerResults results, String outputParam, HttpServletResponse response, String servletPath, String queryString, String xsl, boolean filterTrace) throws IOException {
+  protected OutputProducer getOutputProducer(TestRunnerResults results, String outputParam, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     String output = outputParam;
 
     if (output == null) {
@@ -394,7 +397,7 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-      return new HTMLOutput(results, response, servletPath, queryString, filterTrace);
+      return new HTMLOutput(results, request, response, filterTrace);
     }
     if (output.equals(OUTPUT_XML)) {
       return new XMLOutput(results, response, xsl, filterTrace);
