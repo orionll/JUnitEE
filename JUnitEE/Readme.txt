@@ -23,8 +23,8 @@ Directory layout
 - lib         pre-compiled libraries
 - doc         documentation
 - example     example appliation + test case
-- src         Java sources
-
+- src         Java sources for the JUnitEE Test Servlet
+- anttask     Java sources for the JUnitEE Ant Task
 
 Contact
 =======
