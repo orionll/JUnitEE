@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.3 2002-09-02 23:01:41 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -21,7 +21,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TestRunner extends BaseTestRunner {
 
@@ -49,11 +49,14 @@ public class TestRunner extends BaseTestRunner {
   public void run(String[] testClassNames) {
     TestResult result = new TestResult();
     result.addListener(listener);
+    listener.start(false);
 
     for (int i = 0; i < testClassNames.length; i++) {
       Test test = getTest(testClassNames[i]);
       test.run(result);
     }
+
+    listener.finish();
   }
 
 
@@ -61,8 +64,12 @@ public class TestRunner extends BaseTestRunner {
     TestResult result = new TestResult();
     result.addListener(listener);
 
+    listener.start(true);
+
     Test test = getTest(testClassName, testName);
     test.run(result);
+
+    listener.finish();
   }
 
   public TestSuiteLoader getLoader() {

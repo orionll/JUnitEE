@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.3 2002-09-02 23:01:52 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -140,14 +140,13 @@ public class JUnitEEServlet extends HttpServlet {
       if (request.getParameter("sendResult") != null) {
 //        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
       } else {
-        HTMLOutput output = new HTMLOutput(pw, request.getContextPath() + request.getServletPath());
+        HTMLOutput output = new HTMLOutput(response, request.getContextPath() + request.getServletPath());
         tester = new TestRunner(this.getDynamicClassLoader(), output);
         if (test == null) {
           tester.run(testClassNames);
         } else {
           tester.run(testClassNames[0], test);
         }
-        output.writeOutput();
       }
 /*      if (methodList != null) {
         // show method list on output

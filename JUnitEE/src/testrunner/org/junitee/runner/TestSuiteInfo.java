@@ -1,5 +1,5 @@
 /**
- * $Id: TestSuiteInfo.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: TestSuiteInfo.java,v 1.2 2002-09-02 23:01:41 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestSuiteInfo.java,v $
  */
 
@@ -21,13 +21,14 @@ import org.junitee.runner.JUnitEETestListener;
  * This class holds information about on test.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TestSuiteInfo {
   private String testClassName;
   private List tests = new ArrayList();
   private List errors = new ArrayList();
   private List failures = new ArrayList();
+  private long elapsedTime = 0L;
 
 
   public TestSuiteInfo(String className) {
@@ -42,6 +43,7 @@ public class TestSuiteInfo {
     } else if (info.hasFailure()) {
       failures.add(info);
     }
+    elapsedTime = elapsedTime + info.getElapsedTime();
   }
 
 
@@ -68,5 +70,20 @@ public class TestSuiteInfo {
   public String getTestClassName() {
     return testClassName;
   }
+
+
+  public long getElapsedTime() {
+    return elapsedTime;
+  }
+
+
+  public List getFailures() {
+    return failures;
+  }
+
+  public List getErrors() {
+    return errors;
+  }
+
 }
 
