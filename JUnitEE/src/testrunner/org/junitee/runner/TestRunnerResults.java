@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunnerResults.java,v 1.3 2003-03-11 19:07:16 o_rossmueller Exp $
+ * $Id: TestRunnerResults.java,v 1.4 2003-04-10 19:56:48 o_rossmueller Exp $
  */
 package org.junitee.runner;
 
@@ -12,7 +12,7 @@ import junit.framework.Test;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @since 1.5
  */
 public class TestRunnerResults implements TestRunnerListener {
@@ -55,8 +55,18 @@ public class TestRunnerResults implements TestRunnerListener {
 
 
   public synchronized void addError(Test test, Throwable t) {
+    boolean preRunError = false;
+
+    if (getCurrentInfo() == null) {
+      setTimestamp(System.currentTimeMillis());
+      setCurrentInfo(new TestInfo(test));
+      preRunError = true;
+    }
     getCurrentInfo().setError(t);
     setFailure(true);
+    if (preRunError) {
+      endTest(test);
+    }
   }
 
 
