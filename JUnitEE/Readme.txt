@@ -16,6 +16,12 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+
+Release 1.6
+
+No changes to 1.6rc2.
+
+
 Release 1.6rc2
 
 - junitee task logs the server response in case of a parse exception (in rare error cases html is produced by
