@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.8 2003-09-26 12:50:43 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.9 2003-09-26 20:57:25 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -20,19 +20,20 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class JUnitEEWarTask extends War {
 
   private static final String URLPATTERN_TOKEN = "@urlPattern@";
   private static final String URLPATTERN_REPLACEMENT = "TestServlet";
   private static final String WEBXML_URLPATTERN = "/" + URLPATTERN_REPLACEMENT + "/*";
-  private final static String WEBXML_DOCTYPE =
+  private final static String WEBXML_DOCTYPE_2_2 =
     "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
+  private final static String WEBXML_DOCTYPE_2_3 =
+    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_3.dtd\"";
   private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
   private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
   private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
-
 
 
   private String testjarname;
@@ -106,6 +107,7 @@ public class JUnitEEWarTask extends War {
     return ejbRef;
   }
 
+
   /**
    * Create a nested ejbLocalRef element.
    * An EjbLocalRef describes a <ejb-local-ref>
@@ -120,6 +122,7 @@ public class JUnitEEWarTask extends War {
     return ejbRef;
   }
 
+
   /**
    * Create a nested resourceRef element.
    * @return
@@ -130,6 +133,7 @@ public class JUnitEEWarTask extends War {
     resRefs.add(ref);
     return ref;
   }
+
 
   /**
    * Check that all the required parameters have been properly set.
@@ -182,7 +186,7 @@ public class JUnitEEWarTask extends War {
         fs.setFullpath("WEB-INF/lib/" + this.testjarname);
         addFileset(fs);
       } else {
-       Iterator iterator = classes.iterator();
+        Iterator iterator = classes.iterator();
 
         while (iterator.hasNext()) {
           ZipFileSet zipFileSet = (ZipFileSet)iterator.next();
@@ -253,7 +257,12 @@ public class JUnitEEWarTask extends War {
       webXmlFile.createNewFile();
       PrintWriter pw = new PrintWriter(new FileOutputStream(webXmlFile));
       pw.println("<?xml version=\"1.0\"?>");
-      pw.println("<!DOCTYPE " + WEBXML_DOCTYPE + ">");
+
+      if (ejbLocalRefs.isEmpty()) {
+        pw.println("<!DOCTYPE " + WEBXML_DOCTYPE_2_2 + ">");
+      } else {
+        pw.println("<!DOCTYPE " + WEBXML_DOCTYPE_2_3 + ">");
+      }
       pw.println("");
       pw.println("<web-app>");
       pw.println("  <display-name>" + WEBXML_DISPLAY_NAME + "</display-name>");
@@ -269,7 +278,7 @@ public class JUnitEEWarTask extends War {
       pw.println("    <url-pattern>" + WEBXML_URLPATTERN + "</url-pattern>");
       pw.println("  </servlet-mapping>");
       pw.println("");
-      for(Iterator i = resRefs.iterator(); i.hasNext();) {
+      for (Iterator i = resRefs.iterator(); i.hasNext();) {
         ResRef ref = (ResRef)i.next();
         pw.println("");
         pw.println("  <resource-ref>");
