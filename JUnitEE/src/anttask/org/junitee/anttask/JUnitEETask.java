@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.17 2004-05-27 14:36:56 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.18 2004-07-03 14:01:37 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -29,13 +29,13 @@ import org.xml.sax.SAXException;
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
- * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.17 $
+ * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
+ * @version $Revision: 1.18 $
  */
 public class JUnitEETask extends Task {
 
   private String url;
-   private boolean threaded = true;
+  private boolean threaded = true;
   private Vector tests = new Vector();
   private boolean printSummary = false;
   private Vector formatters = new Vector();
@@ -51,16 +51,16 @@ public class JUnitEETask extends Task {
   }
 
 
-   public void setThreaded(boolean threaded) {
-      this.threaded = threaded;
-   }
+  public void setThreaded(boolean threaded) {
+    this.threaded = threaded;
+  }
 
 
   public void setFiltertrace(boolean filtertrace) {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest)enum.nextElement()).setFiltertrace(filtertrace);
+      ((JUnitEETest) enum.nextElement()).setFiltertrace(filtertrace);
     }
   }
 
@@ -69,13 +69,13 @@ public class JUnitEETask extends Task {
    * Tell the task how to handle test failures. If set to true, the task will stop execution if a test failure or error occurs.
    * If set to false, the task will continue exectuion.
    *
-   * @param value   true, if the task should stop execution on test failures and errors
+   * @param value true, if the task should stop execution on test failures and errors
    */
   public void setHaltonfailure(boolean value) {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest)enum.nextElement()).setHaltonfailure(value);
+      ((JUnitEETest) enum.nextElement()).setHaltonfailure(value);
     }
   }
 
@@ -84,20 +84,19 @@ public class JUnitEETask extends Task {
    * Tell the task how to handle errors. If set to true, the task will stop execution if an error occurs.
    * If set to false, the task will continue exectuion.
    *
-   * @param value   true, if the task should stop execution on errors
+   * @param value true, if the task should stop execution on errors
    */
   public void setHaltonerror(boolean value) {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest)enum.nextElement()).setHaltonerror(value);
+      ((JUnitEETest) enum.nextElement()).setHaltonerror(value);
     }
   }
 
 
   /**
    * Tell the task to print a verbose test summary.
-   *
    */
   public void setPrintsummary(boolean printSummary) {
     this.printSummary = printSummary;
@@ -113,7 +112,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest)enum.nextElement()).setErrorproperty(value);
+      ((JUnitEETest) enum.nextElement()).setErrorproperty(value);
     }
   }
 
@@ -127,7 +126,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest)enum.nextElement()).setFailureproperty(value);
+      ((JUnitEETest) enum.nextElement()).setFailureproperty(value);
     }
   }
 
@@ -163,7 +162,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      JUnitEETest test = (JUnitEETest)enum.nextElement();
+      JUnitEETest test = (JUnitEETest) enum.nextElement();
 
       if (test.shouldExecute(getProject())) {
         execute(test);
@@ -182,10 +181,10 @@ public class JUnitEETask extends Task {
 
     arguments.append(url).append("?output=xml");
 
-     if (threaded) {
-        log("Threaded mode", Project.MSG_DEBUG);
-        arguments.append("&thread=true");
-     }
+    if (threaded) {
+      log("Threaded mode", Project.MSG_DEBUG);
+      arguments.append("&thread=true");
+    }
 
     if (test.getResource() != null) {
       arguments.append("&resource=").append(test.getResource());
@@ -209,28 +208,30 @@ public class JUnitEETask extends Task {
       sessionCookie = con.getHeaderField("Set-Cookie");
       log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
 
-       if (sessionCookie != null) {
-          int index = sessionCookie.indexOf(';');
-          if (index != -1) {
-             sessionCookie = sessionCookie.substring(0, index);
-          }
-       }
-       in = con.getInputStream();
-       done = parseResult(in, test);
+      if (sessionCookie != null) {
+        int index = sessionCookie.indexOf(';');
+        if (index != -1) {
+          sessionCookie = sessionCookie.substring(0, index);
+        }
+      }
+      in = con.getInputStream();
+      done = parseResult(in, test);
     } catch (BuildException e) {
       throw e;
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
       throw new BuildException(e);
     } finally {
-       if (in != null) {
-          try { in.close(); } catch (IOException e) {};
-       }
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+        }
+        ;
+      }
     }
 
     try {
-//      requestUrl = new URL(url + "?output=xml");
-
       while (!done) {
         try {
           log("Sleeping ... ", Project.MSG_DEBUG);
@@ -240,15 +241,19 @@ public class JUnitEETask extends Task {
         }
         log("Get xml again using URL " + requestUrl, Project.MSG_DEBUG);
         con = requestUrl.openConnection();
-         if (sessionCookie != null) {
-            con.setRequestProperty("Cookie", sessionCookie);
-         }
-         in =con.getInputStream();
-         try {
-            done = parseResult(in, test);
-         } finally {
-            try { in.close(); } catch (IOException e) {};
-         }
+        if (sessionCookie != null) {
+          con.setRequestProperty("Cookie", sessionCookie);
+        }
+        in = con.getInputStream();
+        try {
+          done = parseResult(in, test);
+        } finally {
+          try {
+            in.close();
+          } catch (IOException e) {
+          }
+          ;
+        }
       }
     } catch (BuildException e) {
       throw e;
@@ -284,53 +289,45 @@ public class JUnitEETask extends Task {
     NodeList testcases = root.getElementsByTagName("testsuite");
     Vector resultFormatters = createFormatters(test);
 
-    try {
-      for (int i = 0; i < testcases.getLength(); i++) {
-        Node node = testcases.item(i);
-        NamedNodeMap attributes = node.getAttributes();
-        String testClass = attributes.getNamedItem("name").getNodeValue();
-        String testPkg = attributes.getNamedItem("package").getNodeValue();
-        int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
-        int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
-        String testName;
+    for (int i = 0; i < testcases.getLength(); i++) {
+      Node node = testcases.item(i);
+      NamedNodeMap attributes = node.getAttributes();
+      String testClass = attributes.getNamedItem("name").getNodeValue();
+      String testPkg = attributes.getNamedItem("package").getNodeValue();
+      int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
+      int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
+      String testName;
 
-        if (testPkg != null && testPkg.length() != 0) {
-          testName = testPkg + "." + testClass;
-        } else {
-          testName = testClass;
-        }
-        Enumeration enumeration = resultFormatters.elements();
-
-        while (enumeration.hasMoreElements()) {
-          JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
-          log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
-          formatter.format(node);
-        }
-
-        if (errors != 0) {
-          if (test.getErrorproperty() != null) {
-            getProject().setNewProperty(test.getErrorproperty(), "true");
-          }
-          if (test.getHaltonerror() || test.getHaltonfailure()) {
-
-            throw new BuildException("Test " + testName + " failed.");
-          }
-        }
-        if (failures != 0) {
-          if (test.getFailureproperty() != null) {
-            getProject().setNewProperty(test.getFailureproperty(), "true");
-          }
-          if (test.getHaltonfailure()) {
-            throw new BuildException("Test " + testName + " failed.");
-          }
-        }
+      if (testPkg != null && testPkg.length() != 0) {
+        testName = testPkg + "." + testClass;
+      } else {
+        testName = testClass;
       }
-    } finally {
       Enumeration enumeration = resultFormatters.elements();
 
       while (enumeration.hasMoreElements()) {
-        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
+        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter) enumeration.nextElement();
+        log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
+        formatter.format(node);
         formatter.flush();
+      }
+
+      if (errors != 0) {
+        if (test.getErrorproperty() != null) {
+          getProject().setNewProperty(test.getErrorproperty(), "true");
+        }
+        if (test.getHaltonerror() || test.getHaltonfailure()) {
+
+          throw new BuildException("Test " + testName + " failed.");
+        }
+      }
+      if (failures != 0) {
+        if (test.getFailureproperty() != null) {
+          getProject().setNewProperty(test.getFailureproperty(), "true");
+        }
+        if (test.getHaltonfailure()) {
+          throw new BuildException("Test " + testName + " failed.");
+        }
       }
     }
 
@@ -364,7 +361,7 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = formatters.elements();
 
     while (enumeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement)enumeration.nextElement();
+      FormatterElement element = (FormatterElement) enumeration.nextElement();
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
@@ -372,7 +369,7 @@ public class JUnitEETask extends Task {
 
     enumeration = test.getFormatters();
     while (enumeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement)enumeration.nextElement();
+      FormatterElement element = (FormatterElement) enumeration.nextElement();
       log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());

@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractResultFormatter.java,v 1.6 2004-05-27 14:33:41 o_rossmueller Exp $
+ * $Id: AbstractResultFormatter.java,v 1.7 2004-07-03 14:01:36 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -14,7 +14,7 @@ import org.w3c.dom.NamedNodeMap;
 
 
 /**
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public abstract class AbstractResultFormatter implements JUnitEEResultFormatter {
@@ -66,6 +66,7 @@ public abstract class AbstractResultFormatter implements JUnitEEResultFormatter 
     if (out != null && out != System.out && out != System.err) {
       try {
         out.close();
+        out = null;
       } catch (IOException e) { /* ignore */
       }
     }
