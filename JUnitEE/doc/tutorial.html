@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: tutorial.html,v 1.6 2002-10-06 16:32:37 o_rossmueller Exp $
+	$Id: tutorial.html,v 1.7 2003-11-08 14:05:35 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.6 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.7 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -191,6 +191,21 @@
   &lt;/ejb-ref&gt;
 &lt;/web-app&gt;</pre></code>
 		</div>
+
+   <p>
+    <b>IMPORTANT NOTE:</b> Orion Application Server has a bug in it's url pattern matching algorithm that
+    causes some problems for JUnitEE. If you are using Orion please change the servlet mapping in the deployment descriptor to
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;</pre></code>
+    </div>
+    </p>
+
+
 
 	<table cellspacing="0" cellpadding="0" width="100%">
 	    <tr><td>&nbsp;</td></tr>
