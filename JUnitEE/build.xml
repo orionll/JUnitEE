@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.4 2002-08-15 19:59:36 o_rossmueller Exp $
+	$Id: build.xml,v 1.5 2002-08-15 20:03:13 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -91,6 +91,8 @@
         <include name="example/**/*.xml"/>
         <include name="example/**/*.html"/>
         <include name="src/**/*.java"/>
+        <include name="anttask/**/*.java"/>
+        <include name="anttask/**/*.xml"/>
         <include name="3rdparty/**"/>
         <include name="build.xml"/>
         <include name="Readme.txt"/>
