@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.9 2002-09-18 22:54:59 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.10 2002-09-19 20:31:22 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -338,7 +338,5 @@ public class JUnitEEServlet extends HttpServlet {
       }
     }
     reader.close();
-    pw.close();
   }
-
 }

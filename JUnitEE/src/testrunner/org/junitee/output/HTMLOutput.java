@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.9 2002-09-18 22:54:59 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.10 2002-09-19 20:31:22 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -25,7 +25,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -34,9 +34,9 @@ public class HTMLOutput extends AbstractOutput {
   protected static final String PASSED = "Passed";
   protected static final String UNKNOWN = "Unknown";
 
-  protected static final String RESOURCE_RED_BULLET = "bullets_red_ball.gif";
-  protected static final String RESOURCE_YELLOW_BULLET = "bullets_yellow_ball.gif";
-  protected static final String RESOURCE_GREEN_BULLET = "bullets_green_ball.gif";
+  protected static final String RESOURCE_RED_BULLET = "bullets_red_x.png";
+  protected static final String RESOURCE_YELLOW_BULLET = "bullets_orange_x.png";
+  protected static final String RESOURCE_GREEN_BULLET = "bullets_green_hook.png";
   protected static final String RESOURCE_INFO = "info.png";
 
   private String servletPath;
