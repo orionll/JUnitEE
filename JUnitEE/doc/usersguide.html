@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: usersguide.html,v 1.1 2002-08-15 19:44:39 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
+-->
+
+<html>
+	<head>
+		<title>JUnitEE</title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+    <table>
+      <tr><td colspan="3">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr> <td class="pageTitle"> JUnitEE </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.1 $ </small> </td> </tr>
+        </table>
+      </td></tr>
+      <tr><td valign="top" align="left">
+        <table width="100%" height="100%" border="0" cellspacing="2" cellpadding="2" class="menuTable">
+          <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="documentation.html">Documentation</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=31476">Download</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/projects/junitee">Project page</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="contact.html">Contact</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe">JUnitEE Wiki</a></td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> User's Guide </td> </tr>
+		</table>
+
+		<p>
+    JUnitEE is an extension to the <a href="http://www.junit.org">JUnit test framework</a>. JUnit provides the framework for writing
+    your unit tests, and JUnitEE gives you the possibility to run these tests inside your application server. This has the advantage
+    of testing your EJB/servlet-based application in the same environment it will run when in production.
+    <p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle">Contents</td> </tr>
+		</table>
+
+    <p>
+    <ul>
+    <li><a href="#package">Packaging JUnitEE</a></li>
+    <li><a href="#servlet">JUnitEE Test Servlet</a></li>
+    <li><a href="#anttask">JUnitEE Ant Task</a>.</li>
+    </ul>
+		</p>
+    <br>
+    <br>
+    <a name="package"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle">Packaging JUnitEE</td> </tr>
+		</table>
+
+    <p>
+    Adding JUnitEE to your server application is quite easy. You just have to create a new web application which contains the
+    JUnitEE Test Servlet and your test classes. Place <tt>junitee.jar</tt> and <tt>junit.jar</tt> and the jar containing your tests
+    in the <tt>WEB-INF/lib</tt> directory of the WAR. Then you add the <tt>web.xml</tt> deployment descriptor similar to the one
+    from our example:
+    </p>
+
+			<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app PUBLIC 
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" 
+        "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test framework&lt;/description&gt;
+    &lt;servlet-class&gt;junit.htmlui.TestServletBase&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;ejb-ref&gt;
+    &lt;ejb-ref-name&gt;ejb/EinsteinEJB&lt;/ejb-ref-name&gt;
+    &lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+    &lt;home&gt;org.infohazard.ejb.einstein.EinsteinHome&lt;/home&gt;
+    &lt;remote&gt;org.infohazard.ejb.einstein.Einstein&lt;/remote&gt;
+  &lt;/ejb-ref&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+			</pre>
+
+    <p>
+    The final step is to package the <tt>test.war</tt> together with your application in an EAR and to deploy it to your application server.
+    Now you may start your tests from any browser you like.
+    </p>
+
+    <a name="servlet"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> JUnitEE Test Servlet </td> </tr>
+		</table>
+
+    <p>
+    The JUnitEE Test Servlet is the central part of JUnitEE - it provides the entry point to run your tests inside your application server
+    and produces a concise summary of the test results (see screenshot).
+		</p>
+
+    <p>
+    <table cellspacing="0" cellpadding="0" width="100%">
+    <tr><td>&nbsp;</td></tr>
+    <tr><td width="100%" align="center"><img src="browser.png" widht="438" height="319" alt="Screenshot JUnitEE Test Servlet"></td></tr>
+    <tr><td>&nbsp;</td></tr>
+    </table>
+    </p>
+
+    <p>
+    You may run the test servlet in two different modes:
+    <ul>
+    <li>in the <tt>Basic Test Mode</tt> the servlet will execute a set of test suites which has to be defined in the servlet request</li>
+    <li>in the <tt>Smart Test Mode</tt> the servlet will try to find all test suites available in one or more jar files packaged with the servlet
+    and then will execute all these test suites</li>
+    </ul>
+    </p>
+
+    <p>
+    The following sections will give you a detailed description of these two modes.
+    </p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle">Basic Test Mode</td> </tr>
+		</table>
+    
+    <p>
+    In the <tt>Basic Test Mode</tt> you have to explicitly define the test suites the servlet should execute. You do this by adding one or more
+    key-value-pairs of the form <pre>suite=your.testclass.name</pre> to the URL you enter in your browser. For the sample test case included
+    in the examples of the JUnitEE distribution this would look like <pre>http://host/exampletest/TestServlet?suite=org.infohazard.test.EinsteinTest</pre>
+    </p>
+    <p>
+    By default the test servlet will produce a test report that lists all test suites with their corresponding test result. If there were errors or failures
+    the report will also contain the reason for each error/failure. If you would like to get a more detailed report that also contains a list of all tests
+    included in the test suited with their respective test results, set the parameter <pre>list=true</pre> in your request. For the sample test case included
+    in the examples of the JUnitEE distribution this would look like 
+    <pre>http://host/exampletest/TestServlet?suite=org.infohazard.test.EinsteinTest&amp;list=true</pre>
+    </p>
+		<p>
+    <table align="center" width="90%" cellspacing="2" cellpadding="2">
+      <tr><td colspan="3" class="top">&nbsp;</td></tr>
+      <tr><td colspan="3" class="tabletitle">Basic Test Mode request parameters</td></tr>
+      <tr><td class="tablehead">Parameter</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+      <tr><td align="center">suite</td><td>Defines the class name of the test case to be executed by the test servlet.
+      This parameter may be used multiple times in one request.</td><td align="center">YES</td></tr>
+      <tr><td align="center">list</td><td>Set this parameter to whatever value you like to force JUnitEE to produce a more detailed test report that lists all
+      tests included in the executed test suites in combination with their test result.</td><td align="center">No</td></tr>
+      <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </p>
+
+    
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle">Smart Test Mode</td> </tr>
+		</table>
+    
+    <p>
+    In the <tt>Smart Test Mode</tt> JUnitEE will try to detect all tests you deployed to the server (which means all classes with a name ending with <tt>Test</tt> or <tt>Tests</tt>) and will then execute them. To switch the
+    test servlet to this mode you have to set the parameter <pre>all=true</pre> in your request. For the sample test case included
+    in the examples of the JUnitEE distribution this would look like 
+    <pre>http://host/exampletest/TestServlet?all=true</pre>
+    </p>
+    <p>
+    To tell the servlet where to look for your tests you have to either set the request parameter
+
+    <pre>search=path to your test jar inside the WAR</pre>
+    
+    or to define an init parameter for the JUnitEE servlet in the deployment descriptor of the <tt>test.war</tt>.
+    </p>
+    <p>
+    So for our example you either have to enter the URL 
+    <pre>http://host/exampletest/TestServlet?all=true&amp;search=WEB-INF/lib/junitee-example-test.jar</pre> in your browser or
+    extend the deployment descriptor like
+    
+<pre>
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test framework&lt;/description&gt;
+    &lt;servlet-class&gt;junit.htmlui.TestServletBase&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;searchResources&lt;/param-name&gt;
+      &lt;param-value&gt;WEB-INF/lib/junitee-example-test.jar&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/servlet&gt;
+</pre>
+    <p>
+    
+		<p>
+    <table align="center" width="90%" cellspacing="2" cellpadding="2">
+      <tr><td colspan="3" class="top">&nbsp;</td></tr>
+      <tr><td colspan="3" class="tabletitle">Smart Test Mode request parameters</td></tr>
+      <tr><td class="tablehead">Parameter</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+      <tr><td align="center">all</td><td>Set this parameter to whatever value you like to switch the test servlet to Smart Test Mode</td><td align="center">YES</td></tr>
+      <tr><td align="center">search</td><td>Define the resource the servlet should use to search for test classes.</td><td align="center">If there is no <tt>searchResource</tt> init parameter</td></tr>
+      <tr><td align="center">list</td><td>Set this parameter to whatever value you like to force JUnitEE to produce a more detailed test report that lists all
+      tests included in the executed test suites in combination with their test result.</td><td align="center">No</td></tr>
+      <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </p>
+		<p>
+    <table align="center" width="90%" cellspacing="2" cellpadding="2">
+      <tr><td colspan="3" class="top">&nbsp;</td></tr>
+      <tr><td colspan="3" class="tabletitle">Smart Test Mode servlet init parameters</td></tr>
+      <tr><td class="tablehead">Parameter</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+      <tr><td align="center">searchResources</td><td>Comma-separated list of resources the servlet should use to search for test classes.</td><td align="center">If you don't use the <tt>search</tt> request parameter</td></tr>
+      <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </p>
+
+   <a name="anttask"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle">JUnitEE Ant Task</td> </tr>
+		</table>
+
+    <p>
+    JUnitEE provides a task for the Ant build tool to integrate your JUnitEE tests with your build process. To use this task
+    you have to declare a new task in your build script:
+		</p>
+			<pre>
+&lt;taskdef name="junitee" 
+         classname="junitee.anttask.JUnitEETask" 
+         classpath="junitee-anttask.jar"/&gt;</pre>
+
+		<p>
+    The JUnitEETask supports the following attributes:
+		</p>
+
+		<p>
+    <table align="center" width="90%" cellspacing="2" cellpadding="2">
+      <tr><td colspan="3" class="top">&nbsp;</td></tr>
+      <tr><td colspan="3" class="tabletitle">JUnitEETask attributes</td></tr>
+      <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+      <tr><td align="center">url</td><td>URL of the JUnitEE Test Servlet</td><td align="center">YES</td></tr>
+      <tr><td align="center">haltonfailure</td><td>Stop the build if a failure occurs</td><td align="center">No</td></tr>
+      <tr><td align="center">haltonerror</td><td>Stop the build if an error or a failure occurs</td><td align="center">No</td></tr>
+      <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </p>
+		<p>
+    The task requires a set of nested &lt;test&gt; elements to define which tests to run. Each &lt;test&gt; element supports these attributes:
+    </p>
+		<p>
+    <table align="center" width="90%" cellspacing="2" cellpadding="2">
+      <tr><td colspan="3" class="top">&nbsp;</td></tr>
+      <tr><td colspan="3" class="tabletitle">Test attributes</td></tr>
+      <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+      <tr><td align="center">name</td><td>Name of the test class to be executed</td><td align="center">If <tt>runall</tt> is not set</td></tr>
+      <tr><td align="center">runall</td><td>Execute all tests</td><td align="center">If <tt>name</tt> is not set</td></tr>
+      <tr><td align="center">resource</td><td>Comma-separated list of all resources containing test classes</td><td align="center">If <tt>runall</tt> is set and the servlet has not init parameter</td></tr>
+      <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </p>
+
+
+    <p>
+    This example will run the test suite <tt>org.infohazard.test.EinsteinTest</tt> and halt the build if a failure occurs. To execute the test
+    the given URL will be used.
+    </p>
+
+			<pre>
+&lt;target name="do-run-tests"&gt;
+
+  &lt;junitee url="http://localhost:8080/exampletest/TestServlet"&gt;
+    &lt;test name="org.infohazard.test.EinsteinTest" haltonfailure="true" /&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;
+</pre>
+    </p>
+    <p>
+    This example will run all tests available in <tt>WEB-INF/lib/mytests.jar</tt>.
+    </p>
+
+			<pre>
+&lt;target name="do-run-tests"&gt;
+
+  &lt;junitee url="http://localhost:8080/exampletest/TestServlet"&gt;
+    &lt;test runall="true" resource="WEB-INF/lib/mytests.jar" /&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;
+</pre>
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
+			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
+      <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">  
+			</a></td></tr>
+		</table>
+
+      </td></tr>
+    </table>
+	</body>
+</html>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.3 2002-07-31 22:02:54 o_rossmueller Exp $
+	$Id: build.xml,v 1.4 2002-08-15 19:44:39 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -9,10 +9,10 @@
 
 	<property name="name" value="junitee-example" />
 
-	<property name="output.dir" value="out" />
+	<property name="build.dir" value="build" />
 
   <property name="lib.dir" value="${basedir}/../lib"/>
-  <property name="junitee.dir" value="${basedir}/../out"/>
+  <property name="junitee.dir" value="${basedir}/../build"/>
   
 	<property name="junit.library" value="${lib.dir}/junit.jar" />
 	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
@@ -20,24 +20,24 @@
   <property name="junitee.library" value="${junitee.dir}/junitee.jar"/>
   
 	<property name="javasrc.dir" value="javasrc" />
-	<property name="javasrc.staging.dir" value="${output.dir}/${javasrc.dir}" />
+	<property name="javasrc.staging.dir" value="${build.dir}/${javasrc.dir}" />
 
 	<property name="app-ear.dir" value="components/app-ear" />
-	<property name="app-ear.product" value="${output.dir}/${name}.ear" />
+	<property name="app-ear.product" value="${build.dir}/${name}.ear" />
 
 	<property name="ejb-jar.dir" value="components/ejb-jar" />
 	<property name="ejb-jar.file" value="${name}-ejb.jar" />
-	<property name="ejb-jar.product" value="${output.dir}/${ejb-jar.file}" />
+	<property name="ejb-jar.product" value="${build.dir}/${ejb-jar.file}" />
 
 	<property name="web-war.dir" value="components/web-war" />
 	<property name="web-war.file" value="${name}-web.war" />
-	<property name="web-war.product" value="${output.dir}/${web-war.file}" />
+	<property name="web-war.product" value="${build.dir}/${web-war.file}" />
 	
 	<property name="test-war.dir" value="components/test-war" />
 	<property name="test-war.file" value="${name}-test.war" />
-	<property name="test-war.product" value="${output.dir}/${test-war.file}" />
+	<property name="test-war.product" value="${build.dir}/${test-war.file}" />
 	<property name="test-jar.file" value="${name}-test.jar" />
-	<property name="test-jar.product" value="${output.dir}/${test-jar.file}" />
+	<property name="test-jar.product" value="${build.dir}/${test-jar.file}" />
 
 	<property name="orion.dir" value="/java/orion" />
 	<property name="lib.dir" value="lib" />
@@ -53,7 +53,7 @@
 
 
 	<target name="clean">
-		<delete dir="${output.dir}" />
+		<delete dir="${build.dir}" />
 	</target>
 
  	<target name="javasrc">
@@ -107,7 +107,7 @@
       
       <lib dir="${junitee.dir}" includes="*.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
-      <lib dir="${output.dir}" includes="${test-jar.file}"/>
+      <lib dir="${build.dir}" includes="${test-jar.file}"/>
 		</war>
 	</target>
 
@@ -115,7 +115,7 @@
 		<jar jarfile="${app-ear.product}">
 			<fileset dir="${app-ear.dir}" />
 
-			<fileset dir="${output.dir}">
+			<fileset dir="${build.dir}">
 				<include name="${ejb-jar.file}" />
 				<include name="${web-war.file}" />
 				<include name="${test-war.file}" />

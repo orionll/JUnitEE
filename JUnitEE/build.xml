@@ -1,77 +1,103 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.2 2002-07-31 21:04:30 o_rossmueller Exp $
+	$Id: build.xml,v 1.3 2002-08-15 19:44:27 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
 
-	You will probably need to change the library paths
-	and the deployment directory to build.
-
 	Jeff Schnitzer (jeff@infohazard.org)
+  Oliver Rossmueller (oliver@oross.net)
 -->
 
 <project name="junitee" default="all" basedir=".">
 
 	<property name="name" value="junitee" />
-
+  <property name="version" value="1.4"/>
+  <property name="distname" value="${name}-${version}"/>
+  
   <property name="lib.dir" value="${basedir}/lib"/>
   
 	<property name="junit.library" value="${lib.dir}/junit.jar" />
 	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
 	<property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar" />
 
-	<property name="deployment.dir" value="/java/orion/lib" />
-	<property name="publish.dir" value="/java/orion/default-web-app/junitee" />
-
- 	<property name="src.dir" value="src" />
-	<property name="output.dir" value="out" />
-	<property name="staging.dir" value="${output.dir}/staging" />
-	<property name="website.dir" value="doc" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="dist.root" value="${dist.dir}/${distname}"/>
+	<property name="dist.lib" value="${dist.root}/lib"/>
+	<property name="dist.doc" value="${dist.root}/doc"/>
+	<property name="dist.src" value="${dist.root}/src"/>
+	<property name="build.classes" value="${build.dir}/classes"/>
+	<property name="doc.dir" value="doc" />
 	<property name="example.dir" value="example" />
+	<property name="anttask.dir" value="anttask" />
 
+  
 	<target name="clean">
-		<deltree dir="${output.dir}" />
+		<delete dir="${build.dir}" quiet="true" />
+		<delete dir="${dist.dir}" quiet="true" />
 	</target>
 
-	<target name="prepare-staging">
-		<mkdir dir="${staging.dir}" />
+  
+	<target name="prepare">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.root}" />
+		<mkdir dir="${dist.lib}" />
+		<mkdir dir="${dist.doc}" />
+		<mkdir dir="${dist.src}" />
 	</target>
 
- 	<target name="classes" depends="prepare-staging">
+  
+ 	<target name="compile" depends="prepare">
 		<javac srcdir="${src.dir}"
-				destdir="${staging.dir}"
+				destdir="${build.classes}"
 				classpath="${junit.library}:${servlet.library}:${j2ee.library}" />
 	</target>
 
-	<target name="jar" depends="classes">
-		<jar jarfile="${output.dir}/${name}.jar"
-				basedir="${staging.dir}" />
+  
+	<target name="jar" depends="compile">
+		<jar jarfile="${build.dir}/${name}.jar"
+				basedir="${build.classes}" />
 	</target>
 
-	<target name="deploy" depends="jar">
-		<copyfile src="${output.dir}/${name}.jar"
-					dest="${deployment.dir}/${name}.jar" />
+  <target name="anttask">
+    <ant dir="${anttask.dir}" inheritall="false"/>
+    <copy file="${anttask.dir}/build/lib/junitee-anttask.jar" todir="${build.dir}"/>
+  </target>
+  
+	<target name="dist" depends="clean, jar, anttask">
+		<copy todir="${dist.lib}">
+      <fileset dir="${build.dir}" includes="*.jar"/>
+    </copy>
+
+    <copy todir="${dist.doc}">
+      <fileset dir="${doc.dir}">
+        <include name="*.html"/>
+        <include name="*.css"/>
+        <include name="*.png"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.root}">
+      <fileset dir="${basedir}">
+        <include name="example/**/*.java"/>
+        <include name="example/**/*.xml"/>
+        <include name="example/**/*.html"/>
+        <include name="src/**/*.java"/>
+        <include name="build.xml"/>
+        <include name="Readme.txt"/>
+      </fileset>
+    </copy>
+    
+    <zip zipfile="${dist.dir}/${distname}.zip"
+				basedir="${dist.root}" />
 	</target>
 
-	<target name="redist" depends="clean, jar">
-		<ant dir="${example.dir}" target="clean" />
-
-		<mkdir dir="${output.dir}/redist/junitee/lib" />
-
-		<copyfile src="${output.dir}/${name}.jar"
-					dest="${output.dir}/redist/junitee/lib/${name}.jar" />
-
-		<copydir src="."
-					dest="${output.dir}/redist/junitee"
- 					excludes="${output.dir}/**, ${publish.dir}/**" />
-
-		<zip zipfile="${output.dir}/${name}.zip"
-				basedir="${output.dir}/redist" />
-	</target>
-
-	<target name="publish" depends="redist">
+	<target name="publish" depends="dist">
 		<deltree dir="${publish.dir}" />
 
 		<mkdir dir="${publish.dir}" />
@@ -83,6 +109,6 @@
 					dest="${publish.dir}" />
 	</target>
   
-  <target name="all" depends="jar" description="Build the JUnitEE library"/>
+  <target name="all" depends="jar, anttask" description="Build the JUnitEE library"/>
 </project>
 

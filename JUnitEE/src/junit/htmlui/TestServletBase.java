@@ -1,5 +1,5 @@
 /**
- * $Id: TestServletBase.java,v 1.3 2002-07-31 22:03:42 o_rossmueller Exp $
+ * $Id: TestServletBase.java,v 1.4 2002-08-15 19:44:39 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestServletBase.java,v $
  */
 
@@ -27,8 +27,9 @@ import javax.servlet.http.*;
  * long-running tests could produce a timeout.
  *
  * @author Jeff Schnitzer (jeff@infohazard.org)
+ * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
-public abstract class TestServletBase extends HttpServlet {
+public class TestServletBase extends HttpServlet {
   /**
    * The form parameter which defines the name of the suite
    * class to run.  This parameter can appear more than once
@@ -50,13 +51,16 @@ public abstract class TestServletBase extends HttpServlet {
   protected static final String SEARCH = "search";
   
   /**
-   * This should be implemented by a class in the web application's
-   * WEB-INF/classes directory.  That way this servlet will use
-   * the special class loader which dynamically reloads changed
-   * classes (assuming the app server is not pathetic).  The
-   * implementation should be "this.getClass().getClassLoader()"
+   * Answer the classloader used to load the test classes. The default implementation
+   * answers the classloader of this class, which usally will be the classloader of
+   * the web application the servlet is a part of.
+   *
+   * If this default behaviour does not work for you, overwrite this method and answer
+   * the classloader that fits your needs.
    */
-  abstract protected ClassLoader getDynamicClassLoader();
+  protected ClassLoader getDynamicClassLoader() {
+    return getClass().getClassLoader();
+  }
   
   
   public void init(ServletConfig config) throws ServletException {
@@ -78,7 +82,7 @@ public abstract class TestServletBase extends HttpServlet {
     String[] testClassNames = null;
     
     if (runAll != null) {
-      testClassNames = searchForTests(request.getParameter(SEARCH));
+      testClassNames = searchForTests(request.getParameterValues(SEARCH));
     } else {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
@@ -133,6 +137,15 @@ public abstract class TestServletBase extends HttpServlet {
     this.doGet(request, response);
   }
   
+  
+  protected String[] searchForTests(String[] param) {
+    StringBuffer buffer = new StringBuffer();
+    
+    for (int i = 0; i < param.length; i++) {
+      buffer.append(param[i]).append(",");
+    }
+    return searchForTests(buffer.toString());
+  }
   
   /**
    * Search all resources set via the searchResources init parameter for classes ending with "Tests"

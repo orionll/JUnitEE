@@ -2,59 +2,54 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: tutorial.html,v 1.2 2001-07-23 21:55:59 lhoriman Exp $
+	$Id: tutorial.html,v 1.3 2002-08-15 19:44:39 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial.html,v $
 -->
 
 <html>
 	<head>
-		<title> JUnitEE Tutorial </title>
+		<title>JUnitEE</title>
 
 		<link rel="stylesheet" href="stylesheet.css" type="text/css">
 	</head>
 
 	<body>
+    <table>
+      <tr><td colspan="3">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr> <td class="pageTitle"> JUnitEE </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.3 $ </small> </td> </tr>
+        </table>
+      </td></tr>
+      <tr><td valign="top" align="left">
+        <table width="100%" height="100%" border="0" cellspacing="2" cellpadding="2" class="menuTable">
+          <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="documentation.html">Documentation</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=31476">Download</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/projects/junitee">Project page</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="contact.html">Contact</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe">JUnitEE Wiki</a></td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
 
-		<table width="100%" cellspacing="0" cellpadding="0">
-			<tr> <td class="pageTitle"> JUnitEE Tutorial </td> </tr>
-			<tr> <td align="right"> <small> $Revision: 1.2 $ </small> </td> </tr>
-		</table>
 
-		<p>
-			<b>
-				This article will show you how to use JUnitEE to unit test an
-				Enterprise JavaBean.  You will write a web-application which contains
-				unit test cases and build it into your J2EE application.
-			</b>
-		</p>
-		<div align="center">
-			<table width="90%" border="0" cellspacing="0" cellpadding="1" class="noteTable">
-				<tr> <td> <b> Note: </b> </td> </tr>
-				<tr>
-					<td class="noteText">
-						<i>
-							This article assumes that you already understand how
-							to build and deploy EJBs in your app server.  It also
-							assumes you understand how to write JUnit test cases.
-							There are links at the <a href="#refs">bottom</a> of
-							this article which may help.
-						</i>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<p> </p>
-
-		<a name="intro"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Introduction </td> </tr>
+			<tr> <td class="sectionTitle"> Tutorial </td> </tr>
 		</table>
 
 		<p>
-			This will be a quick tutorial on building a J2EE web-application
-			containing a test suite for an EJB in a J2EE solution.  It will
-			attempt to be as platform-independant as possible.
+      This tutorial will show you how to use JUnitEE to unit test an
+      Enterprise JavaBean. You will write a web-application which contains
+      unit test cases and build it into your J2EE application.
 		</p>
 
 		<p>
@@ -67,18 +62,25 @@
 			<li> <a href="http://junitee.sourceforge.net/"> The JUnitEE extension to JUnit </a> </li>
 		</ul>
 
+    <p>
+						<i>
+							We assume that you already understand how
+							to build and deploy EJBs in your app server and how to write JUnit test cases.
+							There are links at the <a href="#refs">bottom</a> of
+							this page which may help.
+						</i>
+    </p>
 		<p>
-			This article has the following sections:
+			This tutorial will follow these steps:
 		</p>
 		<ul>
-			<li> <a href="#intro"> Introduction </a> </li>
-			<li> <a href="#step1"> Step 1: Install JUnit and JUnitEE </a> </li>
-			<li> <a href="#step2"> Step 2: Prepare the sample EJB </a> </li>
-			<li> <a href="#step3"> Step 3: Set up the directory structure </a> </li>
-			<li> <a href="#step4"> Step 4: Write the test case </a> </li>
-			<li> <a href="#step5"> Step 5: Create the TestServlet </a> </li>
-			<li> <a href="#step6"> Step 6: Create the UI form </a> </li>
-			<li> <a href="#step7"> Step 7: Create the web.xml deployment descriptor </a> </li>
+			<li> <a href="#step1"> Step 1: Prepare the sample EJB </a> </li>
+			<li> <a href="#step2"> Step 2: Set up the directory structure </a> </li>
+			<li> <a href="#step3"> Step 3: Write the test case </a> </li>
+			<li> <a href="#step4"> Step 4: Create the TestServlet</a> </li>
+			<li> <a href="#step5"> Step 5: Create the UI form </a> </li>
+			<li> <a href="#step6"> Step 6: Create the web.xml deployment descriptor </a> </li>
+			<li> <a href="#step7"> Step 7: Package the application</a> </li>
 			<li> <a href="#step8"> Step 8: Install application and run </a> </li>
 			<li> <a href="#notes"> Notes </a> </li>
 			<li> <a href="#refs"> References </a> </li>
@@ -88,25 +90,12 @@
 
 		<a name="step1"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 1: Install JUnit and JUnitEE </td> </tr>
-		</table>
-
-		<p>
-			You need to make junit.jar and junitee.jar available in your J2EE
-			application's classpath.  Usually this can be done simply by copying
-			the jar files into a "lib" directory in the app server's home
-			directory.  Note that files in this directory are not usually dynamically
-			reloaded, so you will probably need to restart your app server.
-		</p>
-
-		<a name="step2"></a>
-		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 2: Prepare the sample EJB </td> </tr>
+			<tr> <td class="sectionTitle"> Step 1: Prepare the sample EJB </td> </tr>
 		</table>
 
 		<p>
 			You will find an example EJB (and test harness) in the <tt>example</tt>
-			subdir of the JUnitEE install directory.  You should first build this
+			subdirectory of the JUnitEE install directory.  You should first build this
 			example and make sure it works, or, case the case happens to be,
 			doesn't work (the sample bean has a bug which causes it to fail its
 			test case).  You will most likely need to edit the
@@ -149,9 +138,9 @@
 			tutorial is how to build the test.
 		</p>
 
-		<a name="step3"></a>
+		<a name="step2"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 3: Set up the directory structure </td> </tr>
+			<tr> <td class="sectionTitle"> Step 2: Set up the directory structure </td> </tr>
 		</table>
 
 		<p>
@@ -173,9 +162,9 @@
 			you may wish to reconsider doing this.
 		</p>
 
-		<a name="step4"></a>
+		<a name="step3"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 4: Write the test case </td> </tr>
+			<tr> <td class="sectionTitle"> Step 3: Write the test case </td> </tr>
 		</table>
 
 		<p>
@@ -184,25 +173,23 @@
 			this:
 		</p>
 
-		<blockquote>
 			<pre>
 protected void setUp() throws Exception
 {
-	Context jndiContext = new InitialContext();
+  Context jndiContext = new InitialContext();
 
-	Object einRef = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
-	EinsteinHome home = (EinsteinHome)PortableRemoteObject.narrow(einRef, EinsteinHome.class);
+  Object einRef = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
+  EinsteinHome home = 
+      (EinsteinHome)PortableRemoteObject.narrow(einRef, EinsteinHome.class);
 
-	this.ein = home.create();
+  this.ein = home.create();
 }
 			</pre>
-		</blockquote>
 
 		<p>
 			And the test methods themselves look like this:
 		</p>
 
-		<blockquote>
 			<pre>
 public void testSimpleAddition() throws RemoteException
 {
@@ -210,7 +197,6 @@ public void testSimpleAddition() throws RemoteException
 	assert(result.equals("17"));
 }
 			</pre>
-		</blockquote>
 
 		<p>
 			This code belongs in: <br>
@@ -218,49 +204,33 @@ public void testSimpleAddition() throws RemoteException
 			<tt>example/javasrc/org/infohazard/test/EinsteinTest.java</tt>.
 		</p>
 
-		<a name="step5"></a>
+		<a name="step4"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 5: Create the TestServlet </td> </tr>
+			<tr> <td class="sectionTitle"> Step 4: Create the TestServlet</td> </tr>
 		</table>
 
 		<p>
-			We need to have a servlet to run our test cases.  There is a
-			servlet included in the <tt>junit.htmlui</tt> package, but you
-			cannot use it directly.  Instead you must create a servlet in
-			your web application's <tt>WEB-INF/classes/</tt> which derives
-			from <tt>junit.htmlui.TestServletBase</tt> and adds this juicy detail:
+			We need to have a servlet to run our test cases.  The <tt>junit.htmlui.TestServletBase</tt> will be sufficent
+      for almost all kinds of usage.
+    </p>
+    <p>
+      The important detail is the classloader which will be
+      used by the servlet to load your test cases. The default behaviour of the servlet is to use the classloader that 
+      loaded the servlet class itself. If this does not work in your situation, you have to subclass <tt>junit.htmlui.TestServletBase</tt>
+      and overwrite the <tt>getDynamicClassLoader()</tt> method:
 		</p>
 
-		<blockquote>
 			<pre>
 protected ClassLoader getDynamicClassLoader()
 {
-	return this.getClass().getClassLoader();
+	return getMySpecialClassLoader();
 }
 			</pre>
-		</blockquote>
 
-		<p>
-			By using this servlet (instead of one in the junitee.jar library
-			directly), we trick the app server into useing the special dynamic
-			classloader for loading test cases rather than the boring default
-			classloader which was used to load classes in junitee.jar.  If
-			we didn't do this, we would have to restart our app server every
-			time we changed the test classes!
-		</p>
 
-		<p>
-			If your app server does not dynamically reload modified classes
-			in the web application directory, this step isn't going to help
-			you.  You still have to do it because the <tt>TestServletBase</tt>
-			is declared <tt>abstract</tt>, but you're going to have to
-			restart your app server anyways if you make changes to test cases.
-			Bummer.
-		</p>
-
-		<a name="step6"></a>
+		<a name="step5"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 6: Create the UI Form </td> </tr>
+			<tr> <td class="sectionTitle"> Step 5: Create the UI Form </td> </tr>
 		</table>
 
 		<p>
@@ -269,7 +239,6 @@ protected ClassLoader getDynamicClassLoader()
 			nice to have a simple front end form:
 		</p>
 
-		<blockquote>
 			<pre>
 &lt;p&gt;
 	You may type in the name of a test suite:
@@ -296,15 +265,14 @@ protected ClassLoader getDynamicClassLoader()
 	&lt;/form&gt;
 &lt;/p&gt;
 			</pre>
-		</blockquote>
 
 		<p>
 			Save this as <tt>example/components/test-war/index.html</tt>
 		</p>
 
-		<a name="step7"></a>
+		<a name="step6"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="sectionTitle"> Step 7: Create the web.xml deployment descriptor </td> </tr>
+			<tr> <td class="sectionTitle"> Step 6: Create the web.xml deployment descriptor </td> </tr>
 		</table>
 
 		<p>
@@ -314,39 +282,61 @@ protected ClassLoader getDynamicClassLoader()
 			of URI.  Here's what the <tt>web.xml</tt> should look like:
 		</p>
 
-		<blockquote>
 			<pre>
 &lt;?xml version="1.0"?&gt;
-&lt;!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+&lt;!DOCTYPE web-app PUBLIC 
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" 
+        "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
 
 &lt;web-app&gt;
-	&lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
 
-	&lt;servlet&gt;
-		&lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
-		&lt;description&gt;JUnitEE test framework&lt;/description&gt;
-		&lt;servlet-class&gt;org.infohazard.servlet.TestServlet&lt;/servlet-class&gt;
-	&lt;/servlet&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test framework&lt;/description&gt;
+    &lt;servlet-class&gt;junit.htmlui.TestServletBase&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
 
- 	&lt;ejb-ref&gt;
-		&lt;ejb-ref-name&gt;ejb/EinsteinEJB&lt;/ejb-ref-name&gt;
-		&lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
-		&lt;home&gt;org.infohazard.ejb.einstein.EinsteinHome&lt;/home&gt;
-		&lt;remote&gt;org.infohazard.ejb.einstein.Einstein&lt;/remote&gt;
-	&lt;/ejb-ref&gt;
+  &lt;ejb-ref&gt;
+    &lt;ejb-ref-name&gt;ejb/EinsteinEJB&lt;/ejb-ref-name&gt;
+    &lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+    &lt;home&gt;org.infohazard.ejb.einstein.EinsteinHome&lt;/home&gt;
+    &lt;remote&gt;org.infohazard.ejb.einstein.Einstein&lt;/remote&gt;
+  &lt;/ejb-ref&gt;
 
-	&lt;servlet-mapping&gt;
-		&lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
-		&lt;url-pattern&gt;/TestServlet&lt;/url-pattern&gt;
-	&lt;/servlet-mapping&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
 &lt;/web-app&gt;
 			</pre>
-		</blockquote>
 
 		<p>
 			This should be saved as: <br>
 			<tt>example/components/test-war/WEB-INF/web.xml</tt>
 		</p>
+    <p>
+      For the case you implemented your own test servlet class, please be sure to replace <tt>junit.htmlui.TestServletBase</tt>
+      in the deployment descriptor with the class name of your own servlet.
+    </p>
+
+
+		<a name="step7"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 7: Package the test WAR</td> </tr>
+		</table>
+
+    <p>
+    Now you have everything ready to package the test web application. You have to put
+    </p>
+    <ul>
+    <li><tt>junit.jar</tt> and <tt>junitee.jar</tt> to <tt>WEB-INF/lib</tt></li>
+    <li>your test classes to <tt>WEB-INF/classes</tt> or a jar containing the test classes to <tt>WEB-INF/lib</tt></li>
+    <li>if you implemented your own test servlet, you have to place this class to <tt>WEB-INF/classes</tt>, too</li>
+    </ul>
+    <p>
+    Finally, jar everything into the <tt>test.war</tt>.
+    </p>
 
 		<a name="step8"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
@@ -356,7 +346,7 @@ protected ClassLoader getDynamicClassLoader()
 		<p>
 			Not acutually true; you still need to add the web-application to the
 			application's <tt>application.xml</tt> deployment descriptor, build the
-			enterprise archive as described in Step 2, and install the application
+			enterprise archive as described in Step 1, and install the application
 			in your app server.  But if you're using the example EJB, the
 			<tt>application.xml</tt> should already be set up, and you should already
 			know how to do the rest :-)
@@ -447,16 +437,11 @@ protected ClassLoader getDynamicClassLoader()
 				<tr>
 					<td class="noteText">
 		<p>
-			This article was written by Jeff Schnitzer
-			(<a href="mailto:jeff@infohazard.org">jeff@infohazard.org</a>).  Its
-			style was borrowed from the
-			<a href="http://www.jollem.com/orion-primer/">Orion Primer</a>
-			by Ernst de Haan and the
-			<a href="http://www.orionserver.com/">Orion</a> website by, well,
-			the People Who Wrote the Orion Website.
+			This tutorial was written by <a href="mailto:jeff@infohazard.org">Jeff Schnitzer</a>
+			and edited by <a href="oliver@oross.net">Oliver Rossmueller</a> to reflect the latest changes in JUnitEE.
 		</p>
 		<p>
-			This article was developed on a Casio Portatone keyboard running
+			This article was originally developed on a Casio Portatone keyboard running
 			BlackKey Linux.  All typos, innacuracies, mistakes, and
 			outright lies have been inserted by the FBI computer preprocessing
 			all of your email and web downloads.
@@ -466,5 +451,17 @@ protected ClassLoader getDynamicClassLoader()
 			</table>
 		</div>
 
+		<table cellspacing="0" cellpadding="0" width="100%">
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
+			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
+      <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">  
+			</a></td></tr>
+		</table>
+
+      </td></tr>
+    </table>
 	</body>
 </html>

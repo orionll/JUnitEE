@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.1 2002-07-31 21:45:31 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.2 2002-08-15 19:44:39 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -20,7 +20,7 @@ import org.apache.tools.ant.BuildException;
 /**
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JUnitEETask extends Task {
   
@@ -31,10 +31,6 @@ public class JUnitEETask extends Task {
   
   public void setUrl(String url) {
     this.url = url;
-  }
-  
-  public void setListMethods(boolean value) {
-    listMethods = value;
   }
   
   public void setHaltonfailure(boolean value) {
@@ -69,9 +65,6 @@ public class JUnitEETask extends Task {
     }
   }
   
-  public void setPrintsummary(boolean value) {
-    printSummary = value;
-  }
   
   public JUnitEETest createTest() {
     JUnitEETest test = new JUnitEETest();
@@ -111,13 +104,13 @@ public class JUnitEETask extends Task {
     
     if (test.getResource() != null) {
       arguments.append(URLEncoder.encode("resource")).append("=").append(URLEncoder.encode(test.getResource()));
-    } else if (test.getRunall()) {
+    };
+    if (test.getRunall()) {
       arguments.append(URLEncoder.encode("all")).append("=").append(URLEncoder.encode("true"));
-    } else {
+    } else if (test.getName() != null){
       arguments.append(URLEncoder.encode("suite")).append("=").append(URLEncoder.encode(test.getName()));
-    }
-    if (listMethods) {
-      arguments.append(URLEncoder.encode("list")).append("=").append(URLEncoder.encode("true"));
+    } else {
+      throw new BuildException("You must specify the name or runall attribute", location);
     }
     try {
       URL url = new URL(arguments.toString());
@@ -143,7 +136,7 @@ public class JUnitEETask extends Task {
       if (line.equals("TEST FAILED")) {
         line = in.readLine();
         while (! line.equals("===")) {
-          if (line.equals("Error") && test.getHaltonerror()) {
+          if (line.equals("Error") && (test.getHaltonerror() || test.getHaltonfailure())) {
             throw new BuildException("Error while running test.");
           }
           if (line.equals("Failure") && test.getHaltonfailure()) {
@@ -160,7 +153,5 @@ public class JUnitEETask extends Task {
   }
   
   private String url;
-  private boolean listMethods;
-  private boolean printSummary;
   private Vector tests = new Vector();
 }

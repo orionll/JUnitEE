@@ -1,10 +1,10 @@
 /*
- * $Id: stylesheet.css,v 1.1.1.1 2001-07-23 21:30:54 lhoriman Exp $
+ * $Id: stylesheet.css,v 1.2 2002-08-15 19:44:39 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/stylesheet.css,v $
  */
 
 body {
-	font-family: lucida, verdana;
+	font-family: lucida, verdana, sans-serif;
 	font-size: 10pt;
 	color: #000000;
 	background-color: #FFFFFF
@@ -13,8 +13,12 @@ body {
 a:link		{ color: #FF4444 }
 a:active	{ color: #4444FF }
 a:visited	{ color: #AA4444 }
-a:hover		{ color: #FF4444; background-color: #F4E5E5 }
+a:hover		{ color: #FF4444 }
 a:hover img	{ background-color: #FFFFFF }
+
+pre {
+  background-color: #FFFFFF;
+}
 
 .pageTitle {
 	font-size: 2em;
@@ -43,13 +47,64 @@ a:hover img	{ background-color: #FFFFFF }
 	background-color: #980000;
 }
 
-.noteText {
+.tablehead {
 	color: #000000;
 	background-color: #F4E5E5;
+}
+
+.tabletitle {
+	color: #000000;
+	background-color: #F4E5E5;
+  font-weight: bold;
+}
+
+.menuTable {
+	color: #FFFFFF;
+	background-image:url(menuback.png);
 	border-top-width: 1px;
-	border-bottom-width: 1px;
+	border-bottom-width: 0px;
 	border-left-width: 1px;
 	border-right-width: 1px;
 	border-style: solid;
 	border-color: #980000;
+}
+
+.menuSelected {
+	color: #980000;
+  text-decoration: underline;
+}
+
+.menuSelected:link		{ color: #000000; text-decoration: none }
+.menuSelected:active	{ color: #000000; text-decoration: none }
+.menuSelected:visited	{ color: #000000; text-decoration: none }
+.menuSelected:hover		{ color: #FF4444; text-decoration: none }
+
+.menu {
+	color: #000000;
+}
+
+.menu:link		{ color: #000000; text-decoration: none }
+.menu:active	{ color: #000000; text-decoration: none }
+.menu:visited	{ color: #000000; text-decoration: none }
+.menu:hover		{ color: #FF4444; text-decoration: none }
+
+
+.footer {
+	color: #000000;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.top {
+	color: #000000;
+	border-top-width: 0;
+	border-bottom-width: 1px;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
 }
