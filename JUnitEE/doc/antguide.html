@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: antguide.html,v 1.6 2004-05-27 22:56:15 o_rossmueller Exp $
+	$Id: antguide.html,v 1.7 2004-05-28 11:15:19 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/antguide.html,v $
 -->
 
@@ -20,7 +20,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle">JUnitEE</td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.6 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.7 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -199,7 +199,7 @@
       </p>
 
       <div class="code"><code>
-        <pre>&lt;target name="do-run-tests"&gt;
+        <pre>&lt;target name="run-tests"&gt;
   &lt;runservertests
     testURL="http://your.server:port/myTest/TestServlet"
     startTarget="deploy-test-ear"
@@ -224,6 +224,42 @@
     <p>That's it! Whenever you execute the <tt>run-tests</tt> target, Ant will deploy your application, run the tests and undeploy the
     application. And if there was a failure or error in one of the tests, the build process will be stopped with an error message.
     </p>
+
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		<tr><td class="sectionTitle">Deploy the test.war and run the tests using hot deploy</td></tr>
+	  </table>
+
+	  <p>In case you are using an application server which supports hot deploy of your applications, things are a little
+	  bit easier. You just have to hot deploy the test.war by copying the file to the deploy directory, wait for deployment and then
+	  run the tests. Here is the ant task (thanks to Gregory Joseph):
+	  </p>
+
+ <div class="code"><code>
+        <pre>&lt;target name="run-tests"&gt;
+  &lt;taskdef name=&quot;junitee&quot; classname=&quot;org.junitee.anttask.JUnitEETask&quot;&gt;
+    &lt;classpath&gt;
+      &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+    &lt;/classpath&gt;
+  &lt;/taskdef&gt;
+
+  &lt;copy file="myTest.war" todir="${test.deploy.dir}"/&gt;
+
+  &lt;waitfor maxwait="10000"&gt;
+    &lt;http url="http://your.server:port/myTest/TestServlet&gt;
+  &lt;/waitfor&gt;
+
+  &lt;echo&gt;Running JUnitEE tests&lt;/ant:echo&gt;
+
+  &lt;junitee url="http://your.server:port/myTest/TestServlet" printsummary="true"&gt;
+     &lt;test runall="true"/&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;</pre></code>
+      </div>
+
+   <p></p>
+
 
     <table cellspacing="0" cellpadding="0" width="100%">
 	  <tr><td>&nbsp;</td></tr>
