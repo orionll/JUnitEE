@@ -1,5 +1,5 @@
 /**
- * $Id: TestServletBase.java,v 1.1.1.1 2001-07-23 21:31:03 lhoriman Exp $
+ * $Id: TestServletBase.java,v 1.2 2001-10-12 21:17:28 kaila Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestServletBase.java,v $
  */
 
@@ -33,7 +33,12 @@ public abstract class TestServletBase extends HttpServlet
 	 * to run multiple test suites.
 	 */
 	protected static final String PARAM_SUITE = "suite";
-
+    
+    /**
+    * The form parameter which defines if
+    * method list is shown 
+    */
+    protected static final String METHOD_LIST = "list";
 	/**
 	 * This should be implemented by a class in the web application's
 	 * WEB-INF/classes directory.  That way this servlet will use
@@ -51,7 +56,7 @@ public abstract class TestServletBase extends HttpServlet
 		response.setContentType("text/html");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		
+		String methodList = request.getParameter(METHOD_LIST);
 		String[] testClassNames = request.getParameterValues(PARAM_SUITE);
 		if (testClassNames == null)
 		{
@@ -70,7 +75,14 @@ public abstract class TestServletBase extends HttpServlet
 		else
 		{
 			TestRunner tester = new TestRunner(pw, this.getDynamicClassLoader());
-			tester.start(testClassNames);
+			if (methodList != null) {
+			    // show method list on output
+			    tester.start(testClassNames,true);
+			}
+			else {			    
+			    // don't show method list on output
+			    tester.start(testClassNames);
+			}
 		}
 	}
 
