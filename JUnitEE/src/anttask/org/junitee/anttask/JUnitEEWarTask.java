@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.3 2002-09-18 22:54:59 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.4 2002-09-19 22:03:09 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -22,7 +22,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class JUnitEEWarTask extends Task {
 
@@ -185,7 +185,7 @@ public class JUnitEEWarTask extends Task {
       fs = new ZipFileSet();
       fs.setDir(new File(lstTestFile.getParent()));
       fs.setIncludes(lstTestFile.getName());
-      fs.setFullpath("testCase.txt");
+      fs.setFullpath("WEB-INF/testCase.txt");
       war.addFileset(fs);
 
       war.execute();

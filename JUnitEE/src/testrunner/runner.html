@@ -23,6 +23,7 @@
 		.cell       	{ color: black; background-color: #CCCCFF }
 		.passedcell       	{ color: black; background-color: #CCCCFF }
 		.failedcell       	{ color: black; background-color: #CCCCFF }
+		.message       	{ color: red; }
 	-->
   </style>
 </head>
@@ -35,9 +36,12 @@
   </table>
 
   <br>
+  <span class="message">
+<!-- message -->
+  </span>
   <br>
                            
-  <form action="TestServlet" method="get">
+  <form>
     <p>
     <table border="0" cellspacing="2" cellpadding="3" width="100%">
       <tbody>
@@ -50,12 +54,13 @@
   </form>
 
 <!-- beginList
-  <form action="TestServlet" method="get">
+  <form>
     <p>
     <table border="0" cellspacing="2" cellpadding="3" width="100%">
       <tbody>
         <tr><td class="sectionTitle">Select test suite(s) to run</td></tr>
 ###
+        <tr><td class="cell"><input type="checkbox" name="all" value=true">&nbsp;&nbsp;Run all tests</td></tr>
         <tr><td class="cell"><input type="submit" value="Run"></td></tr>
         <tr><td>&nbsp;</td></tr>
       </tbody>

@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.10 2002-09-19 20:31:22 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.11 2002-09-19 22:03:09 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -106,6 +106,7 @@ public class JUnitEEServlet extends HttpServlet {
     String test = request.getParameter(PARAM_TEST);
     String runAll = request.getParameter(PARAM_RUN_ALL);
     String[] testClassNames = null;
+    String message;
 
     if (runAll != null) {
       testClassNames = searchForTests(request.getParameterValues(PARAM_SEARCH));
@@ -113,48 +114,30 @@ public class JUnitEEServlet extends HttpServlet {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
 
-    if (testClassNames == null && runAll == null) {
-      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), pw);
-    } else if (testClassNames == null) {
-      // TODO: move to method
-      pw.println("<html>");
-      pw.println("<head><title> Error </title></head>");
-      pw.println("<body>");
-      if (runAll != null) {
-        pw.println("<p> No test class(es) specified. </p>");
-        pw.println("<p>");
-        pw.println("  You requested all test cases to be run by setting the \"all\" parameter,");
-        pw.println("  but not test case was found searching the resources");
-        pw.print("  \"");
-        pw.print(searchResources);
-        pw.println("\"");
-        pw.println("</p>");
+    if (testClassNames == null) {
+      if (runAll == null) {
+        message = "";
       } else {
-        pw.println("<p> No test class(es) specified. </p>");
-        pw.println("<p>");
-        pw.println("  This servlet uses the form parameter \"suite\" to identify");
-        pw.println("  which Test to run.  The parameter can appear multiple times");
-        pw.println("  to run multiple tests.");
-        pw.println("</p>");
+        message = "You requested all test cases to be run by setting the \"all\" parameter, but not test case was found.";
       }
-      pw.println("</body>");
-      pw.println("</html>");
+      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, pw);
+      return;
+    }
+    if ((test != null) && (testClassNames.length != 1)) {
+      message = "You requested to run a single test case but provided more than one test suite.";
+      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, pw);
+      return;
+    }
+
+
+    TestRunner tester = null;
+
+    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath());
+    tester = new TestRunner(this.getDynamicClassLoader(), output);
+    if (test == null) {
+      tester.run(testClassNames);
     } else {
-      if ((test != null) && (testClassNames.length != 1)) {
-        // TODO: print error message
-        throw new ServletException("Error");
-      }
-
-
-      TestRunner tester = null;
-
-      JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath());
-      tester = new TestRunner(this.getDynamicClassLoader(), output);
-      if (test == null) {
-        tester.run(testClassNames);
-      } else {
-        tester.run(testClassNames[0], test);
-      }
+      tester.run(testClassNames[0], test);
     }
   }
 
@@ -243,7 +226,7 @@ public class JUnitEEServlet extends HttpServlet {
 
 
   protected String[] searchForTestCaseList() throws IOException {
-    InputStream in = getClass().getClassLoader().getResourceAsStream("testCase.txt");
+    InputStream in = getServletContext().getResourceAsStream("WEB-INF/testCase.txt");
 
     if (in == null) {
       return null;
@@ -311,7 +294,7 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
 
-  protected void printIndexHtml(String[] testCases, PrintWriter pw) throws IOException {
+  protected void printIndexHtml(String[] testCases, String servletPath, String message, PrintWriter pw) throws IOException {
     InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + "/runner.html");
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
     String line;
@@ -330,7 +313,13 @@ public class JUnitEEServlet extends HttpServlet {
       if (testCases != null) {
         if (line.startsWith("###")) {
           pw.print(bufferList.toString());
-        } else if (! ((line.startsWith("<!-- beginList")) || (line.startsWith("endList -->")))) {
+        } else if (line.startsWith("<!-- message -->")) {
+          pw.println(message);
+        } else if (line.indexOf("<form>") != -1) {
+          pw.print("  <form action=\"");
+          pw.print(servletPath);
+          pw.println("\" method=\"get\">\n");
+        } else if (!((line.startsWith("<!-- beginList")) || (line.startsWith("endList -->")))) {
           pw.println(line);
         }
       } else {
