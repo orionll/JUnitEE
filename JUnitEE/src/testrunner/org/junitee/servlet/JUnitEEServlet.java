@@ -1,9 +1,10 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.3 2002-09-02 23:01:52 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.4 2002-09-03 21:07:16 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
 package org.junitee.servlet;
+
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +14,10 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.junitee.runner.TestRunner;
+import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.output.HTMLOutput;
+import org.junitee.output.XMLOutput;
+
 
 /**
  * This is an abstract base class.  In order to use it, you must create
@@ -47,18 +51,21 @@ public class JUnitEEServlet extends HttpServlet {
 
   /**
    * The form parameter which defines if
-   * method list is shown
-   */
-  protected static final String METHOD_LIST = "list";
-
-  /**
-   * The form parameter which defines if
    * resources should be checked to run all included test cases
    */
-  protected static final String RUN_ALL = "all";
-  protected static final String SEARCH = "search";
+  protected static final String PARAM_RUN_ALL = "all";
+  protected static final String PARAM_SEARCH = "search";
+  protected static final String PARAM_OUTPUT = "output";
+
+  protected static final String OUTPUT_HTML = "html";
+  protected static final String OUTPUT_XML = "xml";
+
 
   private static final String RESOURCE_PREFIX = "resource";
+
+
+  private String searchResources;
+
 
   /**
    * Answer the classloader used to load the test classes. The default implementation
@@ -94,11 +101,11 @@ public class JUnitEEServlet extends HttpServlet {
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter pw = response.getWriter();
     String test = request.getParameter(PARAM_TEST);
-    String runAll = request.getParameter(RUN_ALL);
+    String runAll = request.getParameter(PARAM_RUN_ALL);
     String[] testClassNames = null;
 
     if (runAll != null) {
-      testClassNames = searchForTests(request.getParameterValues(SEARCH));
+      testClassNames = searchForTests(request.getParameterValues(PARAM_SEARCH));
     } else {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
@@ -127,8 +134,7 @@ public class JUnitEEServlet extends HttpServlet {
       }
       pw.println("</body>");
       pw.println("</html>");
-    }
-    else {
+    } else {
       if ((test != null) && (testClassNames.length != 1)) {
         // TODO: print error message
         throw new ServletException("Error");
@@ -137,25 +143,13 @@ public class JUnitEEServlet extends HttpServlet {
 
       TestRunner tester = null;
 
-      if (request.getParameter("sendResult") != null) {
-//        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
+      JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath());
+      tester = new TestRunner(this.getDynamicClassLoader(), output);
+      if (test == null) {
+        tester.run(testClassNames);
       } else {
-        HTMLOutput output = new HTMLOutput(response, request.getContextPath() + request.getServletPath());
-        tester = new TestRunner(this.getDynamicClassLoader(), output);
-        if (test == null) {
-          tester.run(testClassNames);
-        } else {
-          tester.run(testClassNames[0], test);
-        }
+        tester.run(testClassNames[0], test);
       }
-/*      if (methodList != null) {
-        // show method list on output
-        tester.start(testClassNames,true);
-      }
-      else {
-        // don't show method list on output
-        tester.start(testClassNames);
-      }*/
     }
   }
 
@@ -191,6 +185,7 @@ public class JUnitEEServlet extends HttpServlet {
     }
     return searchForTests(buffer.toString());
   }
+
 
   /**
    * Search all resources set via the searchResources init parameter for classes ending with "Tests"
@@ -236,5 +231,42 @@ public class JUnitEEServlet extends HttpServlet {
     return answer;
   }
 
-  private String searchResources;
+
+  /**
+   * Answer the default output format of the test report. This implementation returns html as the default output. It
+   * is possible to set the output format by using the <code>output</code> request parameter. Overwrite this method
+   * in your subclass to change the output format without the need for the request parameter.
+   *
+   * @return
+   */
+  protected String getDefaultOutput() {
+    return OUTPUT_HTML;
+  }
+
+
+  /**
+   * Answer the output producer for the given output format.
+   *
+   * @param outputParam required output format
+   * @param response  response object of the current servlet request
+   * @param servletPath path of this servlet
+   * @return  output producer
+   * @throws IOException
+   */
+  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath) throws IOException {
+    String output = outputParam;
+
+    if (output == null) {
+      output = getDefaultOutput();
+    }
+
+    if (output.equals(OUTPUT_HTML)) {
+      return new HTMLOutput(response, servletPath);
+    }
+    if (output.equals(OUTPUT_XML)) {
+      return new XMLOutput(response, servletPath);
+    }
+    return null;
+  }
+
 }

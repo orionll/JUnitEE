@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractOutput.java,v 1.1 2002-09-02 23:01:11 o_rossmueller Exp $
+ * $Id: AbstractOutput.java,v 1.2 2002-09-03 21:07:16 o_rossmueller Exp $
  */
 package org.junitee.output;
 
@@ -8,16 +8,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-import org.junitee.runner.JUnitEETestListener;
+import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
 
 
-public abstract class AbstractOutput implements JUnitEETestListener {
+public abstract class AbstractOutput implements JUnitEEOutputProducer {
 
   private long timestamp;
   private List testInfo = new ArrayList();
@@ -36,19 +39,19 @@ public abstract class AbstractOutput implements JUnitEETestListener {
 
 
   public void addError(Test test, Throwable t) {
-    getCurrentInfo().addError(t);
+    getCurrentInfo().setError(t);
     setFailure(true);
   }
 
 
   public void addFailure(Test test, Throwable t) {
-    getCurrentInfo().addFailure(t);
+    getCurrentInfo().setFailure(t);
     setFailure(true);
   }
 
 
   public void addFailure(Test test, AssertionFailedError t) {
-    getCurrentInfo().addFailure(t);
+    getCurrentInfo().setFailure(t);
     setFailure(true);
   }
 
@@ -144,4 +147,41 @@ public abstract class AbstractOutput implements JUnitEETestListener {
     }
     suite.add(info);
   }
+
+
+  protected String exceptionToString(Throwable t) {
+    CharArrayWriter buffer = new CharArrayWriter();
+
+    t.printStackTrace(new PrintWriter(buffer));
+    return buffer.toString();
+  }
+
+
+  /**
+   * Checks to see if t is a RemoteException containing
+   * an EJBException, and if it is, prints the nested
+   * exception inside the EJBException.  This is necessary
+   * because the EJBException.printStackTrace() method isn't
+   * intelligent enough to print the nexted exception.
+   */
+  protected String getEJBExceptionDetail(Throwable t) {
+    if (t instanceof java.rmi.RemoteException) {
+      java.rmi.RemoteException remote = (java.rmi.RemoteException)t;
+      if (remote.detail != null && remote.detail instanceof javax.ejb.EJBException) {
+        javax.ejb.EJBException ejbe = (javax.ejb.EJBException)remote.detail;
+        if (ejbe.getCausedByException() != null) {
+
+          StringWriter sw = new StringWriter();
+          PrintWriter spw = new PrintWriter(sw);
+          spw.println("Nested exception is: ");
+          ejbe.getCausedByException().printStackTrace(spw);
+
+          return sw.toString();
+        }
+      }
+    }
+    return "";
+  }
+
+
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.3 2002-09-02 23:01:41 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.4 2002-09-03 21:07:16 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -21,12 +21,12 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class TestRunner extends BaseTestRunner {
 
   private TestSuiteLoader loader;
-  private JUnitEETestListener listener;
+  private JUnitEEOutputProducer listener;
 
 
   /**
@@ -35,7 +35,7 @@ public class TestRunner extends BaseTestRunner {
    * @param loader  classloader to load test classes
    * @param listener  test listener to be notfied
    */
-  public TestRunner(ClassLoader loader, JUnitEETestListener listener) {
+  public TestRunner(ClassLoader loader, JUnitEEOutputProducer listener) {
     this.listener = listener;
     this.loader = new org.junitee.runner.TestSuiteLoader(loader);
   }

@@ -1,5 +1,5 @@
 /*
- * $Id: EinsteinTest.java,v 1.2 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: EinsteinTest.java,v 1.3 2002-09-03 21:07:16 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/javasrc/org/infohazard/test/EinsteinTest.java,v $
  */
 
@@ -90,5 +90,14 @@ public class EinsteinTest extends TestCase
 			ok = true;
 		}
 		assertTrue("Accepted bad numbers '20a' and 'd5'", ok);
+	}
+
+
+	/**
+	 */
+	public void testEmc2() throws RemoteException, BadNumberException
+	{
+	  double result = ein.emc2(2.998, 1.998);
+	  assertTrue("Result is " + result + " but should be 11.96802799", result == 11.96802799);
 	}
 }

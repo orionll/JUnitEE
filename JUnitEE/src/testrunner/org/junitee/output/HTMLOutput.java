@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.5 2002-09-02 23:01:27 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.6 2002-09-03 21:07:16 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -15,16 +15,16 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junitee.runner.JUnitEETestListener;
+import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
 
 
 /**
- * This class implements the {@link JUnitEETestListener} interface and produces an HTML test report.
+ * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -280,38 +280,31 @@ public class HTMLOutput extends AbstractOutput {
         TestInfo test = (TestInfo)tests.next();
 
         if (!test.successful()) {
-          pw.println("<a name=\"" + test + "\"></a>");
-          pw.println("<tr><td class=\"sectionTitle\">" + test + "</td></tr>");
+          pw.print("<tr><td class=\"sectionTitle\">");
+          pw.print("<a name=\"" + test + "\"></a>");
+          pw.println(test + "</td></tr>");
 
-          Iterator errors = test.getErrors().iterator();
+          Throwable t = test.getError();
 
-          while (errors.hasNext()) {
-            CharArrayWriter buffer = new CharArrayWriter();
-            Throwable t = (Throwable)errors.next();
-
+          if (t != null) {
             pw.println("<tr><td class=\"cell\">");
             pw.println(t.getMessage());
             pw.println("&nbsp;</td>");
 
             pw.println("<tr><td class=\"cell\">");
-            t.printStackTrace(new PrintWriter(buffer));
-            pw.println(htmlText(buffer.toString()));
+            pw.println(htmlText(exceptionToString(t)));
             pw.println(htmlText(getEJBExceptionDetail(t)));
             pw.println("</td>");
           }
-          Iterator failures = test.getFailures().iterator();
+          t = test.getFailure();
 
-          while (failures.hasNext()) {
-            CharArrayWriter buffer = new CharArrayWriter();
-            Throwable t = (Throwable)failures.next();
-
+          if (t != null) {
             pw.println("<tr><td class=\"cell\">");
             pw.println(t.getMessage());
             pw.println("&nbsp;</td>");
 
             pw.println("<tr><td class=\"cell\">");
-            t.printStackTrace(new PrintWriter(buffer));
-            pw.println(htmlText(buffer.toString()));
+            pw.println(htmlText(exceptionToString(t)));
             pw.println(htmlText(getEJBExceptionDetail(t)));
             pw.println("</td>");
           }
@@ -322,31 +315,5 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("</table>");
   }
 
-
-  /**
-   * Checks to see if t is a RemoteException containing
-   * an EJBException, and if it is, prints the nested
-   * exception inside the EJBException.  This is necessary
-   * because the EJBException.printStackTrace() method isn't
-   * intelligent enough to print the nexted exception.
-   */
-  protected String getEJBExceptionDetail(Throwable t) {
-    if (t instanceof java.rmi.RemoteException) {
-      java.rmi.RemoteException remote = (java.rmi.RemoteException)t;
-      if (remote.detail != null && remote.detail instanceof javax.ejb.EJBException) {
-        javax.ejb.EJBException ejbe = (javax.ejb.EJBException)remote.detail;
-        if (ejbe.getCausedByException() != null) {
-          pw.println("Nested exception is: ");
-
-          StringWriter sw = new StringWriter();
-          PrintWriter spw = new PrintWriter(sw);
-          ejbe.getCausedByException().printStackTrace(spw);
-
-          return sw.toString();
-        }
-      }
-    }
-    return "";
-  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: EinsteinBusiness.java,v 1.1.1.1 2001-07-23 21:31:02 lhoriman Exp $
+ * $Id: EinsteinBusiness.java,v 1.2 2002-09-03 21:07:13 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/javasrc/org/infohazard/ejb/einstein/EinsteinBusiness.java,v $
  */
 
@@ -21,4 +21,11 @@ public interface EinsteinBusiness
 	 *         containers.
 	 */
 	public String addTwoNumbers(String first, String second) throws BadNumberException, RemoteException;
+
+    /**
+     * Calculate e = mc2
+     * @throws RemoteException
+     */
+    public double emc2(double m, double c) throws RemoteException;
+
 }

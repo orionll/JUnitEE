@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEETestListener.java,v 1.2 2002-09-02 23:01:41 o_rossmueller Exp $
+ * $Id: JUnitEEOutputProducer.java,v 1.1 2002-09-03 21:07:16 o_rossmueller Exp $
  */
 
 package org.junitee.runner;
@@ -12,10 +12,10 @@ import junit.framework.TestListener;
  * The listener interface for receiving test runner events.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  * @since 1.5
  */
-public interface JUnitEETestListener extends TestListener {
+public interface JUnitEEOutputProducer extends TestListener {
 
   /**
    * This method is called before the first test is executed.

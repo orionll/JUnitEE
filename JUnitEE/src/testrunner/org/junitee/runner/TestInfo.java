@@ -1,5 +1,5 @@
 /**
- * $Id: TestInfo.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
+ * $Id: TestInfo.java,v 1.3 2002-09-03 21:07:16 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestInfo.java,v $
  */
 
@@ -14,22 +14,22 @@ import java.util.*;
 import junit.framework.*;
 import junit.runner.BaseTestRunner;
 
-import org.junitee.runner.JUnitEETestListener;
+import org.junitee.runner.JUnitEEOutputProducer;
 
 
 /**
  * This class holds information about on test.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TestInfo {
   private Test test;
   private String testClassName;
   private String testName;
   private long elapsedTime;
-  private List errors = new ArrayList(1);
-  private List failures = new ArrayList(1);
+  private Throwable error;
+  private Throwable failure;
 
 
   public TestInfo(Test test) {
@@ -71,23 +71,23 @@ public class TestInfo {
   }
 
 
-  public void addError(Throwable t) {
-    errors.add(t);
+  public void setError(Throwable t) {
+    error = t;
   }
 
 
-  public void addFailure(Throwable t) {
-    failures.add(t);
+  public void setFailure(Throwable t) {
+    failure = t;
   }
 
 
   public boolean hasFailure() {
-    return !failures.isEmpty();
+    return failure != null;
   }
 
 
   public boolean hasError() {
-    return !errors.isEmpty();
+    return error != null;
   }
 
 
@@ -97,22 +97,22 @@ public class TestInfo {
 
 
   /**
-   * Answer the list of failures
+   * Answer the failures
    *
-   * @return collection of Throwable instances
+   * @return Throwable instances
    */
-  public Collection getFailures() {
-    return Collections.unmodifiableCollection(failures);
+  public Throwable getFailure() {
+    return failure;
   }
 
 
   /**
-   * Answer the list of errors
+   * Answer the errors
    *
-   * @return collection of Throwable instances
+   * @return Throwable instances
    */
-  public Collection getErrors() {
-    return Collections.unmodifiableCollection(errors);
+  public Throwable getError() {
+    return error;
   }
 
 
