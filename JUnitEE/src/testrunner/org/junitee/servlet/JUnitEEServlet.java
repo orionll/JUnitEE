@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.14 2002-10-01 22:46:19 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.15 2002-10-04 22:40:54 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -69,6 +69,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   private String searchResources;
   private String xslStylesheet;
+
 
   /**
    * Answer the classloader used to load the test classes. The default implementation
@@ -214,15 +215,26 @@ public class JUnitEEServlet extends HttpServlet {
 
         if (in != null) {
           JarInputStream jar = new JarInputStream(in);
+          try {
+            JarEntry entry = null;
 
-          while (jar.available() != 0) {
-            JarEntry entry = jar.getNextJarEntry();
-            String name = entry.getName();
+            while ((entry = jar.getNextJarEntry()) != null) {
+              String name = entry.getName();
 
-            if (name.endsWith("Tests.class") || name.endsWith("Test.class")) {
-              tests.add(name.substring(0, name.length() - 6).replace('/', '.'));
+              if (name.endsWith("Tests.class") || name.endsWith("Test.class")) {
+                tests.add(name.substring(0, name.length() - 6).replace('/', '.'));
+              }
+            }
+          } catch (EOFException e) {
+          } finally {
+            if (jar != null) {
+              try {
+                jar.close();
+              } catch (IOException e) {
+              }
             }
           }
+
         }
       } catch (Exception e) {
         e.printStackTrace();
