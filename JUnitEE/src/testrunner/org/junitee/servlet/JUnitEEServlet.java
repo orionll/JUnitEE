@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.30 2004-03-21 12:58:57 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.31 2004-03-21 14:54:22 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -8,8 +8,8 @@ package org.junitee.servlet;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.*;
-
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +20,6 @@ import javax.servlet.http.HttpSession;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.junitee.output.HTMLOutput;
 import org.junitee.output.OutputProducer;
 import org.junitee.output.XMLOutput;
@@ -258,7 +257,7 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
 
-  protected String[] searchForTests(String[] param) throws IOException {
+  protected String[] searchForTests(String[] param) throws IOException, ServletException {
     StringBuffer buffer = new StringBuffer();
 
     if (param == null) {
@@ -322,7 +321,7 @@ public class JUnitEEServlet extends HttpServlet {
   /**
    * Search all resources set via the searchResources init parameter for classes ending with "Tests"
    */
-  protected String[] searchForTests(String param) throws IOException {
+  protected String[] searchForTests(String param) throws IOException, ServletException {
     if (searchResources == null && param == null) {
       return searchForTestCaseList();
     }
@@ -372,7 +371,7 @@ public class JUnitEEServlet extends HttpServlet {
 
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        throw new ServletException(e);
       }
     }
     String[] answer = new String[tests.size()];
