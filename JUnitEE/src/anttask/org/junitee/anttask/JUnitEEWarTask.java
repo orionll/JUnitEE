@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.7 2003-02-24 23:07:50 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.8 2003-09-26 12:50:43 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -20,7 +20,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class JUnitEEWarTask extends War {
 
@@ -40,6 +40,7 @@ public class JUnitEEWarTask extends War {
   private List testCases = new ArrayList();
   private List classes = new ArrayList();
   private List ejbRefs = new ArrayList();
+  private List ejbLocalRefs = new ArrayList();
   private List resRefs = new ArrayList();
   private File deploymentDescriptor;
 
@@ -93,7 +94,7 @@ public class JUnitEEWarTask extends War {
 
   /**
    * Create a nested ejbRef element.
-   * An EjbRef describes a <ejb-ref> which will be eventually appear
+   * An EjbRef describes a <ejb-ref>
    * in the generated web.xml file.
    *
    * @return new ejbRef element
@@ -105,6 +106,19 @@ public class JUnitEEWarTask extends War {
     return ejbRef;
   }
 
+  /**
+   * Create a nested ejbLocalRef element.
+   * An EjbLocalRef describes a <ejb-local-ref>
+   * in the generated web.xml file.
+   *
+   * @return new ejbRef element
+   */
+  public EjbLocalRef createEjbLocalRef() {
+    EjbLocalRef ejbRef = new EjbLocalRef();
+
+    ejbLocalRefs.add(ejbRef);
+    return ejbRef;
+  }
 
   /**
    * Create a nested resourceRef element.
@@ -278,6 +292,19 @@ public class JUnitEEWarTask extends War {
         }
         pw.println("  </ejb-ref>");
       }
+      for (Iterator i = ejbLocalRefs.iterator(); i.hasNext();) {
+        EjbLocalRef ejbRef = (EjbLocalRef)i.next();
+        pw.println("");
+        pw.println("  <ejb-local-ref>");
+        pw.println("    <ejb-ref-name>" + ejbRef.getEjbRefName() + "</ejb-ref-name>");
+        pw.println("    <ejb-ref-type>" + ejbRef.getEjbRefType() + "</ejb-ref-type>");
+        pw.println("    <local-home>" + ejbRef.getLocalHome() + "</local-home>");
+        pw.println("    <local>" + ejbRef.getLocal() + "</local>");
+        if (ejbRef.getEjbLink() != null) {
+          pw.println("    <ejb-link>" + ejbRef.getEjbLink() + "</ejb-link>");
+        }
+        pw.println("  </ejb-local-ref>");
+      }
       pw.println("</web-app>");
       pw.close();
       return (webXmlFile);
@@ -374,12 +401,10 @@ public class JUnitEEWarTask extends War {
   }
 
 
-  public class EjbRef {
+  public abstract class AbstractEjbRef {
 
     private String ejbRefName;
     private String ejbRefType;
-    private String home;
-    private String remote;
     private String ejbLink;
 
 
@@ -403,6 +428,33 @@ public class JUnitEEWarTask extends War {
     }
 
 
+    String getEjbLink() {
+      return (this.ejbLink);
+    }
+
+
+    public void setEjbLink(String ejbLink) {
+      this.ejbLink = ejbLink;
+    }
+
+
+    public void check() throws BuildException {
+      if (this.ejbRefName == null) {
+        throw new BuildException("You must specify the ejbRefName attribute", location);
+      }
+      if (this.ejbRefType == null) {
+        throw new BuildException("You must specify the ejbRefType attribute", location);
+      }
+    }
+  }
+
+
+  public class EjbRef extends AbstractEjbRef {
+
+    private String home;
+    private String remote;
+
+
     String getHome() {
       return (this.home);
     }
@@ -423,23 +475,8 @@ public class JUnitEEWarTask extends War {
     }
 
 
-    String getEjbLink() {
-      return (this.ejbLink);
-    }
-
-
-    public void setEjbLink(String ejbLink) {
-      this.ejbLink = ejbLink;
-    }
-
-
     public void check() throws BuildException {
-      if (this.ejbRefName == null) {
-        throw new BuildException("You must specify the ejbRefName attribute", location);
-      }
-      if (this.ejbRefType == null) {
-        throw new BuildException("You must specify the ejbRefType attribute", location);
-      }
+      super.check();
       if (this.home == null) {
         throw new BuildException("You must specify the home attribute", location);
       }
@@ -449,6 +486,43 @@ public class JUnitEEWarTask extends War {
     }
   }
 
+
+  public class EjbLocalRef extends AbstractEjbRef {
+
+    private String localHome;
+    private String local;
+
+
+    public String getLocalHome() {
+      return localHome;
+    }
+
+
+    public void setLocalHome(String localHome) {
+      this.localHome = localHome;
+    }
+
+
+    public String getLocal() {
+      return local;
+    }
+
+
+    public void setLocal(String local) {
+      this.local = local;
+    }
+
+
+    public void check() throws BuildException {
+      super.check();
+      if (this.localHome == null) {
+        throw new BuildException("You must specify the localhome attribute", location);
+      }
+      if (this.local == null) {
+        throw new BuildException("You must specify the local attribute", location);
+      }
+    }
+  }
 
   public class ResRef {
 

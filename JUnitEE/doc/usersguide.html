@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.15 2003-07-30 21:04:06 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.16 2003-09-26 12:50:40 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.15 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.16 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -204,6 +204,8 @@
     </div>
     </p>
     <br>
+    <p>JUnitEE will look for classes with a name ending with <code>Test</code> or <code>Tests</code> in the jar files you specified.
+    </p>
     <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCase.txt</code> to your .war file.
     If no jar files are specified, JUnitEE will look for that file and use the list of test case names declared in <code>testCase.txt</code> instead.
     <code>testCase.txt</code> has to be a simple text file containing one test class name per line like in this example:
@@ -217,7 +219,9 @@ org.junitee.example.ComplexUnitTests</pre></code>
     </div>
     </p>
     <br>
-    <p>And finally there is the option to use the <a href="#parameters"><code>search</code></a> request parameter to specify the resources.</p>
+    <p>A convenient way to create the <code>testCase.txt</code> file is by using the <a href="#juniteewar">JUnitEEWar Ant task</a>.</p>
+
+    <p>Finally there is the option to use the <a href="#parameters"><code>search</code></a> request parameter to specify the resources.</p>
 
 
     <p>In case you want your test servlet to generate xml output it is possible to define the URL of a stylesheet by using the init parameter named
@@ -482,6 +486,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     </p>
     <br>
 
+    <a name="juniteewar"></a>
     <p>The <code>JUnitEEWarTask</code> is an extension of the <code>War</code> task available in the standard Ant distribution. In addition to the
     attributes of the <code>War</code> task the <code>JUnitEEWarTask</code> supports the following attributes:
     <div>
@@ -515,10 +520,29 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <td class="coloredrow">ejbRefType</td><td class="coloredrow">set <code>&lt;ejb-ref-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
         <td class="whiterow">home</td><td class="whiterow">set <code>&lt;home&gt;</code> value</td><td class="whiterow">Yes</td></tr>
         <td class="coloredrow">remote</td><td class="coloredrow">set <code>&lt;remote&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">ejbLink</td><td class="whiterow">set <code>&lt;ejbLink&gt;</code> value</td><td class="whiterow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>
     </p>
+
+
+    <p>To use local EJBs from your test cases it is possible to declare EJB local references which should be included
+    in the generated deployment descriptor of the <code>war</code> file using nested <code>&lt;ejbLocalRef&gt;</code> elements. An <code>&lt;ejbLocalRef&gt;</code> element supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">ejbLocalRef attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <td class="whiterow">ejbRefName</td><td class="whiterow">set <code>&lt;ejb-ref-name&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">ejbRefType</td><td class="coloredrow">set <code>&lt;ejb-ref-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">localhome</td><td class="whiterow">set <code>&lt;local-home&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">local</td><td class="coloredrow">set <code>&lt;local&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">ejbLink</td><td class="whiterow">set <code>&lt;ejbLink&gt;</code> value</td><td class="whiterow">No</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
 
     <p>Finally the <code>JUnitEEWarTask</code> supports nested <code>&lt;resourceRef&gt;</code> elements to delcare resource reference entries to be included
     in the generated deployment descriptor of the <code>war</code> file. <code>&lt;resourceRef&gt;</code> elements provide the following attributes:
@@ -581,7 +605,8 @@ org.junitee.example.ComplexUnitTests</pre></code>
 
     <p>All JUnitEE servlets set the system property
     <code>cactus.contextURL</code> to the context of the web application the JUnitEE servlet is part of. Therefore you don't have to specify
-    this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application).
+    this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application) when using JUnitEE to run
+    Cactus tests.
     </p>
 
     <a name="security"></a>
