@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.4 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.5 2002-09-20 20:39:41 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -21,7 +21,8 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
+ * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
 

@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractOutput.java,v 1.2 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: AbstractOutput.java,v 1.3 2002-09-20 20:39:41 o_rossmueller Exp $
  */
 package org.junitee.output;
 
@@ -20,6 +20,11 @@ import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
 
 
+/**
+ * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
+ * @version $Revision: 1.3 $
+ * @since 1.5
+ */
 public abstract class AbstractOutput implements JUnitEEOutputProducer {
 
   private long timestamp;

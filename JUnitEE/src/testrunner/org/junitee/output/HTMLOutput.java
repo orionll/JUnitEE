@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.10 2002-09-19 20:31:22 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.11 2002-09-20 20:39:41 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -25,7 +25,8 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
+ * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
 

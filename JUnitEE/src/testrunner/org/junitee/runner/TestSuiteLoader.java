@@ -1,5 +1,5 @@
 /*
- * $Id: TestSuiteLoader.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: TestSuiteLoader.java,v 1.2 2002-09-20 20:39:41 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -15,7 +15,8 @@ package org.junitee.runner;
  * used to load test classes is set in the constructor.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
+ * @since   1.5
  */
 public class TestSuiteLoader implements junit.runner.TestSuiteLoader {
 

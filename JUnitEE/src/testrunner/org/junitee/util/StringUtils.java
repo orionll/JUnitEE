@@ -1,9 +1,14 @@
 /*
- * $Id: StringUtils.java,v 1.1 2002-09-18 22:54:59 o_rossmueller Exp $
+ * $Id: StringUtils.java,v 1.2 2002-09-20 20:39:41 o_rossmueller Exp $
  */
 package org.junitee.util;
 
 
+/**
+ * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
+ * @version $Revision: 1.2 $
+ * @since 1.5
+ */
 public class StringUtils {
   /**
    * This method converts texts to be displayed on

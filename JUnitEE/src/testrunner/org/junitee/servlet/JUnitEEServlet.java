@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.11 2002-09-19 22:03:09 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.12 2002-09-20 20:39:41 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -23,23 +23,17 @@ import org.junitee.runner.TestRunner;
 
 
 /**
- * This is an abstract base class.  In order to use it, you must create
- * a derived class *in the WEB-INF/classes directory* of your web application.
- * That class should simply implement the getDynamicClassLoader() method.
- * This is so that we can use the app server's special class loader which
- * both intelligently reloads changed classes and knows where to look for
- * web application class files.
+ * This servlet implements the JUnitEE test runner. By default the classloader of this servlet is used also for
+ * loading the test classes. This will work in almost any case, but if necessary you can change this behaviour by
+ * subclassing this class and overwrite the method {@link #getDynamicClassLoader} to answer the classloader of your
+ * choice.
  *
- * A future version of this servlet & runner would start the test in another
- * thread, store results in the session, and use the HTTP Refresh header to
- * cause the client to poll for summary results until the test is complete.
- * Right now the entire test is run within the scope of a single request, so
- * long-running tests could produce a timeout.
- *
- * @author Jeff Schnitzer (jeff@infohazard.org)
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
+ * @since   1.5
  */
 public class JUnitEEServlet extends HttpServlet {
+
+  // todo: run tests in another thread and update result page using HTTP refresh
 
   /**
    * The form parameter which defines the name of the suite
