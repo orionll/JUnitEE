@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.10 2002-11-17 14:02:10 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.11 2003-01-08 21:17:50 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.10 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.11 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -204,9 +204,9 @@
     </div>
     </p>
     <br>
-    <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCases.txt</code> to your .war file.
-    If no jar files are specified, JUnitEE will look for that file and use the list of test case names declared in <code>testCases.txt</code> instead.
-    <code>testCases.txt</code> has to be a simple text file containing one test class name per line like in this example:
+    <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCase.txt</code> to your .war file.
+    If no jar files are specified, JUnitEE will look for that file and use the list of test case names declared in <code>testCase.txt</code> instead.
+    <code>testCase.txt</code> has to be a simple text file containing one test class name per line like in this example:
     </p>
 
     <p>
@@ -246,7 +246,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     </p>
 
     <p>The JUnitEE distribution contains an <a href="#anttask">Ant task</a> which automates the creation of the
-    <code>test.war</code> including the deployment descriptor and <code>testCases.txt</code>, so you don't have to create the web archive manually.
+    <code>test.war</code> including the deployment descriptor and <code>testCase.txt</code>, so you don't have to create the web archive manually.
     But anyway it's good to know what's going on behind the scenes.
     </p>
 
@@ -324,12 +324,12 @@ org.junitee.example.ComplexUnitTests</pre></code>
         following conditions is true:
         <ul>
         <li>the init parameter <code>searchResources</code> of the servlet is set</li>
-        <li>the file <code>WEB-INF/testCases.txt</code> is available</li>
+        <li>the file <code>WEB-INF/testCase.txt</code> is available</li>
         <li>the <code>search</code> request parameter is set</li>
         </ul>
         </td><td class="coloredrow">No</td></tr>
         <tr><td class="whiterow">search</td><td class="whiterow">Define the resource the servlet should use to search for test classes.</td>
-        <td class="whiterow">If there is no <code>searchResource</code> init parameter and no <code>WEB-INF/testCases.txt</code></td></tr>
+        <td class="whiterow">If there is no <code>searchResource</code> init parameter and no <code>WEB-INF/testCase.txt</code></td></tr>
         <tr><td class="coloredrow">output</td><td class="coloredrow">Tell the servlet to generate the test report in the given format. JUnitEE supports
         <ul>
         <li><code>html</code> for the html test report described above</li>
@@ -518,7 +518,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <ul>
           <li><code>junit.jar</code> and <code>junitee.jar</code> under <code>WEB-INF/lib</code></li>
           <li>the classes to test and all test cases under <code>WEB-INF/classes</code></li>
-          <li>a file named <code>WEB-INF/testCases.txt</code> which contains a list of all test case names</li>
+          <li>a file named <code>WEB-INF/testCase.txt</code> which contains a list of all test case names</li>
           <li>a file named <code>index.html</code> which allows you to run tests manually using your browser</li>
           <li>the deployment descriptor <code>WEB-INF/web.xml</code> which makes  <code>myTest.war</code> a deployable web archive</li>
         </ul>
