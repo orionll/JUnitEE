@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.2 2002-07-31 21:04:49 o_rossmueller Exp $
+	$Id: build.xml,v 1.3 2002-07-31 22:02:54 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -36,6 +36,8 @@
 	<property name="test-war.dir" value="components/test-war" />
 	<property name="test-war.file" value="${name}-test.war" />
 	<property name="test-war.product" value="${output.dir}/${test-war.file}" />
+	<property name="test-jar.file" value="${name}-test.jar" />
+	<property name="test-jar.product" value="${output.dir}/${test-jar.file}" />
 
 	<property name="orion.dir" value="/java/orion" />
 	<property name="lib.dir" value="lib" />
@@ -72,6 +74,14 @@
 			</fileset>
 		</jar>
 	</target>
+  
+  <target name="test-jar" depends="javasrc">
+    <jar jarfile="${test-jar.product}">
+			<fileset dir="${javasrc.staging.dir}">
+				<include name="org/infohazard/test/**/*.class" />
+			</fileset>
+    </jar>
+  </target>
 
 	<target name="web-war" depends="javasrc">
 		<war warfile="${web-war.product}" webxml="${web-war.dir}/WEB-INF/web.xml">
@@ -85,19 +95,19 @@
 		</war>
 	</target>
 
-	<target name="test-war" depends="javasrc">
+	<target name="test-war" depends="javasrc, test-jar">
 		<war warfile="${test-war.product}" webxml="${test-war.dir}/WEB-INF/web.xml">
 			<fileset dir="${test-war.dir}" excludes="WEB-INF/**" />
 			
 			<classes dir="${javasrc.staging.dir}">
 				<include name="org/infohazard/servlet/**/*.class" />
-				<include name="org/infohazard/test/**/*.class" />
 				<include name="org/infohazard/ejb/**/*.class" />
         <exclude name="org/infohazard/ejb/**/EinsteinEJB.class" />
 			</classes>
       
       <lib dir="${junitee.dir}" includes="*.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
+      <lib dir="${output.dir}" includes="${test-jar.file}"/>
 		</war>
 	</target>
 
