@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETest.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: JUnitEETest.java,v 1.2 2002-11-03 10:49:17 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -8,15 +8,35 @@
 
 package org.junitee.anttask;
 
+import java.io.*;
+import java.util.*;
+
 
 /**
  * This is a data type used by the JUnitEE task and represents a call to the JUnitEE servlet to run
  * one specific test suite or all available tests.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JUnitEETest {
+
+  private String name;
+  private String resource;
+  private String errorProperty;
+  private String failureProperty;
+  private boolean haltOnError;
+  private boolean haltOnFailure;
+  private boolean runAll;
+  private File outfile;
+  private File toDir;
+  private Vector formatters = new Vector();
+  private boolean filterTrace = false;
+
+
+  public void addFormatter(FormatterElement formatter) {
+    formatters.addElement(formatter);
+  }
 
 
   public void setName(String value) {
@@ -89,11 +109,52 @@ public class JUnitEETest {
   }
 
 
-  private String name;
-  private String resource;
-  private String errorProperty;
-  private String failureProperty;
-  private boolean haltOnError;
-  private boolean haltOnFailure;
-  private boolean runAll;
+  public void setOutfile(File file) {
+    outfile = file;
+  }
+
+
+  public File getOutfile() {
+    if (outfile == null) {
+      if (toDir == null) {
+        outfile = new File(getFileName());
+      } else {
+        outfile = new File(toDir, getFileName());
+      }
+    }
+    return outfile;
+  }
+
+
+  public File getTodir() {
+    return toDir;
+  }
+
+
+  public void setTodir(File toDir) {
+    this.toDir = toDir;
+  }
+
+
+  public boolean getFiltertrace() {
+    return filterTrace;
+  }
+
+
+  public void setFiltertrace(boolean filterTrace) {
+    this.filterTrace = filterTrace;
+  }
+
+
+  public Enumeration getFormatters() {
+    return formatters.elements();
+  }
+
+  private String getFileName() {
+    if (runAll) {
+      return "TEST-all";
+    } else {
+      return "TEST-" + name;
+    }
+  }
 }

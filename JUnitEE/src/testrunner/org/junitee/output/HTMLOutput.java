@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.12 2002-10-01 21:06:43 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.13 2002-11-03 10:49:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -25,7 +25,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -45,13 +45,13 @@ public class HTMLOutput extends AbstractOutput {
   protected PrintWriter pw;
   private HttpServletResponse response;
 
-
   /**
    */
-  public HTMLOutput(HttpServletResponse response, String servletPath) throws IOException {
+  public HTMLOutput(HttpServletResponse response, String servletPath, boolean filterTrace) throws IOException {
     this.pw = response.getWriter();
     this.response = response;
     this.servletPath = servletPath;
+    setFilterTrace(filterTrace);
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -146,6 +146,7 @@ public class HTMLOutput extends AbstractOutput {
 
     while (errors.hasNext()) {
       String message = (String)errors.next();
+
 
       pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Error") + "</td>");
       pw.print("<td class=\"cell\">&nbsp;</td>");
@@ -293,24 +294,34 @@ public class HTMLOutput extends AbstractOutput {
           Throwable t = test.getError();
 
           if (t != null) {
+            String stackTrace = exceptionToString(t);
+
+            if (isFilterTrace()) {
+              stackTrace = StringUtils.filterStack(stackTrace);
+            }
             pw.println("<tr><td class=\"cell\">");
             pw.println(StringUtils.htmlText(t.getMessage()));
             pw.println("&nbsp;</td></tr>");
 
             pw.println("<tr><td class=\"cell\">");
-            pw.println(StringUtils.htmlText(exceptionToString(t)));
+            pw.println(StringUtils.htmlText(stackTrace));
             pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }
           t = test.getFailure();
 
           if (t != null) {
+            String stackTrace = exceptionToString(t);
+
+            if (isFilterTrace()) {
+              stackTrace = StringUtils.filterStack(stackTrace);
+            }
             pw.println("<tr><td class=\"cell\">");
             pw.println(StringUtils.htmlText(t.getMessage()));
             pw.println("&nbsp;</td>");
 
             pw.println("<tr><td class=\"cell\">");
-            pw.println(StringUtils.htmlText(exceptionToString(t)));
+            pw.println(StringUtils.htmlText(stackTrace));
             pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }

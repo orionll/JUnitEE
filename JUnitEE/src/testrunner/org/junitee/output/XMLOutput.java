@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.6 2002-10-06 16:31:41 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.7 2002-11-03 10:49:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -23,7 +23,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -37,10 +37,11 @@ public class XMLOutput extends AbstractOutput {
 
   /**
    */
-  public XMLOutput(HttpServletResponse response, String xsl) throws IOException {
+  public XMLOutput(HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     this.pw = response.getWriter();
     this.response = response;
     this.xsl = xsl;
+    setFilterTrace(filterTrace);
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -118,21 +119,33 @@ public class XMLOutput extends AbstractOutput {
         }
 
         if (test.hasError()) {
+          String stackTrace = exceptionToString(test.getError());
+
+          if (isFilterTrace()) {
+            stackTrace = StringUtils.filterStack(stackTrace);
+          }
+
           pw.print("      <error message=\"");
           pw.print(StringUtils.xmlText(test.getError().getMessage()));
           pw.print("\" type=\"");
           pw.print(test.getError().getClass().getName());
           pw.println("\">");
-          pw.println(StringUtils.xmlText(exceptionToString(test.getError())));
+          pw.println(StringUtils.xmlText(stackTrace));
           pw.println(StringUtils.xmlText(getEJBExceptionDetail(test.getError())));
           pw.println("      </error>");
         } else if (test.hasFailure()) {
+          String stackTrace = exceptionToString(test.getFailure());
+
+          if (isFilterTrace()) {
+            stackTrace = StringUtils.filterStack(stackTrace);
+          }
+
           pw.print("      <failure message=\"");
           pw.print(StringUtils.xmlText(test.getFailure().getMessage()));
           pw.print("\" type=\"");
           pw.print(test.getFailure().getClass().getName());
           pw.println("\">");
-          pw.println(StringUtils.xmlText(exceptionToString(test.getFailure())));
+          pw.println(StringUtils.xmlText(stackTrace));
           pw.println("      </failure>");
         }
         if (!test.successful()) {

@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.15 2002-10-04 22:40:54 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.16 2002-11-03 10:49:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -55,6 +55,7 @@ public class JUnitEEServlet extends HttpServlet {
   protected static final String PARAM_SEARCH = "search";
   protected static final String PARAM_OUTPUT = "output";
   protected static final String PARAM_XSL = "xsl";
+  protected static final String PARAM_FILTER_TRACE = "filterTrace";
 
   protected static final String INIT_PARAM_RESOURCES = "searchResources";
   protected static final String INIT_PARAM_XSL = "xslStylesheet";
@@ -109,6 +110,11 @@ public class JUnitEEServlet extends HttpServlet {
     String xsl = request.getParameter(PARAM_XSL);
     String[] testClassNames = null;
     String message;
+    boolean filterTrace = true;
+
+    if ("false".equals(request.getParameter(PARAM_FILTER_TRACE))) {
+      filterTrace = false;
+    }
 
     // xsl parameter overwrites init param, so use the init param only if the request parameter is null
     if (xsl == null) {
@@ -143,7 +149,7 @@ public class JUnitEEServlet extends HttpServlet {
 
     TestRunner tester = null;
 
-    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl);
+    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl, filterTrace);
     tester = new TestRunner(this.getDynamicClassLoader(), output);
     if (test == null) {
       tester.run(testClassNames);
@@ -298,7 +304,7 @@ public class JUnitEEServlet extends HttpServlet {
    * @return  output producer
    * @throws IOException
    */
-  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath, String xsl) throws IOException {
+  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath, String xsl, boolean filterTrace) throws IOException {
     String output = outputParam;
 
     if (output == null) {
@@ -306,10 +312,10 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-      return new HTMLOutput(response, servletPath);
+      return new HTMLOutput(response, servletPath, filterTrace);
     }
     if (output.equals(OUTPUT_XML)) {
-      return new XMLOutput(response, xsl);
+      return new XMLOutput(response, xsl, filterTrace);
     }
     return null;
   }

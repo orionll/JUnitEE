@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<devlog>
+  <release name="1.6" status="open">
+    <enhancement date="2002-11-03" author="o_rossmueller">
+      JUnitEEServlet produces filtered stack traces by default, filtering can be disabled by setting <code>filterTrace=false</code>
+    </enhancement>
+    <enhancement date="2002-11-03" author="o_rossmueller">
+      Nested <code>formatter</code> elements for ant task and test element. <code>filtertrace</code> attribute for task and test.
+    </enhancement>
+    <bugfix date="2002-11-02" author="o_rossmueller">
+      result.jsp of the example web application works with renamed EJB
+    </bugfix>
+    <enhancement date="2002-11-02" author="o_rossmueller">
+      Added security section to the user guide.
+    </enhancement>
+    <enhancement date="2002-11-02" author="o_rossmueller">
+      Added attribute <code>servletclass</code> to JUnitEE war task to specify the servlet class for the generated
+      deployment descriptor.
+    </enhancement>
+    <refactoring date="2002-11-02" author="o_rossmueller">
+      JUnitEE war task is now a subclass of the ant war task and therefore inherits all it's features
+    </refactoring>
+  </release>
+</devlog>

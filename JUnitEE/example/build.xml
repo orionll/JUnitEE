@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.10 2002-11-02 16:18:01 o_rossmueller Exp $
+	$Id: build.xml,v 1.11 2002-11-03 10:49:16 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -180,6 +180,15 @@
       <test runall="true" resource="/WEB-INF/lib/test.jar"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
+
+      <test runall="true" outfile="TEST_ALL" filtertrace="true">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
     </junitee>
 
     <echo message="Property test.failure: ${test.failure}"/>

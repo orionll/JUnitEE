@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.6 2002-10-17 19:02:00 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.7 2002-11-03 10:49:17 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -9,35 +9,34 @@
 package org.junitee.anttask;
 
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class JUnitEETask extends Task {
 
+  private String url;
+  private Vector tests = new Vector();
+  private boolean printSummary = false;
+  private Vector formatters = new Vector();
 
   /**
    * Set the URL to call the JUnitEE test servlet.
@@ -46,6 +45,15 @@ public class JUnitEETask extends Task {
    */
   public void setUrl(String url) {
     this.url = url;
+  }
+
+
+  public void setFiltertrace(boolean filtertrace) {
+    Enumeration enum = tests.elements();
+
+    while (enum.hasMoreElements()) {
+      ((JUnitEETest)enum.nextElement()).setFiltertrace(filtertrace);
+    }
   }
 
 
@@ -129,6 +137,11 @@ public class JUnitEETask extends Task {
   }
 
 
+  public void addFormatter(FormatterElement formatter) {
+    formatters.addElement(formatter);
+  }
+
+
   public void execute() throws BuildException {
     if (url == null) {
       throw new BuildException("You must specify the url attribute", location);
@@ -165,13 +178,16 @@ public class JUnitEETask extends Task {
     } else {
       throw new BuildException("You must specify the test name or runall attribute", location);
     }
+    if (! test.getFiltertrace()) {
+      arguments.append("&filterTrace=false");
+    }
     try {
       URL url = new URL(arguments.toString());
       URLConnection con = url.openConnection();
       parseResult(con.getInputStream(), test);
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
-      throw new BuildException("Failed to execute test: " + e.getMessage());
+      throw new BuildException(e);
     }
   }
 
@@ -181,54 +197,92 @@ public class JUnitEETask extends Task {
     DocumentBuilder builder = factory.newDocumentBuilder();
     Document document = builder.parse(in);
     Element root = document.getDocumentElement();
+    root.normalize();
     NodeList testcases = root.getElementsByTagName("testsuite");
-    boolean success = true;
+    Vector resultFormatters = createFormatters(test);
 
-    log("Running tests ...", Project.MSG_INFO);
-    for (int i = 0; i < testcases.getLength(); i++) {
-      Node node = testcases.item(i);
-      NamedNodeMap attributes = node.getAttributes();
-      String testClass = attributes.getNamedItem("name").getNodeValue();
-      String runs = attributes.getNamedItem("tests").getNodeValue();
-      int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
-      int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
-      String time = attributes.getNamedItem("time").getNodeValue();
+    try {
+      for (int i = 0; i < testcases.getLength(); i++) {
+        Node node = testcases.item(i);
+        NamedNodeMap attributes = node.getAttributes();
+        String testClass = attributes.getNamedItem("name").getNodeValue();
+        int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
+        int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
+        Enumeration enumeration = resultFormatters.elements();
 
-      if (printSummary) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(testClass).append(" (runs: ").append(runs).append(" errors: ").append(errors);
-        buffer.append(" failures: ").append(failures).append(" time: ").append(time).append(" sec)");
-        log(buffer.toString(), Project.MSG_INFO);
+        while (enumeration.hasMoreElements()) {
+          JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
+          log("Calling formatter " + formatter, Project.MSG_DEBUG);
+          formatter.format(root, node);
+        }
+
+        if (errors != 0) {
+          if (test.getErrorproperty() != null) {
+            getProject().setNewProperty(test.getErrorproperty(), "true");
+          }
+          if (test.getHaltonerror() || test.getHaltonfailure()) {
+
+            throw new BuildException("Test " + testClass + " failed.");
+          }
+        }
+        if (failures != 0) {
+          if (test.getFailureproperty() != null) {
+            getProject().setNewProperty(test.getFailureproperty(), "true");
+          }
+          if (test.getHaltonfailure()) {
+            throw new BuildException("Test " + testClass + " failed.");
+          }
+        }
       }
-      if (errors != 0) {
-        success = false;
-        if (test.getErrorproperty() != null) {
-          getProject().setNewProperty(test.getErrorproperty(), "true");
-        }
-        if (test.getHaltonerror() || test.getHaltonfailure()) {
+    } finally {
+      Enumeration enumeration = resultFormatters.elements();
 
-          throw new BuildException("Test " + testClass + " failed.");
-        }
-      }
-      if (failures != 0) {
-        success = false;
-        if (test.getFailureproperty() != null) {
-          getProject().setNewProperty(test.getFailureproperty(), "true");
-        }
-        if (test.getHaltonfailure()) {
-          throw new BuildException("Test " + testClass + " failed.");
-        }
+      while (enumeration.hasMoreElements()) {
+        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
+        formatter.flush();
       }
     }
-    if (success) {
-      log("Test successful", Project.MSG_INFO);
-    } else {
-      log("TEST FAILED", Project.MSG_INFO);
-    }
+
   }
 
 
-  private String url;
-  private Vector tests = new Vector();
-  private boolean printSummary = false;
+  private Vector createFormatters(JUnitEETest test) {
+    Vector answer = new Vector();
+    Enumeration enumeration = formatters.elements();
+
+    while (enumeration.hasMoreElements()) {
+      FormatterElement element = (FormatterElement)enumeration.nextElement();
+      element.setOutFile(getOutput(element, test));
+      element.setFilterTrace(test.getFiltertrace());
+      answer.add(element.createFormatter());
+    }
+
+    enumeration = test.getFormatters();
+    while (enumeration.hasMoreElements()) {
+      FormatterElement element = (FormatterElement)enumeration.nextElement();
+      element.setOutFile(getOutput(element, test));
+      element.setFilterTrace(test.getFiltertrace());
+      answer.add(element.createFormatter());
+    }
+    if (printSummary) {
+      log("Adding summary formatter", Project.MSG_DEBUG);
+      SummaryResultFormatter summary = new SummaryResultFormatter();
+      summary.setOutput(System.out);
+      answer.add(summary);
+    }
+    log("Formatters: " + answer, Project.MSG_DEBUG);
+    return answer;
+  }
+
+
+  protected File getOutput(FormatterElement formatter, JUnitEETest test) {
+    if (formatter.isUseFile()) {
+      String filename = test.getOutfile() + formatter.getExtension();
+      File destFile = new File(test.getTodir(), filename);
+      String absFilename = destFile.getAbsolutePath();
+      return getProject().resolveFile(absFilename);
+    }
+    return null;
+  }
+
 }
