@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.3 2002-10-04 20:10:37 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.4 2002-10-11 19:15:05 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -29,11 +29,12 @@ import org.apache.tools.ant.Task;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class JUnitEETask extends Task {
 
@@ -58,7 +59,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setHaltonfailure(value);
+      ((JUnitEETest)enum.nextElement()).setHaltonfailure(value);
     }
   }
 
@@ -73,7 +74,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setHaltonerror(value);
+      ((JUnitEETest)enum.nextElement()).setHaltonerror(value);
     }
   }
 
@@ -96,7 +97,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setErrorproperty(value);
+      ((JUnitEETest)enum.nextElement()).setErrorproperty(value);
     }
   }
 
@@ -110,7 +111,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setFailureproperty(value);
+      ((JUnitEETest)enum.nextElement()).setFailureproperty(value);
     }
   }
 
@@ -141,7 +142,7 @@ public class JUnitEETask extends Task {
     Enumeration enum = tests.elements();
 
     while (enum.hasMoreElements()) {
-      JUnitEETest test = (JUnitEETest) enum.nextElement();
+      JUnitEETest test = (JUnitEETest)enum.nextElement();
 
       execute(test);
     }
@@ -152,20 +153,18 @@ public class JUnitEETask extends Task {
   protected void execute(JUnitEETest test) throws BuildException {
     StringBuffer arguments = new StringBuffer();
 
-    arguments.append(url).append("?");
-    arguments.append(URLEncoder.encode("output")).append("=").append("xml");
-    arguments.append("&");
+    arguments.append(url).append("?output=xml&");
 
     if (test.getResource() != null) {
-      arguments.append(URLEncoder.encode("resource")).append("=").append(URLEncoder.encode(test.getResource()));
+      arguments.append("resource=").append(test.getResource());
     }
     ;
     if (test.getRunall()) {
-      arguments.append(URLEncoder.encode("all")).append("=").append(URLEncoder.encode("true"));
+      arguments.append("all=true");
     } else if (test.getName() != null) {
-      arguments.append(URLEncoder.encode("suite")).append("=").append(URLEncoder.encode(test.getName()));
+      arguments.append("suite=").append(URLEncoder.encode(test.getName()));
     } else {
-      throw new BuildException("You must specify the name or runall attribute", location);
+      throw new BuildException("You must specify the test name or runall attribute", location);
     }
     try {
       URL url = new URL(arguments.toString());
@@ -173,60 +172,52 @@ public class JUnitEETask extends Task {
       parseResult(con.getInputStream(), test);
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
-      e.printStackTrace();
       throw new BuildException("Failed to execute test: " + e.getMessage());
     }
   }
 
 
-  private void parseResult(InputStream in, JUnitEETest test) throws IOException {
+  private void parseResult(InputStream in, JUnitEETest test) throws Exception {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    Document document = builder.parse(in);
+    Element root = document.getDocumentElement();
+    NodeList testcases = root.getElementsByTagName("testsuite");
+    boolean success = true;
 
-    try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.parse(in);
-      Element root = document.getDocumentElement();
-      NodeList testcases = root.getElementsByTagName("testsuite");
-      boolean success = true;
+    log("Running tests ...", Project.MSG_INFO);
+    for (int i = 0; i < testcases.getLength(); i++) {
+      Node node = testcases.item(i);
+      NamedNodeMap attributes = node.getAttributes();
+      String testClass = attributes.getNamedItem("name").getNodeValue();
+      String runs = attributes.getNamedItem("tests").getNodeValue();
+      int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
+      int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
+      String time = attributes.getNamedItem("time").getNodeValue();
 
-       log("Running tests ...", Project.MSG_INFO);
-      for (int i = 0; i < testcases.getLength(); i++) {
-        Node node = testcases.item(i);
-        NamedNodeMap attributes = node.getAttributes();
-        String testClass = attributes.getNamedItem("name").getNodeValue();
-        String runs = attributes.getNamedItem("tests").getNodeValue();
-        int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
-        int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
-        String time = attributes.getNamedItem("time").getNodeValue();
-
-        if (printSummary) {
-          StringBuffer buffer = new StringBuffer();
-          buffer.append(testClass).append(" (runs: ").append(runs).append(" errors: ").append(errors);
-          buffer.append(" failures: ").append(failures).append(" time: ").append(time).append(" sec)");
-          log(buffer.toString(), Project.MSG_INFO);
-        }
-        if (errors != 0) {
-          success = false;
-          if (test.getHaltonerror() || test.getHaltonfailure()) {
-            throw new BuildException("Test " + testClass + " failed.");
-          }
-        }
-        if (failures != 0) {
-          success = false;
-          if (test.getHaltonfailure()) {
-            throw new BuildException("Test " + testClass + " failed.");
-          }
+      if (printSummary) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(testClass).append(" (runs: ").append(runs).append(" errors: ").append(errors);
+        buffer.append(" failures: ").append(failures).append(" time: ").append(time).append(" sec)");
+        log(buffer.toString(), Project.MSG_INFO);
+      }
+      if (errors != 0) {
+        success = false;
+        if (test.getHaltonerror() || test.getHaltonfailure()) {
+          throw new BuildException("Test " + testClass + " failed.");
         }
       }
-      if (success) {
-        log("Test successful", Project.MSG_INFO);
-      } else {
-        log("TEST FAILED", Project.MSG_INFO);
+      if (failures != 0) {
+        success = false;
+        if (test.getHaltonfailure()) {
+          throw new BuildException("Test " + testClass + " failed.");
+        }
       }
-    } catch (FactoryConfigurationError factoryConfigurationError) {
-    } catch (ParserConfigurationException e) {
-    } catch (SAXException e) {
-    } catch (IOException e) {
+    }
+    if (success) {
+      log("Test successful", Project.MSG_INFO);
+    } else {
+      log("TEST FAILED", Project.MSG_INFO);
     }
   }
 
