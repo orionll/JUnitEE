@@ -1,5 +1,5 @@
 /*
- * $Id: PlainResultFormatter.java,v 1.5 2003-08-31 12:17:46 o_rossmueller Exp $
+ * $Id: PlainResultFormatter.java,v 1.6 2004-04-20 16:41:25 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class PlainResultFormatter extends AbstractResultFormatter {
@@ -105,6 +105,5 @@ public class PlainResultFormatter extends AbstractResultFormatter {
 
     out.write(buffer.toString().getBytes());
     out.flush();
-    out.close();
   }
 }

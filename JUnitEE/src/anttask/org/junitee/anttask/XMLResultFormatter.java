@@ -1,5 +1,5 @@
 /*
- * $Id: XMLResultFormatter.java,v 1.3 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: XMLResultFormatter.java,v 1.4 2004-04-20 16:41:26 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -19,7 +19,7 @@ import org.apache.tools.ant.taskdefs.optional.junit.DOMUtil;
 
 
 /**
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class XMLResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
@@ -52,17 +52,11 @@ public class XMLResultFormatter extends AbstractResultFormatter implements JUnit
 
     if (getOutput(testName) != null) {
       Writer writer = null;
-      try {
         writer = new OutputStreamWriter(getOutput(testName), "UTF8");
 
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         (new DOMElementWriter()).write(rootElement, writer, 0, "  ");
         writer.flush();
-      } finally {
-        if (writer != null) {
-          writer.close();
-        }
-      }
     }
   }
 

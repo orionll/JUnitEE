@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.18 2004-03-21 12:58:12 o_rossmueller Exp $
+	$Id: build.xml,v 1.19 2004-04-20 16:41:08 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -271,6 +271,15 @@
   <target name="run-tests-invalid" description="Try to run invalid tests">
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
       <test name="org.junitee.ejb.einstein.test.EinsteinTestInvalid"/>
+    </junitee>
+  </target>
+
+    <target name="run-test-formatter" description="Run the tests">
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+     <test runall="true" todir="${build.dir}">
+        <formatter type="xml" usefile ="false"/>
+      </test>
     </junitee>
   </target>
 
