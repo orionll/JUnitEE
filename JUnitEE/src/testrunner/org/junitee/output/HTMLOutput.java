@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.6 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.7 2002-09-05 13:35:26 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.runner.TestSuiteInfo;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -170,8 +170,9 @@ public class HTMLOutput extends AbstractOutput {
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
-      pw.println("<a name=\"" + suite.getTestClassName() + "\"></a>");
-      pw.println("<tr><td colspan=\"4\" class=\"sectionTitle\">" + suite.getTestClassName() + "</td></tr>");
+      pw.print("<tr><td colspan=\"4\" class=\"sectionTitle\">");
+      pw.print("<a name=\"" + suite.getTestClassName() + "\"></a>");
+      pw.println(suite.getTestClassName() + "</td></tr>");
 
       Iterator tests = suite.getTests().iterator();
 
@@ -289,12 +290,12 @@ public class HTMLOutput extends AbstractOutput {
           if (t != null) {
             pw.println("<tr><td class=\"cell\">");
             pw.println(t.getMessage());
-            pw.println("&nbsp;</td>");
+            pw.println("&nbsp;</td></tr>");
 
             pw.println("<tr><td class=\"cell\">");
             pw.println(htmlText(exceptionToString(t)));
             pw.println(htmlText(getEJBExceptionDetail(t)));
-            pw.println("</td>");
+            pw.println("</td></tr>");
           }
           t = test.getFailure();
 
@@ -306,10 +307,10 @@ public class HTMLOutput extends AbstractOutput {
             pw.println("<tr><td class=\"cell\">");
             pw.println(htmlText(exceptionToString(t)));
             pw.println(htmlText(getEJBExceptionDetail(t)));
-            pw.println("</td>");
+            pw.println("</td></tr>");
           }
+          pw.println("<tr><td>&nbsp;</td></tr>");
         }
-        pw.println("<tr><td>&nbsp;</td></tr>");
       }
     }
     pw.println("</table>");

@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.5 2002-09-03 22:58:24 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.6 2002-09-05 13:35:29 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -179,8 +179,10 @@ public class JUnitEEServlet extends HttpServlet {
   protected String[] searchForTests(String[] param) {
     StringBuffer buffer = new StringBuffer();
 
-    for (int i = 0; i < param.length; i++) {
-      buffer.append(param[i]).append(",");
+    if (param != null) {
+      for (int i = 0; i < param.length; i++) {
+        buffer.append(param[i]).append(",");
+      }
     }
     return searchForTests(buffer.toString());
   }
