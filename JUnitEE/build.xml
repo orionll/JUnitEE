@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.15 2002-10-11 19:19:31 o_rossmueller Exp $
+	$Id: build.xml,v 1.16 2002-10-11 19:47:56 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -109,7 +109,7 @@
 
   </target>
 
-  <target name="dist" depends="clean, src-dist, binary-dist, example-dist"/>
+  <target name="dist" depends="clean, src-dist, binary-dist, example-dist, doc.tgz"/>
 
 
   <target name="src-dist">
@@ -192,7 +192,11 @@
     </tar>
   </target>
 
-
+  <target name="doc.tgz">
+    <tar destfile="${dist.dir}/docs.tgz" compression="gzip">
+      <tarfileset dir="${build.doc}"/>
+    </tar>
+  </target>
 
   <target name="all" depends="jar" description="Build the JUnitEE library and ant task"/>
 </project>
