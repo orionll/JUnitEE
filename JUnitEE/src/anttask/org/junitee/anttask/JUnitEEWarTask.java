@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.9 2003-09-26 20:57:25 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.10 2003-09-26 21:13:34 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -20,7 +20,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class JUnitEEWarTask extends War {
 
@@ -30,7 +30,7 @@ public class JUnitEEWarTask extends War {
   private final static String WEBXML_DOCTYPE_2_2 =
     "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
   private final static String WEBXML_DOCTYPE_2_3 =
-    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_3.dtd\"";
+    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\" \"http://java.sun.com/dtd/web-app_2_3.dtd\"";
   private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
   private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
   private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
