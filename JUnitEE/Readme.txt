@@ -21,6 +21,8 @@ Release 1.6rc2
 - junitee task logs the server response in case of a parse exception (in rare error cases html is produced by
   the servlet even if output is set to 'xml'
 - JUnitEE servlet provides xml in error cases
+- JUnitEE servlet sets correct content type for streamed image resources
+
 
 Release 1.6rc1
 
