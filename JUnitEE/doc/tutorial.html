@@ -1,0 +1,470 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: tutorial.html,v 1.1.1.1 2001-07-23 21:31:02 lhoriman Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial.html,v $
+-->
+
+<html>
+	<head>
+		<title> JUnitEE Tutorial </title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+
+		<table width="100%" cellspacing="0" cellpadding="0">
+			<tr> <td class="pageTitle"> JUnitEE Tutorial </td> </tr>
+			<tr> <td align="right"> <small> $Revision: 1.1.1.1 $ </small> </td> </tr>
+		</table>
+
+		<p>
+			<b>
+				This article will show you how to use JUnitEE to unit test an
+				Enterprise JavaBean.  You will write a web-application which contains
+				unit test cases and build it into your J2EE application.
+			</b>
+		</p>
+		<div align="center">
+			<table width="90%" border="0" cellspacing="0" cellpadding="1" class="noteTable">
+				<tr> <td> <b> Note: </b> </td> </tr>
+				<tr>
+					<td class="noteText">
+						<i>
+							This article assumes that you already understand how
+							to build and deploy EJBs in your app server.  It also
+							assumes you understand how to write JUnit test cases.
+							There are links at the <a href="#refs">bottom</a> of
+							this article which may help.
+						</i>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<p> </p>
+
+		<a name="intro"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Introduction </td> </tr>
+		</table>
+
+		<p>
+			This will be a quick tutorial on building a J2EE web-application
+			containing a test suite for an EJB in a J2EE solution.  It will
+			attempt to be as platform-independant as possible.
+		</p>
+
+		<p>
+			Before you start, you will need the following software (in addition
+			to your app server and the appropriate JDK):
+		</p>
+		<ul>
+			<li> <a href="http://jakarta.apache.org/ant/"> The Ant build system </a> </li>
+			<li> <a href="http://www.junit.org/"> The JUnit test framework </a> </li>
+			<li> <a href="http://www.infohazard.org/junitee/"> The JUnitEE extension to JUnit </a> </li>
+		</ul>
+
+		<p>
+			This article has the following sections:
+		</p>
+		<ul>
+			<li> <a href="#intro"> Introduction </a> </li>
+			<li> <a href="#step1"> Step 1: Install JUnit and JUnitEE </a> </li>
+			<li> <a href="#step2"> Step 2: Prepare the sample EJB </a> </li>
+			<li> <a href="#step3"> Step 3: Set up the directory structure </a> </li>
+			<li> <a href="#step4"> Step 4: Write the test case </a> </li>
+			<li> <a href="#step5"> Step 5: Create the TestServlet </a> </li>
+			<li> <a href="#step6"> Step 6: Create the UI form </a> </li>
+			<li> <a href="#step7"> Step 7: Create the web.xml deployment descriptor </a> </li>
+			<li> <a href="#step8"> Step 8: Install application and run </a> </li>
+			<li> <a href="#notes"> Notes </a> </li>
+			<li> <a href="#refs"> References </a> </li>
+			<li> <a href="#todo"> TODO </a> </li>
+			<li> <a href="#thanks"> Thanks </a> </li>
+		</ul>
+
+		<a name="step1"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 1: Install JUnit and JUnitEE </td> </tr>
+		</table>
+
+		<p>
+			You need to make junit.jar and junitee.jar available in your J2EE
+			application's classpath.  Usually this can be done simply by copying
+			the jar files into a "lib" directory in the app server's home
+			directory.  Note that files in this directory are not usually dynamically
+			reloaded, so you will probably need to restart your app server.
+		</p>
+
+		<a name="step2"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 2: Prepare the sample EJB </td> </tr>
+		</table>
+
+		<p>
+			You will find an example EJB (and test harness) in the <tt>example</tt>
+			subdir of the JUnitEE install directory.  You should first build this
+			example and make sure it works, or, case the case happens to be,
+			doesn't work (the sample bean has a bug which causes it to fail its
+			test case).  You will most likely need to edit the
+			<tt>build.xml</tt> file and update the paths to whatever is appropriate
+			for your system.  Then just run "ant" in the same directory as the
+			build file.
+		</p>
+
+		<p>
+			A word about the source layout:  All java files are compiled in a
+			single big java tree, then integrated into the various components
+			as build steps.  The components (ear, web-war, ejb-jar, etc) are
+			located in the <tt>components</tt> subdirectory and mirror the
+			actual archive directory structure (minus the java classes and
+			other constructed files, of course).
+		</p>
+
+		<p>
+			The final output of building the example should be a file called
+			<tt>junitee-example.ear</tt> in a subdirectory called <tt>out</tt>.
+			It will contain a simple stateless
+			session EJB, a web application which uses the EJB, and the test web
+			application.  This is a standard J2EE enterprise archive and should
+			be installable as-is on any J2EE-compliant app server.
+		</p>
+
+		<p>
+			It is beyond the scope of this article to explain how to install the
+			enterprise archive into your application server because the steps are
+			different for each vendor.  If you're using
+			<a href="http://www.orionserver.com/">Orion</a>, you can find some
+			pretty good instructions
+			<a href="http://www.jollem.com/orion-primer/">here</a>.  Otherwise you're
+			on your own.
+		</p>
+
+		<p>
+			If you want to write everything by hand, delete the <tt>components/test-war</tt>
+			subdirectory in the <tt>example</tt> directory.  The remainder of this
+			tutorial is how to build the test.
+		</p>
+
+		<a name="step3"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 3: Set up the directory structure </td> </tr>
+		</table>
+
+		<p>
+			For building a test web application, first we need to set up the
+			directory structure.  Create these directories:
+		</p>
+
+		<blockquote>
+			example/javasrc/org/infohazard/test/ <br>
+			example/componens/test-war/ <br>
+			example/componens/test-war/WEB-INF/ <br>
+		</blockquote>
+
+		<p>
+			This example puts test cases in the package "org.infohazard.test".  If
+			you want to be able to test package-private methods, you will need to
+			put test cases in the same package as the classes they are trying to
+			test.  Since most testing should occur at the public interface level,
+			you may wish to reconsider doing this.
+		</p>
+
+		<a name="step4"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 4: Write the test case </td> </tr>
+		</table>
+
+		<p>
+			The test case is a standard JUnit TestCase.  For the fixture, you can
+			use the default JNDI InitialContext to get a reference to the EJB like
+			this:
+		</p>
+
+		<blockquote>
+			<pre>
+protected void setUp() throws Exception
+{
+	Context jndiContext = new InitialContext();
+
+	Object einRef = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
+	EinsteinHome home = (EinsteinHome)PortableRemoteObject.narrow(einRef, EinsteinHome.class);
+
+	this.ein = home.create();
+}
+			</pre>
+		</blockquote>
+
+		<p>
+			And the test methods themselves look like this:
+		</p>
+
+		<blockquote>
+			<pre>
+public void testSimpleAddition() throws RemoteException
+{
+	String result = this.ein.addTwoNumbers("7", "10");
+	assert(result.equals("17"));
+}
+			</pre>
+		</blockquote>
+
+		<p>
+			This code belongs in: <br>
+
+			<tt>example/javasrc/org/infohazard/test/EinsteinTest.java</tt>.
+		</p>
+
+		<a name="step5"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 5: Create the TestServlet </td> </tr>
+		</table>
+
+		<p>
+			We need to have a servlet to run our test cases.  There is a
+			servlet included in the <tt>junit.htmlui</tt> package, but you
+			cannot use it directly.  Instead you must create a servlet in
+			your web application's <tt>WEB-INF/classes/</tt> which derives
+			from <tt>junit.htmlui.TestServletBase</tt> and adds this juicy detail:
+		</p>
+
+		<blockquote>
+			<pre>
+protected ClassLoader getDynamicClassLoader()
+{
+	return this.getClass().getClassLoader();
+}
+			</pre>
+		</blockquote>
+
+		<p>
+			By using this servlet (instead of one in the junitee.jar library
+			directly), we trick the app server into useing the special dynamic
+			classloader for loading test cases rather than the boring default
+			classloader which was used to load classes in junitee.jar.  If
+			we didn't do this, we would have to restart our app server every
+			time we changed the test classes!
+		</p>
+
+		<p>
+			If your app server does not dynamically reload modified classes
+			in the web application directory, this step isn't going to help
+			you.  You still have to do it because the <tt>TestServletBase</tt>
+			is declared <tt>abstract</tt>, but you're going to have to
+			restart your app server anyways if you make changes to test cases.
+			Bummer.
+		</p>
+
+		<a name="step6"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 6: Create the UI Form </td> </tr>
+		</table>
+
+		<p>
+			The TestServlet will execute test cases specified by the "suite"
+			form parameter, which can appear multiple times.  It's
+			nice to have a simple front end form:
+		</p>
+
+		<blockquote>
+			<pre>
+&lt;p&gt;
+	You may type in the name of a test suite:
+	&lt;br/&gt;
+	&lt;form action="TestServlet" method="get" name="youTypeItForm"&gt;
+		&lt;input type="text" name="suite" size=60 /&gt;
+		&lt;input type="submit" value="Run" /&gt;
+	&lt;/form&gt;
+&lt;/p&gt;
+&lt;hr/&gt;
+&lt;p&gt;
+	You may pick one or more of the following test suites:
+	&lt;br/&gt;
+	&lt;form action="TestServlet" method="get" name="youPickItForm"&gt;
+		&lt;select name="suite" size="2" multiple&gt;
+			&lt;option value="org.infohazard.test.EinsteinTest"&gt;
+				org.infohazard.test.EinsteinTest
+			&lt;/option&gt;
+			&lt;option value="some.other.Test"&gt;
+				some.other.Test
+			&lt;/option&gt;
+		&lt;/select&gt;
+		&lt;input type="submit" value="Run" /&gt;
+	&lt;/form&gt;
+&lt;/p&gt;
+			</pre>
+		</blockquote>
+
+		<p>
+			Save this as <tt>example/components/test-war/index.html</tt>
+		</p>
+
+		<a name="step7"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 7: Create the web.xml deployment descriptor </td> </tr>
+		</table>
+
+		<p>
+			The web application must have a deployment descriptor which provides
+			the ejb-ref mapping so that the "java:comp/env/ejb/EinsteinEJB" JNDI
+			lookup will work and so that the TestServlet gets mapped to some sort
+			of URI.  Here's what the <tt>web.xml</tt> should look like:
+		</p>
+
+		<blockquote>
+			<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+	&lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+		&lt;description&gt;JUnitEE test framework&lt;/description&gt;
+		&lt;servlet-class&gt;org.infohazard.servlet.TestServlet&lt;/servlet-class&gt;
+	&lt;/servlet&gt;
+
+ 	&lt;ejb-ref&gt;
+		&lt;ejb-ref-name&gt;ejb/EinsteinEJB&lt;/ejb-ref-name&gt;
+		&lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+		&lt;home&gt;org.infohazard.ejb.einstein.EinsteinHome&lt;/home&gt;
+		&lt;remote&gt;org.infohazard.ejb.einstein.Einstein&lt;/remote&gt;
+	&lt;/ejb-ref&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/TestServlet&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+			</pre>
+		</blockquote>
+
+		<p>
+			This should be saved as: <br>
+			<tt>example/components/test-war/WEB-INF/web.xml</tt>
+		</p>
+
+		<a name="step8"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Step 8: There is no step number 8 </td> </tr>
+		</table>
+
+		<p>
+			Not acutually true; you still need to add the web-application to the
+			application's <tt>application.xml</tt> deployment descriptor, build the
+			enterprise archive as described in Step 2, and install the application
+			in your app server.  But if you're using the example EJB, the
+			<tt>application.xml</tt> should already be set up, and you should already
+			know how to do the rest :-)
+		</p>
+
+		<p>
+			To run your test, just point your web browser at whatever URL you
+			mapped the test web application to.
+		</p>
+
+		<a name="notes"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Notes </td> </tr>
+		</table>
+
+		<p>
+			Some things you might want to keep in mind when unit testing EJBs:
+		</p>
+		<ul>
+			<li>
+				Unless you (and everyone else on the project) are extremely
+				careful writing your unit tests, they are very likely going
+				to seriously mess up your database.  You should probably never
+				run tests against a production system, and for this (and other
+				security reasons) you should not enable the test web application
+				on the production machine.
+			</li>
+			<li>
+				The testing of getters and setters is probably a waste of time.
+			</li>
+		</ul>
+
+		<a name="refs"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> References </td> </tr>
+		</table>
+
+		<p>
+			Stuff you might find interesting and/or useful:
+		</p>
+
+		<ul>
+			<li>
+				For information about JUnit, you naturally want to visit the
+				<a href="http://www.junit.org/">JUnit home page</a>.
+			</li>
+			<li>
+				For an introduction to extreme programming, you should read
+				<a href="http://www.extremeprogramming.org/">Extreme Programming: A Gentle Introduction</a>
+				and then go to <a href="http://www.xprogramming.com/">XProgramming.com</a>.
+			</li>
+			<li>
+				For information about how to build J2EE applications with the
+				<a href="http://www.orionserver.com/">Orion</a> server, try the
+				<a href="http://www.jollem.com/orion-primer/">Orion Primer</a>
+				by Ernst de Haan.
+			</li>
+			<li>
+				A fantastic resource for patterns, anecdotes, and other useful
+				information is the
+				<a href="http://www.c2.com/cgi/wiki?WelcomeVisitors">Portland Pattern Repostory</a>.
+				You might want to start with the
+				<a href="http://www.c2.com/cgi/wiki?EjbUnitTest">EjbUnitTest</a>
+				page or the
+				<a href="http://www.c2.com/cgi/wiki?JunitEe">JunitEe</a> page.
+			</li>
+		</ul>
+
+		<a name="todo"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> TODO </td> </tr>
+		</table>
+
+		<p>
+			Lots.
+		</p>
+
+		<a name="thanks"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Thanks </td> </tr>
+		</table>
+
+		<p>
+		</p>
+
+		<div align="center">
+			<table width="90%" border="0" cellspacing="0" cellpadding="1" class="noteTable">
+				<tr>
+					<td class="noteText">
+		<p>
+			This article was written by Jeff Schnitzer
+			(<a href="mailto:jeff@infohazard.org">jeff@infohazard.org</a>).  Its
+			style was borrowed from the
+			<a href="http://www.jollem.com/orion-primer/">Orion Primer</a>
+			by Ernst de Haan and the
+			<a href="http://www.orionserver.com/">Orion</a> website by, well,
+			the People Who Wrote the Orion Website.
+		</p>
+		<p>
+			This article was developed on a Casio Portatone keyboard running
+			BlackKey Linux.  All typos, innacuracies, mistakes, and
+			outright lies have been inserted by the FBI computer preprocessing
+			all of your email and web downloads.
+		</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+	</body>
+</html>

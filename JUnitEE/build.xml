@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<!--
+	$Id: build.xml,v 1.1.1.1 2001-07-23 21:30:53 lhoriman Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
+
+	Build file for JUnit servlet/ejb extensions.
+
+	You will probably need to change the library paths
+	and the deployment directory to build.
+
+	Jeff Schnitzer (jeff@infohazard.org)
+-->
+
+<project name="junitee" default="jar" basedir=".">
+
+	<property name="name" value="junitee" />
+
+	<property name="junit.library" value="/java/junit3.5/junit.jar" />
+	<property name="servlet.library" value="/java/orion/orion.jar" />
+	<property name="ejb.library" value="/java/orion/ejb.jar" />
+
+	<property name="deployment.dir" value="/java/orion/lib" />
+	<property name="publish.dir" value="/java/orion/default-web-app/junitee" />
+
+ 	<property name="src.dir" value="src" />
+	<property name="output.dir" value="out" />
+	<property name="staging.dir" value="${output.dir}/staging" />
+	<property name="website.dir" value="doc" />
+	<property name="example.dir" value="example" />
+
+	<target name="clean">
+		<deltree dir="${output.dir}" />
+	</target>
+
+	<target name="prepare-staging">
+		<mkdir dir="${staging.dir}" />
+	</target>
+
+ 	<target name="classes" depends="prepare-staging">
+		<javac srcdir="${src.dir}"
+				destdir="${staging.dir}"
+				classpath="${junit.library}:${servlet.library}:${ejb.library}" />
+	</target>
+
+	<target name="jar" depends="classes">
+		<jar jarfile="${output.dir}/${name}.jar"
+				basedir="${staging.dir}" />
+	</target>
+
+	<target name="deploy" depends="jar">
+		<copyfile src="${output.dir}/${name}.jar"
+					dest="${deployment.dir}/${name}.jar" />
+	</target>
+
+	<target name="redist" depends="clean, jar">
+		<ant dir="${example.dir}" target="clean" />
+
+		<mkdir dir="${output.dir}/redist/junitee/lib" />
+
+		<copyfile src="${output.dir}/${name}.jar"
+					dest="${output.dir}/redist/junitee/lib/${name}.jar" />
+
+		<copydir src="."
+					dest="${output.dir}/redist/junitee"
+ 					excludes="${output.dir}/**, ${publish.dir}/**" />
+
+		<zip zipfile="${output.dir}/${name}.zip"
+				basedir="${output.dir}/redist" />
+	</target>
+
+	<target name="publish" depends="redist">
+		<deltree dir="${publish.dir}" />
+
+		<mkdir dir="${publish.dir}" />
+
+		<copyfile src="${output.dir}/${name}.zip"
+					dest="${publish.dir}/${name}.zip" />
+
+		<copydir src="${website.dir}"
+					dest="${publish.dir}" />
+	</target>
+</project>
+

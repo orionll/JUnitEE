@@ -1,0 +1,55 @@
+/*
+ * $Id: stylesheet.css,v 1.1.1.1 2001-07-23 21:30:54 lhoriman Exp $
+ * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/stylesheet.css,v $
+ */
+
+body {
+	font-family: lucida, verdana;
+	font-size: 10pt;
+	color: #000000;
+	background-color: #FFFFFF
+}
+
+a:link		{ color: #FF4444 }
+a:active	{ color: #4444FF }
+a:visited	{ color: #AA4444 }
+a:hover		{ color: #FF4444; background-color: #F4E5E5 }
+a:hover img	{ background-color: #FFFFFF }
+
+.pageTitle {
+	font-size: 2em;
+	font-weight: bold;
+	letter-spacing: 0.25em;
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #980000
+}
+
+.sectionTitle {
+	font-weight: bold;
+	font-style: italic;
+	color: #000000;
+	background-color: #F4E5E5;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.noteTable {
+	color: #FFFFFF;
+	background-color: #980000;
+}
+
+.noteText {
+	color: #000000;
+	background-color: #F4E5E5;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-style: solid;
+	border-color: #980000;
+}

@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: index.html,v 1.1.1.1 2001-07-23 21:30:54 lhoriman Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/index.html,v $
+-->
+
+<html>
+	<head>
+		<title> JUnitEE </title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="pageTitle"> JUnitEE </td> </tr>
+			<tr> <td align="right"> <small> $Revision: 1.1.1.1 $ </small> </td> </tr>
+		</table>
+
+		<p>
+			<b> This page is devoted to unit testing in a J2EE environment. </b>
+		</p>
+
+		<p style="color: blue">
+			<b> 14 Mar 2001 </b>
+
+			<ul>
+				<li>
+					JUnitEE has been updated to work with JUnit 3.5.
+				</li>
+
+				<li>
+				The example has been updated to use a modern (and much, much
+				simpler) Ant buildfile.
+				</li>
+
+				<li>
+				Extra spaces (which were confusing the Sun J2EE RI) have been
+				removed from the example's xml deployment descriptors.
+				</li>
+			</ul>
+		</p>
+
+		<p style="color: blue">
+			<b> 12 Jan 2001 </b>
+			<ul> <li> JUnitEE has been updated to work with JUnit 3.4. </li> </ul>
+		</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Introduction </td> </tr>
+		</table>
+
+		<p>
+			Dante could never have painted a more fearsome hell than the last
+			few months of a large software project which did not make extensive
+			use of unit testing.  There are few creatures more feral and
+ 			dangerous than a stressed, sleep-deprived, overly-caffinated
+ 			programmer who has just been told that a bug they fixed two
+			months ago has resurfaced... for the third time.
+		</p>
+
+		<p>
+			I've been there.  More than once.  I'm not going back.
+		</p>
+
+		<p>
+			If you're not already a unit testing zealot, you should go immediately
+			to the <a href="http://www.junit.org">JUnit</a> home page and read the
+			article <a href="http://www.junit.org/junit/doc/testinfected/testing.htm">Test Infected</a>.
+			That first paragraph is about me.  If you haven't heard of JUnit before,
+			it's probably about you, too.  Then come back here and find out how
+			to integrate JUnit with J2EE development.
+		</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Why JUnitEE? </td> </tr>
+		</table>
+
+		<p>
+			If you have tried to use JUnit with a J2EE application, you probably
+			noticed that the people who wrote JUnit (whom we thank greatly anyways!)
+			have a certain, shall we say,
+			"bias" towards client-side applications.  JUnit comes with three
+			TestRunners: an AWT app, a Swing app, and a text-based
+			command-line app.  Neither are they suitable for running in an
+			app-server environment nor do they output the HTML we crave.
+		</p>
+
+		<p>
+			There is no reason why you cannot use the standard TestRunners
+			if you write your tests as external clients to your app server.
+			But I can think of three good reasons why this is undesirable:
+		</p>
+		<ul>
+			<li>
+				It is necessary to set up all the client JNDI properties
+				in the test cases, making it a pain to run against several
+				different test servers.  Also, if you're like me,
+				you never have bothered to learn how to set up a standalone
+				client.  :-)
+			</li>
+			<li>
+				If your production clients are servlets running inside
+				the app server, your tests could be affected by being
+				run in a different execution environment.
+			</li>
+			<li>
+				It is not possible to unit test your non-EJB web-application
+				components.
+			</li>
+		</ul>
+		<p>
+			Wouldn't you rather run your tests from a servlet?
+		</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Solution </td> </tr>
+		</table>
+
+		<p>
+			Downloadable from this site is a TestRunner which outputs HTML and
+			a servlet which can be used as an entry point.  Building your
+			test harness as a standard J2EE web application means:
+		</p>
+		<ul>
+			<li>
+				Your tests are packaged conveniently into a .war file which
+				can easily be moved between servers; you can leave the
+				.war file in the main .ear file and simply avoid enabling
+				the test web application on the production server.
+			</li>
+			<li>
+				Your test classes will be dynamically reloaded by the app
+				server (assuming your server supports this).
+			</li>
+			<li>
+				Your test cases look just like your production code,
+				and can use the same beans (or whatever) you use as
+				a facade for your EJBs.
+			</li>
+		</ul>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Download </td> </tr>
+		</table>
+
+		<p>
+			You can <a href="junitee.zip">download</a> version 1.2 of JUnitEE.
+		</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Tutorial </td> </tr>
+		</table>
+
+		<p>
+			A reasonably comprehensive <a href="tutorial.html">tutorial</a> on
+			how to set up and use JUnitEE is available.
+		</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> Contact, Discussion, etc </td> </tr>
+		</table>
+
+		<p>
+			For more discussion of JUnitEE, go to the Portland Pattern Repository's
+			<a href="http://www.c2.com/cgi/wiki?JunitEe">JUnitEE topic</a>.  If you've
+			never been there or used a
+			<a href="http://www.c2.com/cgi/wiki?WikiWikiWeb">WikiWikiWeb</a> before,
+			take a look around.  I think this is one of the coolest things on the
+			net.
+		</p>
+
+		<p>
+			Alternatively, if you would like to get in touch with me, my contact
+			info is:
+		</p>
+
+		<p>
+			<cite>Jeff Schnitzer</cite> <br>
+			<a href="mailto:jeff@infohazard.org">jeff@infohazard.org</a>
+		</p>
+	</body>
+</html>

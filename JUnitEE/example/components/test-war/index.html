@@ -1,0 +1,50 @@
+<!--
+	$Id: index.html,v 1.1.1.1 2001-07-23 21:31:02 lhoriman Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/components/test-war/index.html,v $
+-->
+
+<html>
+
+	<head>
+		<title> JUnitEE Unit Test Framework </title>
+	</head>
+
+	<body>
+
+		<p>
+			Welcome to <em> JUnitEE </em>.  You have
+ 			two ways to choose which test suite(s) to run:
+		</p>
+
+		<hr>
+
+		<p>
+			You may type in the name of a test suite:
+ 			<br>
+			<form action="TestServlet" method="get" name="youTypeItForm">
+				<input type="text" name="suite" size=60>
+				<input type="submit" value="Run">
+			</form>
+		</p>
+
+		<hr>
+
+		<p>
+			You may pick one or more of the following test suites:
+ 			<br>
+			<form action="TestServlet" method="get" name="youPickItForm">
+				<select name="suite" size="2" multiple>
+					<option value="org.infohazard.test.EinsteinTest">
+						org.infohazard.test.EinsteinTest
+					</option>
+					<option value="some.other.Test">
+						some.other.Test
+					</option>
+				</select>
+				<input type="submit" value="Run">
+			</form>
+		</p>
+
+	</body>
+
+</html>

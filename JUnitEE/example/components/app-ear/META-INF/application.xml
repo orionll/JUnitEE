@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.2//EN" "http://java.sun.com/j2ee/dtds/application_1_2.dtd">
+
+<!--
+	$Id: application.xml,v 1.1.1.1 2001-07-23 21:31:02 lhoriman Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/components/app-ear/META-INF/application.xml,v $
+-->
+
+<application>
+	<display-name>JUnitEE Example</display-name>
+	
+	<module>
+		<ejb>junitee-example-ejb.jar</ejb>
+	</module>
+	
+	<module>
+		<web>
+			<web-uri>junitee-example-web.war</web-uri>
+			<context-root>/example</context-root>
+		</web>
+	</module>
+
+	<module>
+		<web>
+			<web-uri>junitee-example-test.war</web-uri>
+			<context-root>/exampletest</context-root>
+		</web>
+	</module>
+	
+	<security-role>
+		<role-name>users</role-name>
+	</security-role>
+	
+</application>
