@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.10 2003-09-26 21:13:34 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.11 2004-05-27 22:46:47 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -20,7 +20,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class JUnitEEWarTask extends War {
 
@@ -34,8 +34,11 @@ public class JUnitEEWarTask extends War {
   private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
   private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
   private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
+  private final static int DEFAULT_HTML_REFRESH_DELAY = 2;
 
 
+
+  private int htmlRefreshDelay = DEFAULT_HTML_REFRESH_DELAY;
   private String testjarname;
   private String servletclass = WEBXML_SERVLET_CLASS;
   private List testCases = new ArrayList();
@@ -44,6 +47,19 @@ public class JUnitEEWarTask extends War {
   private List ejbLocalRefs = new ArrayList();
   private List resRefs = new ArrayList();
   private File deploymentDescriptor;
+
+
+   /**
+    * This optional parameter defines the delay for HTML page refreshes when run as a separate
+    * thread. The default value is <code>2</code>.
+    */
+   public void setHtmlRefreshDelay( String htmlRefreshDelay) {
+       try {
+         this.htmlRefreshDelay = Integer.parseInt( htmlRefreshDelay);
+       } catch (NumberFormatException e) {
+         this.htmlRefreshDelay = 2;
+       }
+   }
 
 
   /**
@@ -271,6 +287,10 @@ public class JUnitEEWarTask extends War {
       pw.println("    <servlet-name>" + WEBXML_SERVLET_NAME + "</servlet-name>");
       pw.println("    <description>JUnitEE test harness</description>");
       pw.println("    <servlet-class>" + servletclass + "</servlet-class>");
+      pw.println("    <init-param>");
+      pw.println("      <param-name>htmlRefreshDelay</param-name>");
+      pw.println("      <param-value>" + htmlRefreshDelay + "</param-value>");
+      pw.println("    </init-param>");
       pw.println("  </servlet>");
       pw.println("");
       pw.println("  <servlet-mapping>");

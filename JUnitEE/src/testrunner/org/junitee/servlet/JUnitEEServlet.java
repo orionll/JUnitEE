@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.32 2004-05-27 14:32:26 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.33 2004-05-27 22:46:52 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -65,6 +65,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   private static final String INIT_PARAM_RESOURCES = "searchResources";
   private static final String INIT_PARAM_XSL = "xslStylesheet";
+   private static final String INIT_HTML_REFRESH_DELAY = "htmlRefreshDelay";
 
   public static final String OUTPUT_HTML = "html";
   public static final String OUTPUT_XML = "xml";
@@ -80,6 +81,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   private String searchResources;
   private String xslStylesheet;
+  private int htmlRefreshDelay = 2;
 
 
   /**
@@ -100,6 +102,10 @@ public class JUnitEEServlet extends HttpServlet {
 
     searchResources = config.getInitParameter(INIT_PARAM_RESOURCES);
     xslStylesheet = config.getInitParameter(INIT_PARAM_XSL);
+    try {
+        htmlRefreshDelay = Integer.parseInt( config.getInitParameter( INIT_HTML_REFRESH_DELAY));
+    } catch (NumberFormatException ignore) {
+    }
   }
 
 
@@ -460,7 +466,7 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-      return new HTMLOutput(results, request, response, filterTrace);
+       return new HTMLOutput(results, request, response, filterTrace, htmlRefreshDelay);
     }
     if (output.equals(OUTPUT_XML)) {
       return new XMLOutput(results, response, xsl, filterTrace);

@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.22 2004-03-21 14:38:37 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.23 2004-05-27 22:46:51 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -45,11 +45,12 @@ public class HTMLOutput extends AbstractOutput {
   private HttpServletResponse response;
   private String queryString;
   private HttpServletRequest request;
+  private int refreshDelay;
 
 
   /**
    */
-  public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace) throws IOException {
+  public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace, int refreshDelay) throws IOException {
     super(results, filterTrace);
     response.setContentType("text/html;charset=UTF-8");
 
@@ -58,6 +59,7 @@ public class HTMLOutput extends AbstractOutput {
     this.servletPath = request.getContextPath() + request.getServletPath();
     this.queryString = request.getQueryString();
     this.request = request;
+    this.refreshDelay = refreshDelay;
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -105,7 +107,7 @@ public class HTMLOutput extends AbstractOutput {
       if (queryString != null) {
         redirect = redirect + "?" + queryString;
       }
-      pw.println("<META HTTP-EQUIV=\"Refresh\" CONTENT=\"2; URL=" + response.encodeURL(redirect) + "\">");
+       pw.println("<META HTTP-EQUIV=\"Refresh\" CONTENT=\"" + refreshDelay + "; URL=" + response.encodeURL(redirect) + "\">");
     }
     pw.println("</head>");
 
