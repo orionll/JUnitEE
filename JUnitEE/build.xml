@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.33 2004-03-21 14:38:37 o_rossmueller Exp $
+	$Id: build.xml,v 1.34 2004-05-27 22:56:59 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -194,6 +194,53 @@
   </target>
 
   <target name="doc.tgz">
+     <replace dir="${build.doc}">
+         <include name="*.html"/>
+
+        <replacetoken><![CDATA[<!-- ads -->]]></replacetoken>
+        <replacevalue><![CDATA[
+      <tr><td colspan="3" align="center">
+      <script type="text/javascript">
+        google_ad_client = "pub-6547819708707132";
+        google_ad_width = 728;
+        google_ad_height = 90;
+        google_ad_format = "728x90_as";
+        google_ad_channel ="9408961084";
+        google_color_border = "DDB7BA";
+        google_color_bg = "FFF5F6";
+        google_color_link = "0000CC";
+        google_color_url = "008000";
+        google_color_text = "6F6F6F";
+    </script>
+    <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+   </td></tr>]]></replacevalue>
+         </replace>
+
+     <replace dir="${build.doc}">
+         <include name="*.html"/>
+
+        <replacetoken><![CDATA[<!-- ads_index -->]]></replacetoken>
+        <replacevalue><![CDATA[
+      <script type="text/javascript">
+        google_ad_client = "pub-6547819708707132";
+        google_ad_width = 728;
+        google_ad_height = 90;
+        google_ad_format = "728x90_as";
+        google_ad_channel ="9408961084";
+        google_color_border = "DDB7BA";
+        google_color_bg = "FFF5F6";
+        google_color_link = "0000CC";
+        google_color_url = "008000";
+        google_color_text = "6F6F6F";
+    </script>
+    <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>]]></replacevalue>
+         </replace>
+
+
     <tar destfile="${dist.dir}/docs.tgz" compression="gzip">
       <tarfileset dir="${build.doc}"/>
     </tar>
