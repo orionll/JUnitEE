@@ -1,5 +1,5 @@
 <!--
-	$Id: result.jsp,v 1.2 2002-11-02 14:27:28 o_rossmueller Exp $
+	$Id: result.jsp,v 1.3 2002-11-02 16:18:01 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/web-app/result.jsp,v $
 
 	This is a cheesey JSP Model 1 "page centric" example.  A real web
@@ -22,7 +22,7 @@
 			Object ref = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
 			EinsteinHome home = (EinsteinHome)PortableRemoteObject.narrow(ref, EinsteinHome.class);
 
-			this.ein = home.create();
+			ein = home.create();
 		}
 		catch (Exception ex)
 		{
@@ -36,7 +36,7 @@
 	<head>
 		<title> Add Numbers </title>
 	</head>
-	
+
 	<body>
 		<p>
 			<%
@@ -71,7 +71,7 @@
 			%>
 
 		</p>
-	
+
 	</body>
 
 </html>

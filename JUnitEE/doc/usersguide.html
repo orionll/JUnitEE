@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.6 2002-10-17 19:02:00 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.7 2002-11-02 16:17:58 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.6 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.7 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -68,7 +68,7 @@
 
     <p>This guide will tell you how to <a href="#package">package JUnitEE</a> and your test cases to a deployable web archive. It will also describe the
     user interface of the <a href="#runner">JUnitEE TestRunner</a> and how to integrate JUnitEE with your Ant build process by using the
-    <a href="#anttask">JUnitEE Ant tasks</a>.
+    <a href="#anttask">JUnitEE Ant tasks</a>. Finally there are some <a href="#security">security issues</a> related to the deployment of JUnitEE.
     </p>
 
     <a name="package"></a>
@@ -507,6 +507,32 @@ org.junitee.example.ComplexUnitTests</pre></code>
     <code>cactus.contextURL</code> to the context of the web application the JUnitEE servlet is part of. Therefore you don't have to specify
     this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application).
     </p>
+
+    <a name="security"></a>
+
+	<table cellspacing="0" cellpadding="0" width="100%">
+	  <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">Security issues</td></tr>
+	</table>
+
+    <p>JUnitEE takes some actions which are under control of the Java security manager:
+    <ul>
+    <li>set the system property <code>cactus.contextURL</code></li>
+    <li>read the file <code>junit.properties</code> from user home
+    </ul>
+    In case the security manager is enabled in your J2EE environment (which for example is the case for the J2EE reference
+    implementation provided by Sun) you have to grant permission for these actions in your security policy:
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>grant {
+    permission java.util.PropertyPermission &quot;cactus.contextURL&quot;, &quot;read,write&quot;;
+    // replace <code>&lt;USERHOME&gt;</code> with your home directory
+    permission java.io.FilePermission &quot;&lt;USERHOME&gt;\junit.properties&quot;, &quot;read&quot;;
+};</pre></code>
+    </div>
+    </p>
+
 
 		<table cellspacing="0" cellpadding="0" width="100%">
       <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>

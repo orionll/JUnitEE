@@ -2,7 +2,7 @@
 <!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.2//EN" "http://java.sun.com/j2ee/dtds/application_1_2.dtd">
 
 <!--
-	$Id: application.xml,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+	$Id: application.xml,v 1.2 2002-11-02 16:18:01 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/deploy/app-ear/application.xml,v $
 -->
 
@@ -26,7 +26,14 @@
 			<context-root>/exampletest</context-root>
 		</web>
 	</module>
-	
+
+  <module>
+    <web>
+      <web-uri>junitee-example-test-xml.war</web-uri>
+      <context-root>/exampletestxml</context-root>
+    </web>
+  </module>
+
 	<security-role>
 		<role-name>users</role-name>
 	</security-role>

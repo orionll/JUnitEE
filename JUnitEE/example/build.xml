@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.9 2002-10-17 19:02:00 o_rossmueller Exp $
+	$Id: build.xml,v 1.10 2002-11-02 16:18:01 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -38,6 +38,8 @@
 
   <property name="test-war.file" value="${name}-test.war"/>
   <property name="test-war.product" value="${build.dir}/${test-war.file}"/>
+  <property name="test-war-xml.file" value="${name}-test-xml.war"/>
+  <property name="test-war-xml.product" value="${build.dir}/${test-war-xml.file}"/>
   <property name="test-jar.file" value="${name}-test.jar"/>
   <property name="test-jar.product" value="${build.dir}/${test-jar.file}"/>
 
@@ -116,7 +118,25 @@
       </classpath>
     </taskdef>
 
-    <juniteewar destFile="${test-war.product}" testJarName="test.jar">
+    <juniteewar destFile="${test-war.product}" testjarname="test.jar">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+      </testcases>
+      <ejbRef ejbRefName="ejb/EinsteinEJB"
+        ejbRefType="Session"
+        home="org.junitee.ejb.einstein.EinsteinHome"
+        remote="org.junitee.ejb.einstein.Einstein"
+        ejbLink="EinsteinEJB"/>
+    </juniteewar>
+
+    <juniteewar destFile="${test-war-xml.product}" servletclass="org.junitee.servlet.JUnitEEXMLServlet">
       <lib dir="${junitee.dir}" includes="junitee.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
       <classes dir="${build.classes}">
@@ -143,6 +163,7 @@
       <fileset dir="${build.dir}">
         <include name="${ejb-jar.file}"/>
         <include name="${web-war.file}"/>
+        <include name="${test-war-xml.file}"/>
         <include name="${test-war.file}"/>
       </fileset>
     </jar>

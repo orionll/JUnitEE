@@ -1,19 +1,16 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.4 2002-09-19 22:03:09 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.5 2002-11-02 16:18:01 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.FileScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.War;
 import org.apache.tools.ant.taskdefs.Jar;
+import org.apache.tools.ant.taskdefs.War;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ZipFileSet;
 
@@ -22,52 +19,65 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
-public class JUnitEEWarTask extends Task {
+public class JUnitEEWarTask extends War {
 
-  /**
-   * Set the name of the .war file to create
-   * @param file .war file to create
-   */
-  public void setDestFile(File file) {
-    this.destFile = file;
-  }
+  private static final String URLPATTERN_TOKEN = "@urlPattern@";
+  private static final String URLPATTERN_REPLACEMENT = "TestServlet";
+  private static final String WEBXML_URLPATTERN = "/" + URLPATTERN_REPLACEMENT + "/*";
+  private final static String WEBXML_DOCTYPE =
+    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
+  private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
+  private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
+  private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
+
+
+
+  private String testjarname;
+  private String servletclass = WEBXML_SERVLET_CLASS;
+  private List testCases = new ArrayList();
+  private List classes = new ArrayList();
+  private List ejbRefs = new ArrayList();
+  private File deploymentDescriptor;
 
 
   /**
    * This optional parameter define the name of the .jar file
-   * which wile contains the test classes.
-   * This parameter is just the name of a .jar file (without any directory) (eg.: test.war)
+   * which will contain the test classes.
+   * This parameter is just the name of a .jar file (without any directory) (eg.: test.jar)
    * If this parameter is not set, the classes will appear as
    * standalone classes in WEB-INF/classes
    * If this parameter is set, the classes will be bundled into a jar
-   * file stored in WEB-INF/lib/<testJarName>
+   * file stored in WEB-INF/lib/<testjarname>
    */
-  public void setTestJarName(String name) {
-    this.testJarName = name;
+  public void setTestjarname(String name) {
+    this.testjarname = name;
   }
 
 
   /**
-   * The nested lib element specifies a FileSet.
-   * All files included in this fileset will end up in the WEB-INF/ lib directory
-   * of the war file.
-   * @param fs nested lib element
+   * Set the name of the servlet used in the generated deployment descriptor.
+   *
+   * @param servletclass
    */
-  public void addLib(ZipFileSet fs) {
-    this.libs.add(fs);
+  public void setServletclass(String servletclass) {
+    this.servletclass = servletclass;
   }
 
 
-  /**
-   * The nested classes element specifies a FileSet.
-   * All files included in this fileset will end up in the WEB- INF/classes directory
-   * of the war file.
-   * @param fs nested classes element
-   */
+  public void setWebxml(File descr) {
+    deploymentDescriptor = descr;
+    super.setWebxml(descr);
+  }
+
+
   public void addClasses(ZipFileSet fs) {
-    this.classes.add(fs);
+    if (testjarname == null) {
+      super.addClasses(fs);
+    } else {
+      classes.add(fs);
+    }
   }
 
 
@@ -103,14 +113,9 @@ public class JUnitEEWarTask extends Task {
    * A BuildException is thrown if the task is not properly configured
    */
   private void check() throws BuildException {
-    if (this.destFile == null) {
-      throw new BuildException("You must specify the destFile attribute", location);
-    }
-
-    if (this.testJarName != null) {
-      if (!this.testJarName.endsWith(".jar")) {
-        throw new BuildException("the testJarName (" + this.testJarName +
-          ")attribute must be terminated by .jar", location);
+    if (this.testjarname != null) {
+      if (!this.testjarname.endsWith(".jar")) {
+        testjarname = testjarname + ".jar";
       }
     }
 
@@ -126,51 +131,33 @@ public class JUnitEEWarTask extends Task {
    * Entry point when the task is ran from ant
    */
   public void execute() throws BuildException {
-    // check configuration
-    check();
-    // do the real work now
-    executeWarTask();
-  }
-
-
-  /**
-   * Create the war file.
-   */
-  private void executeWarTask() {
     File webXmlFile = null;
     File indexHtmlFile = null;
     File jarFile = null;
     File lstTestFile = null;
+    ZipFileSet fs;
+
+    // check configuration
+    check();
+
+    // do the real work now
+
 
     try {
-      ZipFileSet fs;
-      War war = (War)getProject().createTask("war");
-
-      webXmlFile = createWebXml();
-      war.setDestFile(this.destFile);
-      war.setWebxml(webXmlFile);
-
-      for (Iterator i = this.libs.iterator(); i.hasNext();) {
-        fs = (ZipFileSet)i.next();
-        war.addLib(fs);
+      if (deploymentDescriptor == null) {
+        webXmlFile = createWebXml();
+        setWebxml(webXmlFile);
       }
 
-      if (this.testJarName == null) {
-        // if testJarName attribute is not set, the classes are stored
-        // in the WEB-INF/classes directory
-        for (Iterator i = this.classes.iterator(); i.hasNext();) {
-          fs = (ZipFileSet)i.next();
-          war.addClasses(fs);
-        }
-      } else {
-        // if testJarName attribute is set, the classes are bundled
+      if (this.testjarname != null) {
+        // if testjarname attribute is set, the classes are bundled
         // in a jar file which is stored the WEB-INF/lib directory
         jarFile = buildClassesJar();
         fs = new ZipFileSet();
         fs.setDir(new File(jarFile.getParent()));
         fs.setIncludes(jarFile.getName());
-        fs.setFullpath("WEB-INF/lib/" + this.testJarName);
-        war.addFileset(fs);
+        fs.setFullpath("WEB-INF/lib/" + this.testjarname);
+        addFileset(fs);
       }
 
       indexHtmlFile = createIndexHtml();
@@ -179,16 +166,16 @@ public class JUnitEEWarTask extends Task {
       fs.setDir(new File(indexHtmlFile.getParent()));
       fs.setIncludes(indexHtmlFile.getName());
       fs.setFullpath("index.html");
-      war.addFileset(fs);
+      addFileset(fs);
 
       lstTestFile = createTestCaseList();
       fs = new ZipFileSet();
       fs.setDir(new File(lstTestFile.getParent()));
       fs.setIncludes(lstTestFile.getName());
       fs.setFullpath("WEB-INF/testCase.txt");
-      war.addFileset(fs);
+      addFileset(fs);
 
-      war.execute();
+      super.execute();
     } finally {
       if (webXmlFile != null) {
         webXmlFile.delete();
@@ -229,13 +216,6 @@ public class JUnitEEWarTask extends Task {
   }
 
 
-  private final static String WEBXML_DOCTYPE =
-    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
-  private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
-  private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
-  private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
-
-
   private File createWebXml() throws BuildException {
     try {
       File webXmlFile = File.createTempFile("web", "xml");
@@ -250,12 +230,12 @@ public class JUnitEEWarTask extends Task {
       pw.println("  <servlet>");
       pw.println("    <servlet-name>" + WEBXML_SERVLET_NAME + "</servlet-name>");
       pw.println("    <description>JUnitEE test harness</description>");
-      pw.println("    <servlet-class>" + WEBXML_SERVLET_CLASS + "</servlet-class>");
+      pw.println("    <servlet-class>" + servletclass + "</servlet-class>");
       pw.println("  </servlet>");
       pw.println("");
       pw.println("  <servlet-mapping>");
       pw.println("    <servlet-name>" + WEBXML_SERVLET_NAME + "</servlet-name>");
-      pw.println("    <url-pattern>" + urlPattern + "</url-pattern>");
+      pw.println("    <url-pattern>" + WEBXML_URLPATTERN + "</url-pattern>");
       pw.println("  </servlet-mapping>");
       pw.println("");
       for (Iterator i = this.ejbRefs.iterator(); i.hasNext();) {
@@ -303,9 +283,15 @@ public class JUnitEEWarTask extends Task {
         }
       }
 
+      int index;
+
       while ((line = reader.readLine()) != null) {
         if (line.startsWith("<!-- ### -->")) {
           pw.print(bufferList.toString());
+        } else if ((index = line.indexOf(URLPATTERN_TOKEN)) != -1) {
+          pw.print(line.substring(0, index));
+          pw.print(URLPATTERN_REPLACEMENT);
+          pw.println(line.substring(index + URLPATTERN_TOKEN.length()));
         } else {
           pw.println(line);
         }
@@ -438,13 +424,5 @@ public class JUnitEEWarTask extends Task {
 
   }
 
-  // Warning: If you change the value of urlPattern, you may need to update createIndexHtml()
-  // method to propagate this change in the <form action="xx" >
-  private String urlPattern = "/TestServlet/*";
-  private File destFile;
-  private String testJarName;
-  private List libs = new ArrayList();
-  private List classes = new ArrayList();
-  private List testCases = new ArrayList();
-  private List ejbRefs = new ArrayList();
+
 }
