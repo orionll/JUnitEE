@@ -1,5 +1,5 @@
-JUnitEE 1.6rc1
-==============
+JUnitEE 1.6
+===========
 
 This tool provides a TestRunner and a servlet which will run JUnit test suites
 in an app server.
@@ -14,6 +14,20 @@ Oliver Rossmueller (oliver@oross.net)
 
 Change log
 ==========
+
+Release 1.6.6pre2
+
+- Changed html output charset to UTF-8 to support non-latin characters
+- Added interface RequiresDecoration to support test decoration (e.g. use of junit.extensions.TestSetup)
+  when running single tests
+  
+
+Release 1.6.6pre1
+
+Bug fixes (see bug database at http://sourceforge.net/tracker/?group_id=31476&atid=402250 for details)
+
+- 719243
+
 
 Release 1.6.5
 
