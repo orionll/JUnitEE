@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.17 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.18 2002-11-03 21:25:54 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -120,7 +120,7 @@ public class JUnitEEServlet extends HttpServlet {
     String[] testClassNames = null;
     String message;
     boolean filterTrace = true;
-    boolean threaded = "true".equals(request.getParameter(PARAM_THREAD));
+    boolean threaded = "true".equals(request.getParameter(PARAM_THREAD)) | getDefaultThreadMode();
 
     if ("false".equals(request.getParameter(PARAM_FILTER_TRACE))) {
       filterTrace = false;
@@ -347,6 +347,14 @@ public class JUnitEEServlet extends HttpServlet {
     return OUTPUT_HTML;
   }
 
+
+  /**
+   * Answer the default for the thread mode.
+   * @return true if a thread should be forked
+   */
+  protected boolean getDefaultThreadMode() {
+    return false;
+  }
 
   /**
    * Answer the output producer for the given output format.
