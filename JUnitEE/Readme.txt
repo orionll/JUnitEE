@@ -9,12 +9,16 @@ Contact
 =======
 
 junitee-user mailing list (subscribe at http://lists.sourceforge.net/lists/listinfo/junitee-user)
-Jeff Schnitzer (jeff@infohazard.com)
 Oliver Rossmueller (oliver@oross.net)
 
 
 Change log
 ==========
+
+
+Release 1.6.1
+
+- New resourceRef element available for the JUnitEEWar Ant task
 
 
 Release 1.6
