@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.11 2003-01-08 21:17:50 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.12 2003-01-18 11:33:20 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.11 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.12 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -489,7 +489,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     FileSet. All files included in this fileset are the Junit test cases which will be executed if <code>all=true</code> is used when calling the JUnitEE servlet.
     </p>
 
-    <p>Finally it is possible to declare EJB references which should be included
+    <p>To use EJBs from your test cases it is possible to declare EJB references which should be included
     in the generated deployment descriptor of the <code>war</code> file using nested <code>&lt;ejbRef&gt;</code> elements. An <code>&lt;ejbRef&gt;</code> element supports the following attributes:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
@@ -503,6 +503,21 @@ org.junitee.example.ComplexUnitTests</pre></code>
       </table>
     </div>
     </p>
+
+    <p>Finally the <code>JUnitEEWarTask</code> supports nested <code>&lt;resourceRef&gt;</code> elements to delcare resource reference entries to be included
+    in the generated deployment descriptor of the <code>war</code> file. <code>&lt;resourceRef&gt;</code> elements provide the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">resourceRef attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <td class="whiterow">resRefName</td><td class="whiterow">set <code>&lt;res-ref-name&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">resType</td><td class="coloredrow">set <code>&lt;res-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">resAuth</td><td class="whiterow">set <code>&lt;res-auth&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
 
 
       <p>Consider for the following example that you have a project with the following characteristics:
