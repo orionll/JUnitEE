@@ -1,18 +1,21 @@
 /*
- * $Id: EinsteinTest.java,v 1.3 2002-09-03 21:07:16 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/javasrc/org/infohazard/test/EinsteinTest.java,v $
+ * $Id: EinsteinTest.java,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+ * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/java/org/junitee/ejb/einstein/test/EinsteinTest.java,v $
  */
 
-package org.infohazard.test;
+package org.junitee.ejb.einstein.test;
 
-import org.infohazard.ejb.einstein.*;
-
-import junit.framework.*;
-
-import javax.ejb.*;
-import javax.naming.*;
-import javax.rmi.PortableRemoteObject;
 import java.rmi.RemoteException;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.rmi.PortableRemoteObject;
+
+import junit.framework.TestCase;
+
+import org.junitee.ejb.einstein.BadNumberException;
+import org.junitee.ejb.einstein.Einstein;
+import org.junitee.ejb.einstein.EinsteinHome;
 
 /**
  */
