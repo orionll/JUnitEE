@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunnerResults.java,v 1.2 2002-11-27 23:53:25 o_rossmueller Exp $
+ * $Id: TestRunnerResults.java,v 1.3 2003-03-11 19:07:16 o_rossmueller Exp $
  */
 package org.junitee.runner;
 
@@ -12,18 +12,18 @@ import junit.framework.Test;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @since 1.5
  */
 public class TestRunnerResults implements TestRunnerListener {
 
   private long timestamp;
-  private List suiteInfo = new ArrayList();
-  private Map suites = new HashMap();
+  private ArrayList suiteInfo = new ArrayList();
+  private HashMap suites = new HashMap();
   private TestInfo currentInfo;
   private boolean failure = false;
   private boolean singleTest = false;
-  private List errorMessages = new ArrayList();
+  private ArrayList errorMessages = new ArrayList();
   private boolean filterTrace = true;
   private boolean finished = false;
   private boolean stopped = false;
@@ -103,12 +103,12 @@ public class TestRunnerResults implements TestRunnerListener {
 
 
   public synchronized List getSuiteInfo() {
-    return suiteInfo;
+    return (List)suiteInfo.clone();
   }
 
 
   public synchronized void setSuiteInfo(List suiteInfo) {
-    this.suiteInfo = suiteInfo;
+    this.suiteInfo = new ArrayList(suiteInfo);
   }
 
 
@@ -157,14 +157,14 @@ public class TestRunnerResults implements TestRunnerListener {
   }
 
 
-  protected void addToSuite(TestInfo info) {
+  protected synchronized void addToSuite(TestInfo info) {
     String className = info.getTest().getClass().getName();
     TestSuiteInfo suite = (TestSuiteInfo)suites.get(className);
 
     if (suite == null) {
       suite = new TestSuiteInfo(className);
       suites.put(className, suite);
-      getSuiteInfo().add(suite);
+      suiteInfo.add(suite);
     }
     suite.add(info);
   }

@@ -1,5 +1,5 @@
 /**
- * $Id: TestSuiteInfo.java,v 1.5 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: TestSuiteInfo.java,v 1.6 2003-03-11 19:07:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestSuiteInfo.java,v $
  */
 
@@ -21,14 +21,14 @@ import org.junitee.runner.TestRunnerListener;
  * This class holds information about on test.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @since   1.5
  */
 public class TestSuiteInfo {
   private String testClassName;
-  private List tests = new ArrayList();
-  private List errors = new ArrayList();
-  private List failures = new ArrayList();
+  private ArrayList tests = new ArrayList();
+  private ArrayList errors = new ArrayList();
+  private ArrayList failures = new ArrayList();
   private long elapsedTime = 0L;
 
 
@@ -37,7 +37,7 @@ public class TestSuiteInfo {
   }
 
 
-  public void add(TestInfo info) {
+  public synchronized void add(TestInfo info) {
     tests.add(info);
     if (info.hasError()) {
       errors.add(info);
@@ -48,22 +48,22 @@ public class TestSuiteInfo {
   }
 
 
-  public Collection getTests() {
-    return Collections.unmodifiableCollection(tests);
+  public synchronized Collection getTests() {
+    return (Collection)tests.clone();
   }
 
 
-  public boolean hasFailure() {
+  public synchronized boolean hasFailure() {
     return !failures.isEmpty();
   }
 
 
-  public boolean hasError() {
+  public synchronized boolean hasError() {
     return !errors.isEmpty();
   }
 
 
-  public boolean successful() {
+  public synchronized boolean successful() {
     return !(hasError() || hasFailure());
   }
 
@@ -78,12 +78,12 @@ public class TestSuiteInfo {
   }
 
 
-  public List getFailures() {
-    return failures;
+  public synchronized List getFailures() {
+    return (List)failures.clone();
   }
 
-  public List getErrors() {
-    return errors;
+  public synchronized List getErrors() {
+    return (List)errors.clone();
   }
 
 }
