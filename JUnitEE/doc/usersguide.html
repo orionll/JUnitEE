@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.18 2004-01-27 22:30:50 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.19 2004-05-27 22:56:16 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -15,10 +15,12 @@
 
 	<body>
     <table>
+
+      <!-- ads -->
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.18 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.19 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -422,6 +424,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">printsummary</td><td class="coloredrow">Print a summary of all executed tests</td><td class="coloredrow">No</td></tr>
         <tr><td class="whiterow">filtertrace</td><td class="whiterow">Filter the stack trace in case of an error/failure. This removes JUnit methods from the stack trace.</td><td class="whiterow">No; default is true</td></tr>
+        <tr><td class="coloredrow">threaded</td><td class="coloredrow">Run tests in threaded mode to avoid HTTP timeouts</td><td class="coloredrow">No; default is true</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>
@@ -505,14 +508,15 @@ org.junitee.example.ComplexUnitTests</pre></code>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
         <tr><td colspan="3" class="tabletitle">JUnitEEWarTask attributes</td></tr>
         <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
-        <tr><td class="coloredrow">testjarname</td><td class="coloredrow">This parameter defines the name of the <code>.jar</code>
+        <tr><td class="whiterow">testjarname</td><td class="whiterow">This parameter defines the name of the <code>.jar</code>
               file which will contain all the test classes defined in the nested <code>&lt;classes&gt;</code> element.
               This file will then be placed in the <code>WEB-INF/lib</code> directory of the <code>war</code> file.
               If this parameter is not set, the test classes will be stored in the <code>WEB-INF/classes</code> directory of the <code>war</code>
-              file.</td><td class="coloredrow">No</td></tr>
-        <tr><td class="whiterow">servletclass</td><td class="whiterow">Specify the servlet class which will be used to generate the <code>web.xml</code>.</td><td class="whiterow">No</td></tr>
-        <tr><td class="coloredrow">webxml</td><td class="coloredrow">The deployment descriptor to use (WEB-INF/web.xml). This attribute workes like in the <code>War</code> task, except that
-        if not set, <code>web.xml</code> will be generated.</td><td class="coloredrow">No</td></tr>
+              file.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">servletclass</td><td class="coloredrow">Specify the servlet class which will be used to generate the <code>web.xml</code>.</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">webxml</td><td class="whiterow">The deployment descriptor to use (WEB-INF/web.xml). This attribute workes like in the <code>War</code> task, except that
+        if not set, <code>web.xml</code> will be generated.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">htmlRefreshDelay</td><td class="coloredrow">Specify the interval the result page will be reloaded in threaded mode.</td><td class="coloredrow">No; default is 2 seconds.</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>

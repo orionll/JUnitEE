@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: index.html,v 1.24 2004-03-21 14:56:21 o_rossmueller Exp $
+	$Id: index.html,v 1.25 2004-05-27 22:56:16 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/index.html,v $
 -->
 
@@ -16,10 +16,10 @@
 	<body>
 
     <table>
-      <tr><td colspan="3">
+      <tr><td colspan="5">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.24 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.25 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -39,8 +39,8 @@
           <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe"><nobr>JUnitEE Wiki</nobr></a></td></tr>
           <tr><td>&nbsp;</td></tr>
           <tr><td>&nbsp;</td></tr>
-          <tr><td>&nbsp;</td></tr>
-          <tr><td>&nbsp;</td></tr>
+          <tr><td><a href="http://sourceforge.net/donate/index.php?group_id=31476"><IMG src="http://images.sourceforge.net/images/project-support.jpg" alt="Donate to this project" border="0" width="88" height="32"></a></td></tr>
+          <tr><td><a href="http://sourceforge.net/donate/index.php?group_id=31476">Donate to this project</a></td></tr>
           <tr><td>&nbsp;</td></tr>
           <tr><td>&nbsp;</td></tr>
           <tr><td>&nbsp;</td></tr>
@@ -53,14 +53,14 @@
 		</table>
 
     <p>
-		The current stable release is 1.9, available for <a href="http://sourceforge.net/project/showfiles.php?group_id=31476"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">download</a>
+		The current stable release is 1.10, available for <a href="http://sourceforge.net/project/showfiles.php?group_id=31476"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">download</a>
 		at sourceforge.net.</p>
 		<p> 
-		Changes since 1.8:
+		Changes since 1.9:
 			<ul>
-              <li>Bug 854955 fixed (NPE)</li>
-              <li>Bug 890896 fixed (HTTP 500 for NoClassDefFoundError)</li>
-              <li>Bug 920505 fixed (ActiveTestSuite)</li>
+            <li>HTML output page refresh rate config (contributed by Aaron Smith)</li>
+            <li>Bug 952450 fixed (Not serializable objects in session)</li>
+            <li>Bug 938685 fixed (formatter displays first test result only)</li>
 			</ul>
 		</p>
 
@@ -188,7 +188,14 @@
 
 
 
-      </td></tr>
+      </td>
+       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+       <td valign="top">
+       <!-- ads_index -->
+       </td>
+      
+      </tr>
     </table>
+    
 	</body>
 </html>
