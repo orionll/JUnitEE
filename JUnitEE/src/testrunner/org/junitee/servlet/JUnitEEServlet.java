@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.13 2002-09-22 22:32:41 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.14 2002-10-01 22:46:19 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -54,16 +54,21 @@ public class JUnitEEServlet extends HttpServlet {
   protected static final String PARAM_RUN_ALL = "all";
   protected static final String PARAM_SEARCH = "search";
   protected static final String PARAM_OUTPUT = "output";
+  protected static final String PARAM_XSL = "xsl";
+
+  protected static final String INIT_PARAM_RESOURCES = "searchResources";
+  protected static final String INIT_PARAM_XSL = "xslStylesheet";
 
   protected static final String OUTPUT_HTML = "html";
   protected static final String OUTPUT_XML = "xml";
 
-
   private static final String RESOURCE_PREFIX = "resource";
 
+  // for cactus support
+  public static final String CACTUS_CONTEXT_URL_PROPERTY = "cactus.contextURL";
 
   private String searchResources;
-
+  private String xslStylesheet;
 
   /**
    * Answer the classloader used to load the test classes. The default implementation
@@ -81,7 +86,8 @@ public class JUnitEEServlet extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
 
-    searchResources = config.getInitParameter("searchResources");
+    searchResources = config.getInitParameter(INIT_PARAM_RESOURCES);
+    xslStylesheet = config.getInitParameter(INIT_PARAM_XSL);
   }
 
 
@@ -99,8 +105,14 @@ public class JUnitEEServlet extends HttpServlet {
     response.setHeader("Cache-Control", "no-cache");
     String test = request.getParameter(PARAM_TEST);
     String runAll = request.getParameter(PARAM_RUN_ALL);
+    String xsl = request.getParameter(PARAM_XSL);
     String[] testClassNames = null;
     String message;
+
+    // xsl parameter overwrites init param, so use the init param only if the request parameter is null
+    if (xsl == null) {
+      xsl = xslStylesheet;
+    }
 
     if (runAll != null) {
       testClassNames = searchForTests(request.getParameterValues(PARAM_SEARCH));
@@ -123,10 +135,14 @@ public class JUnitEEServlet extends HttpServlet {
       return;
     }
 
+    // Support for Jakarta Cactus test cases:
+    // Set up default Cactus System properties so that there is no need
+    // to have a cactus.properties file in WEB-INF/classes
+    System.setProperty(CACTUS_CONTEXT_URL_PROPERTY, "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath());
 
     TestRunner tester = null;
 
-    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath());
+    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl);
     tester = new TestRunner(this.getDynamicClassLoader(), output);
     if (test == null) {
       tester.run(testClassNames);
@@ -270,7 +286,7 @@ public class JUnitEEServlet extends HttpServlet {
    * @return  output producer
    * @throws IOException
    */
-  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath) throws IOException {
+  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath, String xsl) throws IOException {
     String output = outputParam;
 
     if (output == null) {
@@ -281,7 +297,7 @@ public class JUnitEEServlet extends HttpServlet {
       return new HTMLOutput(response, servletPath);
     }
     if (output.equals(OUTPUT_XML)) {
-      return new XMLOutput(response);
+      return new XMLOutput(response, xsl);
     }
     return null;
   }

@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.4 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.5 2002-10-01 22:46:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -23,22 +23,24 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
 
 
   private NumberFormat numberFormat;
-  protected PrintWriter pw;
+  private PrintWriter pw;
   private HttpServletResponse response;
+  private String xsl;
 
 
   /**
    */
-  public XMLOutput(HttpServletResponse response) throws IOException {
+  public XMLOutput(HttpServletResponse response, String xsl) throws IOException {
     this.pw = response.getWriter();
     this.response = response;
+    this.xsl = xsl;
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -56,6 +58,9 @@ public class XMLOutput extends AbstractOutput {
 
   protected void printHeader() {
     pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    if (xsl != null) {
+      pw.println("<?xml-stylesheet type=\"text/xsl\"  href=\"" + xsl + "\"?>");
+    }
     pw.println("<testsuites>");
   }
 
