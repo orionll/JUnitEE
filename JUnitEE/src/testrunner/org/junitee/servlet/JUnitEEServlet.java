@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.8 2002-09-06 13:08:39 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.9 2002-09-18 22:54:59 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -10,13 +10,16 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.junitee.runner.TestRunner;
-import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.output.HTMLOutput;
 import org.junitee.output.XMLOutput;
+import org.junitee.runner.JUnitEEOutputProducer;
+import org.junitee.runner.TestRunner;
 
 
 /**
@@ -37,6 +40,7 @@ import org.junitee.output.XMLOutput;
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class JUnitEEServlet extends HttpServlet {
+
   /**
    * The form parameter which defines the name of the suite
    * class to run.  This parameter can appear more than once
@@ -109,7 +113,9 @@ public class JUnitEEServlet extends HttpServlet {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
 
-    if (testClassNames == null) {
+    if (testClassNames == null && runAll == null) {
+      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), pw);
+    } else if (testClassNames == null) {
       // TODO: move to method
       pw.println("<html>");
       pw.println("<head><title> Error </title></head>");
@@ -176,11 +182,11 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
 
-  protected String[] searchForTests(String[] param) {
+  protected String[] searchForTests(String[] param) throws IOException {
     StringBuffer buffer = new StringBuffer();
 
     if (param == null) {
-	return searchForTests((String)null);
+      return searchForTests((String)null);
     }
     for (int i = 0; i < param.length; i++) {
       buffer.append(param[i]).append(",");
@@ -192,9 +198,9 @@ public class JUnitEEServlet extends HttpServlet {
   /**
    * Search all resources set via the searchResources init parameter for classes ending with "Tests"
    */
-  protected String[] searchForTests(String param) {
+  protected String[] searchForTests(String param) throws IOException {
     if (searchResources == null && param == null) {
-      return null;
+      return searchForTestCaseList();
     }
 
 
@@ -227,11 +233,42 @@ public class JUnitEEServlet extends HttpServlet {
           }
         }
       } catch (Exception e) {
-	e.printStackTrace();
+        e.printStackTrace();
       }
     }
     String[] answer = new String[tests.size()];
     tests.toArray(answer);
+    return answer;
+  }
+
+
+  protected String[] searchForTestCaseList() throws IOException {
+    InputStream in = getClass().getClassLoader().getResourceAsStream("testCase.txt");
+
+    if (in == null) {
+      return null;
+    }
+    try {
+      return parseTestCaseList(in);
+    } finally {
+      in.close();
+    }
+  }
+
+
+  protected String[] parseTestCaseList(InputStream stream) throws IOException {
+    BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+    String line;
+    ArrayList list = new ArrayList();
+
+    while ((line = in.readLine()) != null) {
+      if (line.charAt(0) != '#') {
+        list.add(line);
+      }
+    }
+
+    String[] answer = new String[list.size()];
+    list.toArray(answer);
     return answer;
   }
 
@@ -268,9 +305,40 @@ public class JUnitEEServlet extends HttpServlet {
       return new HTMLOutput(response, servletPath);
     }
     if (output.equals(OUTPUT_XML)) {
-      return new XMLOutput(response, servletPath);
+      return new XMLOutput(response);
     }
     return null;
+  }
+
+
+  protected void printIndexHtml(String[] testCases, PrintWriter pw) throws IOException {
+    InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + "/runner.html");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+    String line;
+    StringBuffer bufferList = null;
+
+    if (testCases != null) {
+      bufferList = new StringBuffer();
+
+      for (int i = 0; i < testCases.length; i++) {
+        bufferList.append("        <tr><td class=\"cell\"><input type=\"checkbox\" name=\"suite\" value=\"");
+        bufferList.append(testCases[i]).append("\">&nbsp;&nbsp;").append(testCases[i]).append("</td></tr>\n");
+      }
+    }
+
+    while ((line = reader.readLine()) != null) {
+      if (testCases != null) {
+        if (line.startsWith("###")) {
+          pw.print(bufferList.toString());
+        } else if (! ((line.startsWith("<!-- beginList")) || (line.startsWith("endList -->")))) {
+          pw.println(line);
+        }
+      } else {
+        pw.println(line);
+      }
+    }
+    reader.close();
+    pw.close();
   }
 
 }

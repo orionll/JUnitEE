@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.2 2002-09-04 22:58:56 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.3 2002-09-18 22:54:59 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -16,13 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
+import org.junitee.util.StringUtils;
 
 
 /**
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class XMLOutput extends AbstractOutput {
 
@@ -34,7 +35,7 @@ public class XMLOutput extends AbstractOutput {
 
   /**
    */
-  public XMLOutput(HttpServletResponse response, String servletPath) throws IOException {
+  public XMLOutput(HttpServletResponse response) throws IOException {
     this.pw = response.getWriter();
     this.response = response;
     numberFormat = NumberFormat.getInstance();
@@ -104,63 +105,27 @@ public class XMLOutput extends AbstractOutput {
 
         if (test.hasError()) {
           pw.print("      <error message=\"");
-          pw.print(test.getError().getMessage());
+          pw.print(StringUtils.xmlText(test.getError().getMessage()));
           pw.print("\" type=\"");
           pw.print(test.getError().getClass().getName());
           pw.println("\">");
-          pw.println(xmlText(exceptionToString(test.getError())));
-          pw.println(xmlText(getEJBExceptionDetail(test.getError())));
+          pw.println(StringUtils.xmlText(exceptionToString(test.getError())));
+          pw.println(StringUtils.xmlText(getEJBExceptionDetail(test.getError())));
           pw.println("      </error>");
         } else if (test.hasFailure()) {
           pw.print("      <failure message=\"");
-          pw.print(test.getFailure().getMessage());
+          pw.print(StringUtils.xmlText(test.getFailure().getMessage()));
           pw.print("\" type=\"");
           pw.print(test.getFailure().getClass().getName());
           pw.println("\">");
-          pw.println(xmlText(exceptionToString(test.getFailure())));
+          pw.println(StringUtils.xmlText(exceptionToString(test.getFailure())));
           pw.println("      </failure>");
         }
-        if (! test.successful()) {
-            pw.println("    </testcase>");
+        if (!test.successful()) {
+          pw.println("    </testcase>");
         }
       }
       pw.println("  </testsuite>");
     }
-  }
-
-
-  /**
-   * This method converts texts to be displayed on
-   * html-page. Following conversion are done
-   * "<" => "&lt;" , ">" => "&gt;" and "&" => "&amp;"
-   * @author Kaarle Kaila
-   * @since 10.10.2001
-   *
-   * And replaced \n with html breaks - jeff
-   */
-  private String xmlText(String text) {
-    StringBuffer sb = new StringBuffer();
-    char c;
-    if (text == null) return "";
-    for (int i = 0; i < text.length(); i++) {
-      c = text.charAt(i);
-      switch (c) {
-        case '<':
-          sb.append("&lt;");
-          break;
-        case '>':
-          sb.append("&gt;");
-          break;
-        case '&':
-          sb.append("&amp;");
-          break;
-        case '\"':
-          sb.append("&quot;");
-          break;
-        default:
-          sb.append(c);
-      }
-    }
-    return sb.toString();
   }
 }

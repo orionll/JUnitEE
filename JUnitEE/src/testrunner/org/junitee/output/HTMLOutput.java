@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.8 2002-09-16 16:33:17 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.9 2002-09-18 22:54:59 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -18,13 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
+import org.junitee.util.StringUtils;
 
 
 /**
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -85,8 +86,8 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("		a:visited	{ color: black; }");
     pw.println("		a:hover		{ color: blue; }");
 
-    pw.println("		.pageTitle	{ font-size: 2em; font-weight: bold;");
-    pw.println("						letter-spacing: 0.25em; text-align: center;");
+    pw.println("		.pageTitle	{ font-size: 1em; font-weight: bold;");
+    pw.println("						letter-spacing: 0.125em; text-align: center;");
     pw.print("						color: #FFFFFF;");
 
     if (isFailure()) {
@@ -227,42 +228,6 @@ public class HTMLOutput extends AbstractOutput {
   }
 
 
-  /**
-   * This method converts texts to be displayed on
-   * html-page. Following conversion are done
-   * "<" => "&lt;" , ">" => "&gt;" and "&" => "&amp;"
-   * @author Kaarle Kaila
-   * @since 10.10.2001
-   *
-   * And replaced \n with html breaks - jeff
-   */
-  private String htmlText(String text) {
-    StringBuffer sb = new StringBuffer();
-    char c;
-    if (text == null) return "";
-    for (int i = 0; i < text.length(); i++) {
-      c = text.charAt(i);
-      switch (c) {
-        case '<':
-          sb.append("&lt;");
-          break;
-        case '>':
-          sb.append("&gt;");
-          break;
-        case '&':
-          sb.append("&amp;");
-          break;
-        case '\n':
-          sb.append("<br>");
-          break;
-        default:
-          sb.append(c);
-      }
-    }
-    return sb.toString();
-  }
-
-
   protected void printErrorsAndFailures() {
     pw.println("<h2> List of errors and failures</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
@@ -285,24 +250,24 @@ public class HTMLOutput extends AbstractOutput {
 
           if (t != null) {
             pw.println("<tr><td class=\"cell\">");
-            pw.println(t.getMessage());
+            pw.println(StringUtils.htmlText(t.getMessage()));
             pw.println("&nbsp;</td></tr>");
 
             pw.println("<tr><td class=\"cell\">");
-            pw.println(htmlText(exceptionToString(t)));
-            pw.println(htmlText(getEJBExceptionDetail(t)));
+            pw.println(StringUtils.htmlText(exceptionToString(t)));
+            pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }
           t = test.getFailure();
 
           if (t != null) {
             pw.println("<tr><td class=\"cell\">");
-            pw.println(t.getMessage());
+            pw.println(StringUtils.htmlText(t.getMessage()));
             pw.println("&nbsp;</td>");
 
             pw.println("<tr><td class=\"cell\">");
-            pw.println(htmlText(exceptionToString(t)));
-            pw.println(htmlText(getEJBExceptionDetail(t)));
+            pw.println(StringUtils.htmlText(exceptionToString(t)));
+            pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }
           pw.println("<tr><td>&nbsp;</td></tr>");
