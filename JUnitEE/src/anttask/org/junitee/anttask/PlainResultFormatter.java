@@ -1,5 +1,5 @@
 /*
- * $Id: PlainResultFormatter.java,v 1.2 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: PlainResultFormatter.java,v 1.3 2003-03-07 20:58:09 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -23,17 +23,14 @@ package org.junitee.anttask;
 
 import java.io.*;
 import java.text.NumberFormat;
-import java.util.*;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.tools.ant.BuildException;
 
 
 /**
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class PlainResultFormatter extends AbstractResultFormatter {

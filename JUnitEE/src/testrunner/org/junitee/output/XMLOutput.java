@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.11 2003-02-28 19:11:49 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.12 2003-03-07 20:58:20 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -9,7 +9,7 @@ package org.junitee.output;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.Iterator;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -45,9 +45,10 @@ public class XMLOutput extends AbstractOutput {
     this.pw = response.getWriter();
     this.response = response;
     this.xsl = xsl;
-    numberFormat = NumberFormat.getInstance();
+    numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
+    numberFormat.setGroupingUsed(false);
   }
 
 
