@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractOutput.java,v 1.6 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: AbstractOutput.java,v 1.7 2002-11-27 23:53:21 o_rossmueller Exp $
  */
 package org.junitee.output;
 
@@ -13,7 +13,7 @@ import org.junitee.runner.TestInfo;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @since 1.5
  */
 public abstract class AbstractOutput implements OutputProducer {
@@ -45,14 +45,7 @@ public abstract class AbstractOutput implements OutputProducer {
   }
 
 
-  protected List getTestInfo() {
-    synchronized (results) {
-      return results.getTestInfo();
-    }
-  }
-
-
-  protected Map getSuiteInfo() {
+  protected List getSuiteInfo() {
     synchronized (results) {
       return results.getSuiteInfo();
     }

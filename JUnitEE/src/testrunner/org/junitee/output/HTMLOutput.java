@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.14 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.15 2002-11-27 23:53:21 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -23,7 +23,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -192,7 +192,7 @@ public class HTMLOutput extends AbstractOutput {
 
 
   protected void printSummary() {
-    if (getSuiteInfo().values().isEmpty()) {
+    if (getSuiteInfo().isEmpty()) {
       pw.println("<h2>No tests executed</h2>");
       return;
     }
@@ -200,7 +200,7 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> Summary of test results </h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().values().iterator();
+    Iterator suites = getSuiteInfo().iterator();
 
     pw.println("<tr><td colspan=\"4\" class=\"sectionTitle\">&nbsp;</td></tr>");
 
@@ -232,7 +232,7 @@ public class HTMLOutput extends AbstractOutput {
 
 
   protected void printMethodList() {
-    if (getSuiteInfo().values().isEmpty()) {
+    if (getSuiteInfo().isEmpty()) {
       if (isSingleTest()) {
         pw.println("<h2>No tests executed</h2>");
       }
@@ -242,7 +242,7 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> List of executed tests</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().values().iterator();
+    Iterator suites = getSuiteInfo().iterator();
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
@@ -318,7 +318,7 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> List of errors and failures</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().values().iterator();
+    Iterator suites = getSuiteInfo().iterator();
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 

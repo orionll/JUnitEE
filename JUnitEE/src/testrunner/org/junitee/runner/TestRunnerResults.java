@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunnerResults.java,v 1.1 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: TestRunnerResults.java,v 1.2 2002-11-27 23:53:25 o_rossmueller Exp $
  */
 package org.junitee.runner;
 
@@ -12,14 +12,14 @@ import junit.framework.Test;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @since 1.5
  */
 public class TestRunnerResults implements TestRunnerListener {
 
   private long timestamp;
-  private List testInfo = new ArrayList();
-  private Map suiteInfo = new HashMap();
+  private List suiteInfo = new ArrayList();
+  private Map suites = new HashMap();
   private TestInfo currentInfo;
   private boolean failure = false;
   private boolean singleTest = false;
@@ -76,7 +76,6 @@ public class TestRunnerResults implements TestRunnerListener {
     long elapsedTime = System.currentTimeMillis() - getTimestamp();
 
     getCurrentInfo().setElapsedTime(elapsedTime);
-    getTestInfo().add(getCurrentInfo());
     addToSuite(getCurrentInfo());
     setCurrentInfo(null);
   }
@@ -103,22 +102,12 @@ public class TestRunnerResults implements TestRunnerListener {
   }
 
 
-  public synchronized List getTestInfo() {
-    return testInfo;
-  }
-
-
-  public synchronized void setTestInfo(List testInfo) {
-    this.testInfo = testInfo;
-  }
-
-
-  public synchronized Map getSuiteInfo() {
+  public synchronized List getSuiteInfo() {
     return suiteInfo;
   }
 
 
-  public synchronized void setSuiteInfo(Map suiteInfo) {
+  public synchronized void setSuiteInfo(List suiteInfo) {
     this.suiteInfo = suiteInfo;
   }
 
@@ -170,11 +159,12 @@ public class TestRunnerResults implements TestRunnerListener {
 
   protected void addToSuite(TestInfo info) {
     String className = info.getTest().getClass().getName();
-    TestSuiteInfo suite = (TestSuiteInfo)getSuiteInfo().get(className);
+    TestSuiteInfo suite = (TestSuiteInfo)suites.get(className);
 
     if (suite == null) {
       suite = new TestSuiteInfo(className);
-      getSuiteInfo().put(className, suite);
+      suites.put(className, suite);
+      getSuiteInfo().add(suite);
     }
     suite.add(info);
   }
