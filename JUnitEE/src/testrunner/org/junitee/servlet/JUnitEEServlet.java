@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.7 2002-09-05 14:18:04 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.8 2002-09-06 13:08:39 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -84,7 +84,6 @@ public class JUnitEEServlet extends HttpServlet {
     super.init(config);
 
     searchResources = config.getInitParameter("searchResources");
-System.out.println("searchResources=" + searchResources);
   }
 
 
