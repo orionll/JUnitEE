@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.5 2002-10-01 22:46:17 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.6 2002-10-06 16:31:41 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -23,7 +23,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -81,8 +81,16 @@ public class XMLOutput extends AbstractOutput {
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
+      String fullName = suite.getTestClassName();
+      int pos = fullName.lastIndexOf( "." );
+
+      String pkgName = (pos == -1) ? "" : fullName.substring( 0, pos );
+      String className = (pos == -1) ? fullName : fullName.substring( pos + 1 );
+
       pw.print("  <testsuite name=\"");
-      pw.print(suite.getTestClassName());
+      pw.print(className);
+      pw.print("\" package=\"");
+      pw.print(pkgName);
       pw.print("\" tests=\"");
       pw.print(suite.getTests().size());
       pw.print("\" failures=\"");
