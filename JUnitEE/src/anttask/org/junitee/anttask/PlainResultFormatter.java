@@ -1,5 +1,5 @@
 /*
- * $Id: PlainResultFormatter.java,v 1.4 2003-03-14 00:03:02 o_rossmueller Exp $
+ * $Id: PlainResultFormatter.java,v 1.5 2003-08-31 12:17:46 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class PlainResultFormatter extends AbstractResultFormatter {
@@ -85,7 +85,7 @@ public class PlainResultFormatter extends AbstractResultFormatter {
     }
     if (errors > 0) {
       buffer.append("-------------- Errors ----------------\n");
-      buffer.append(errorBuffer);
+      buffer.append(errorBuffer.toString()); // for pre1.4 JRE
       buffer.append("----------- ------ ----------------\n");
       if (failures > 0) {
         buffer.append("\n");
@@ -94,7 +94,7 @@ public class PlainResultFormatter extends AbstractResultFormatter {
 
     if (failures > 0) {
       buffer.append("------------- Failures ---------------\n");
-      buffer.append(failureBuffer);
+      buffer.append(failureBuffer.toString()); // for pre1.4 JRE
       buffer.append("---------- -------- ---------------\n");
     }
 
