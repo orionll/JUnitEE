@@ -1,5 +1,5 @@
 /**
- * $Id: TestRunner.java,v 1.3 2001-10-12 21:16:39 kaila Exp $
+ * $Id: TestRunner.java,v 1.4 2001-10-25 07:54:43 lhoriman Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestRunner.java,v $
  */
 
@@ -45,12 +45,12 @@ public class TestRunner extends BaseTestRunner
 	 * The classloader which will dynamically reload classes (if necessary).
 	 */
 	protected ClassLoader loader;
-    
+
     /**
     * True if method list is requested
     */
     protected boolean showMethodList=false;
-    
+
 	/**
 	 * This allows us to store information about a test that has been run
 	 */
@@ -62,7 +62,7 @@ public class TestRunner extends BaseTestRunner
 		public String extraText;		// additional text to display before results
 		public long elapsedTime;
 		public Vector methodData;       // Vector of method names prefixed by 1-char "P" = pass, "F" = fail
-		
+
 		public TestRunOutput(){
 		    methodData = new Vector();
 		}
@@ -77,11 +77,11 @@ public class TestRunner extends BaseTestRunner
 	}
 
     /**
-    * Alternaticve entry 
+    * Alternaticve entry
     * enter here if methodlist selection is in the parameter
     */
 	public void start(String[] testClassNames,boolean showMethodList){
-	    this.showMethodList = showMethodList;	    
+	    this.showMethodList = showMethodList;
 	    start (testClassNames);
 	}
 
@@ -92,7 +92,7 @@ public class TestRunner extends BaseTestRunner
 	 */
 	public void start(String[] testClassNames)
 	{
-	
+
 		this.printHeader(testClassNames);
 
 		pw.println("<hr>");
@@ -101,7 +101,7 @@ public class TestRunner extends BaseTestRunner
 
 		this.printSummary(results);
 
-        
+
 
 		pw.println("<hr>");
 
@@ -166,7 +166,7 @@ public class TestRunner extends BaseTestRunner
 			pw.println("  <li> <tt>" + testClassNames[i] + "</tt> </li>");
 
 		pw.println("</ul>");
-		
+
 	}
 
 	/**
@@ -277,24 +277,24 @@ public class TestRunner extends BaseTestRunner
 		}
 
 	}
-	
+
 	protected void printMethodList(TestRunOutput[] results){
-	    
+
    		pw.println("<h2> List of executed tests</h2>");
 		pw.println("<p> <table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" bgcolor=\"#CCCCFF\" >");
 
-	        
+
 		for (int i = 0;i < results.length;i++) {
 		    pw.println("<tr><td colspan=\"2\" class=\"sectionTitle\">" + results[i].testClassName + "</td></tr>");
 		    for (int j = 0;j < results[i].methodData.size();j++){
 		        String tmp = (String)results[i].methodData.get(j);
 		        if (tmp.length()>2){
 		            String pass = tmp.substring(0,1);
-		            
-		            if (pass.equals(PASSED.substring(0,1))) {		        
+
+		            if (pass.equals(PASSED.substring(0,1))) {
 		                pw.println("<tr><td bgcolor=\"lightgreen\">" + PASSED + "</td>");
 		            }
-		            else if (pass.equals(ERROR.substring(0,1))) {		   		        
+		            else if (pass.equals(ERROR.substring(0,1))) {
 		                pw.println("<tr><td bgcolor=\"red\">" + ERROR + "</td>");
 		            }
 		            else {
@@ -303,7 +303,7 @@ public class TestRunner extends BaseTestRunner
 		            pw.println("<td>" + tmp.substring(1) + "</td></tr>");
 		        }
 		    }
-		        
+
 		}
 		pw.println("</table>");
 
@@ -314,6 +314,8 @@ public class TestRunner extends BaseTestRunner
     * "<" => "&lt;" , ">" => "&gt;" and "&" => "&amp;"
     * @author Kaarle Kaila
     * @since 10.10.2001
+    *
+    * And replaced \n with html breaks - jeff
     */
     private String htmlText(String text){
         StringBuffer sb = new StringBuffer();
@@ -323,16 +325,19 @@ public class TestRunner extends BaseTestRunner
             c = text.charAt(i);
             switch (c) {
                 case '<':
-                sb.append("&lt;");
-                break;
+                    sb.append("&lt;");
+                    break;
                 case '>':
-                sb.append("&gt;");
-                break;
+                    sb.append("&gt;");
+                    break;
                 case '&':
-                sb.append("&amp;");
-                break;
+                    sb.append("&amp;");
+                    break;
+                case '\n':
+                    sb.append("<br>");
+                    break;
                 default:
-                sb.append(c);
+                    sb.append(c);
             }
         }
         return sb.toString();
@@ -343,24 +348,24 @@ public class TestRunner extends BaseTestRunner
 	protected void printTestFailures(String type, Enumeration errors,TestRunOutput tro)
 	{
 	    String tmp1,tmp2;
-	    
+
 		while (errors.hasMoreElements())
 		{
 			TestFailure bad = (TestFailure)errors.nextElement();
-			
-			
+
+
 			Test ff = (Test)bad.failedTest();
 			tmp1 = ff.toString();
 			int ii;
 			for (ii = 0;ii < tro.methodData.size();ii++) {
-			    tmp2 = (String)tro.methodData.get(ii);			    
+			    tmp2 = (String)tro.methodData.get(ii);
 			    if (tmp2.length() > 2) {
 			        if (tmp1.equals(tmp2.substring(1))){
 			            tro.methodData.set(ii, type.substring(0,1) + tmp2.substring(1));
 			        }
 			    }
 			}
-			
+
 			pw.println("<tr valign=top>");
 			pw.println("  <td>");
 			pw.println("    " + type);
@@ -370,10 +375,10 @@ public class TestRunner extends BaseTestRunner
 			pw.println("  </td>");
 			pw.println("  <td>");
 			pw.println("    <pre>");
-			
+
             StringWriter sw = new StringWriter();
             PrintWriter spw = new PrintWriter(sw);
-            bad.thrownException().printStackTrace(spw);            
+            bad.thrownException().printStackTrace(spw);
             pw.write(htmlText(sw.toString())) ;
 //			bad.thrownException().printStackTrace(pw);
 			this.printEJBExceptionDetail(bad.thrownException());
@@ -401,11 +406,11 @@ public class TestRunner extends BaseTestRunner
 				if (ejbe.getCausedByException() != null)
 				{
 					pw.println("Nested exception is:");
-					
+
                     StringWriter sw = new StringWriter();
                     PrintWriter spw = new PrintWriter(sw);
                     ejbe.getCausedByException().printStackTrace(spw);
-                    
+
                     pw.write(htmlText(sw.toString()));
 //					ejbe.getCausedByException().printStackTrace(pw);
 				}
@@ -481,15 +486,15 @@ public class TestRunner extends BaseTestRunner
 		output.testResult = result;
         if (runThisTest instanceof TestSuite) {
             TestSuite thisSuite = (TestSuite)runThisTest;
-            extractNextTestMethod(thisSuite,output);            
+            extractNextTestMethod(thisSuite,output);
         }
         else {
-            
-            output.methodData.add(PASSED.substring(0,1) + "na" );            
+
+            output.methodData.add(PASSED.substring(0,1) + "na" );
         }
 		return output;
 	}
-	
+
     /**
     * retrieve the test names into the output object
     */
@@ -499,7 +504,7 @@ public class TestRunner extends BaseTestRunner
             String tmp = test.toString();
             int ii = tmp.indexOf("(");
             if (ii>0) {
-                output.methodData.add(PASSED.substring(0,1) + tmp);            
+                output.methodData.add(PASSED.substring(0,1) + tmp);
             }
 			else {
 			    if (test instanceof TestSuite ) {
@@ -507,9 +512,9 @@ public class TestRunner extends BaseTestRunner
 			        extractNextTestMethod(newSuite,output);
 			    }
 			    else {
-			        output.methodData.add(UNKNOWN.substring(0,1) + tmp);            
+			        output.methodData.add(UNKNOWN.substring(0,1) + tmp);
 			    }
-			}			
+			}
 		}
 	}
 
