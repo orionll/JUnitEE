@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.12 2003-03-07 20:58:20 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.13 2003-03-14 00:03:07 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -79,7 +79,7 @@ public class XMLOutput extends AbstractOutput {
 
 
   private String elapsedTimeAsString(long value) {
-    return numberFormat.format((double)value / 1000);
+    return numberFormat.format((double)value / 1000.0);
   }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: PlainResultFormatter.java,v 1.3 2003-03-07 20:58:09 o_rossmueller Exp $
+ * $Id: PlainResultFormatter.java,v 1.4 2003-03-14 00:03:02 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -23,6 +23,7 @@ package org.junitee.anttask;
 
 import java.io.*;
 import java.text.NumberFormat;
+import java.util.*;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -30,13 +31,10 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class PlainResultFormatter extends AbstractResultFormatter {
-
-  private NumberFormat numberFormat = NumberFormat.getInstance();
-
 
   public void format(Node testSuiteNode) throws IOException {
     NamedNodeMap attributes = testSuiteNode.getAttributes();
@@ -45,14 +43,13 @@ public class PlainResultFormatter extends AbstractResultFormatter {
     int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
     int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
     String time = attributes.getNamedItem("time").getNodeValue();
-    Number number = new Double(time);
 
     StringBuffer buffer = new StringBuffer("Testsuite: ");
     buffer.append(testName).append("\n");
     buffer.append("Tests run: ").append(runs).append("\n");
     buffer.append("Errors: ").append(errors).append("\n");
     buffer.append("Failures: ").append(failures).append("\n");
-    buffer.append("Time elapsed: ").append(numberFormat.format(number)).append(" sec\n\n");
+    buffer.append("Time elapsed: ").append(time).append(" sec\n\n");
 
     StringBuffer errorBuffer = new StringBuffer();
     StringBuffer failureBuffer = new StringBuffer();
