@@ -1,132 +1,169 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.5 2002-08-15 19:59:36 o_rossmueller Exp $
+	$Id: build.xml,v 1.6 2002-09-04 22:58:55 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
 <project name="junitee-example" default="all" basedir=".">
 
-	<property name="name" value="junitee-example" />
+  <property name="name" value="junitee-example"/>
 
-	<property name="build.dir" value="build" />
+  <property name="build.dir" value="build"/>
 
   <property name="lib.dir" value="${basedir}/../3rdparty"/>
   <property name="junitee.dir" value="${basedir}/../lib"/>
-  
-	<property name="junit.library" value="${lib.dir}/junit.jar" />
-	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
-	<property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar" />
+
+  <property name="junit.library" value="${lib.dir}/junit.jar"/>
+  <property name="servlet.library" value="${lib.dir}/servlet.jar"/>
+  <property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar"/>
   <property name="junitee.library" value="${junitee.dir}/junitee.jar"/>
-  
-	<property name="javasrc.dir" value="javasrc" />
-	<property name="javasrc.staging.dir" value="${build.dir}/${javasrc.dir}" />
+  <property name="junitee-anttask.library" value="${junitee.dir}/junitee-anttask.jar"/>
 
-	<property name="app-ear.dir" value="components/app-ear" />
-	<property name="app-ear.product" value="${build.dir}/${name}.ear" />
+  <property name="javasrc.dir" value="javasrc"/>
+  <property name="javasrc.staging.dir" value="${build.dir}/${javasrc.dir}"/>
 
-	<property name="ejb-jar.dir" value="components/ejb-jar" />
-	<property name="ejb-jar.file" value="${name}-ejb.jar" />
-	<property name="ejb-jar.product" value="${build.dir}/${ejb-jar.file}" />
+  <property name="app-ear.dir" value="components/app-ear"/>
+  <property name="app-ear.product" value="${build.dir}/${name}.ear"/>
 
-	<property name="web-war.dir" value="components/web-war" />
-	<property name="web-war.file" value="${name}-web.war" />
-	<property name="web-war.product" value="${build.dir}/${web-war.file}" />
-	
-	<property name="test-war.dir" value="components/test-war" />
-	<property name="test-war.file" value="${name}-test.war" />
-	<property name="test-war.product" value="${build.dir}/${test-war.file}" />
-	<property name="test-jar.file" value="${name}-test.jar" />
-	<property name="test-jar.product" value="${build.dir}/${test-jar.file}" />
+  <property name="ejb-jar.dir" value="components/ejb-jar"/>
+  <property name="ejb-jar.file" value="${name}-ejb.jar"/>
+  <property name="ejb-jar.product" value="${build.dir}/${ejb-jar.file}"/>
 
-	<property name="orion.dir" value="/java/orion" />
-	<property name="lib.dir" value="lib" />
+  <property name="web-war.dir" value="components/web-war"/>
+  <property name="web-war.file" value="${name}-web.war"/>
+  <property name="web-war.product" value="${build.dir}/${web-war.file}"/>
 
-	<path id="master-classpath">
-		<pathelement location="${junit.library}" />
-		<pathelement location="${servlet.library}" />
-		<pathelement location="${j2ee.library}" />
-		<pathelement location="${junitee.library}" />
-	</path>
+  <property name="test-war.dir" value="components/test-war"/>
+  <property name="test-war.file" value="${name}-test.war"/>
+  <property name="test-war.product" value="${build.dir}/${test-war.file}"/>
+  <property name="test-jar.file" value="${name}-test.jar"/>
+  <property name="test-jar.product" value="${build.dir}/${test-jar.file}"/>
 
-	<property name="debug" value="on" />
+  <property name="orion.dir" value="/java/orion"/>
+  <property name="lib.dir" value="lib"/>
+
+  <path id="master-classpath">
+    <pathelement location="${junit.library}"/>
+    <pathelement location="${servlet.library}"/>
+    <pathelement location="${j2ee.library}"/>
+    <pathelement location="${junitee.library}"/>
+  </path>
+
+  <property name="debug" value="on"/>
 
 
-	<target name="clean">
-		<delete dir="${build.dir}" />
-	</target>
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
 
- 	<target name="javasrc">
-		<mkdir dir="${javasrc.staging.dir}" />
-		<javac srcdir="${javasrc.dir}"
-				destdir="${javasrc.staging.dir}"
-				debug="${debug}">
-			<classpath refid="master-classpath" />
-		</javac>
-	</target>
+  <target name="javasrc">
+    <mkdir dir="${javasrc.staging.dir}"/>
+    <javac srcdir="${javasrc.dir}"
+      destdir="${javasrc.staging.dir}"
+      debug="${debug}">
+      <classpath refid="master-classpath"/>
+    </javac>
+  </target>
 
-	<target name="ejb-jar" depends="javasrc">
-		<jar jarfile="${ejb-jar.product}">
-			<fileset dir="${ejb-jar.dir}" />
+  <target name="ejb-jar" depends="javasrc">
+    <jar jarfile="${ejb-jar.product}">
+      <fileset dir="${ejb-jar.dir}"/>
 
-			<fileset dir="${javasrc.staging.dir}">
-				<include name="org/infohazard/ejb/**/*.class" />
-			</fileset>
-		</jar>
-	</target>
-  
-  <target name="test-jar" depends="javasrc">
-    <jar jarfile="${test-jar.product}">
-			<fileset dir="${javasrc.staging.dir}">
-				<include name="org/infohazard/test/**/*.class" />
-			</fileset>
+      <fileset dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/ejb/**/*.class"/>
+      </fileset>
     </jar>
   </target>
 
-	<target name="web-war" depends="javasrc">
-		<war warfile="${web-war.product}" webxml="${web-war.dir}/WEB-INF/web.xml">
-			<fileset dir="${web-war.dir}" excludes="WEB-INF/**" />
-      
-			<classes dir="${javasrc.staging.dir}">
-				<include name="org/infohazard/ejb/**/*.class" />
-        <exclude name="org/infohazard/ejb/**/EinsteinEJB.class" />
-			</classes>
-      
-		</war>
-	</target>
+  <target name="test-jar" depends="javasrc">
+    <jar jarfile="${test-jar.product}">
+      <fileset dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/test/**/*.class"/>
+      </fileset>
+    </jar>
+  </target>
 
-	<target name="test-war" depends="javasrc, test-jar">
-		<war warfile="${test-war.product}" webxml="${test-war.dir}/WEB-INF/web.xml">
-			<fileset dir="${test-war.dir}" excludes="WEB-INF/**" />
-			
-			<classes dir="${javasrc.staging.dir}">
-				<include name="org/infohazard/servlet/**/*.class" />
-				<include name="org/infohazard/ejb/**/*.class" />
-        <exclude name="org/infohazard/ejb/**/EinsteinEJB.class" />
-			</classes>
-      
+  <target name="web-war" depends="javasrc">
+    <war warfile="${web-war.product}" webxml="${web-war.dir}/WEB-INF/web.xml">
+      <fileset dir="${web-war.dir}" excludes="WEB-INF/**"/>
+
+      <classes dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/ejb/**/*.class"/>
+        <exclude name="org/infohazard/ejb/**/EinsteinEJB.class"/>
+      </classes>
+
+    </war>
+  </target>
+
+  <target name="test-war.old" depends="javasrc, test-jar">
+    <war warfile="${test-war.product}" webxml="${test-war.dir}/WEB-INF/web.xml">
+      <fileset dir="${test-war.dir}" excludes="WEB-INF/**"/>
+
+      <classes dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/servlet/**/*.class"/>
+        <include name="org/infohazard/ejb/**/*.class"/>
+        <exclude name="org/infohazard/ejb/**/EinsteinEJB.class"/>
+      </classes>
+
       <lib dir="${junitee.dir}" includes="*.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
       <lib dir="${build.dir}" includes="${test-jar.file}"/>
-		</war>
-	</target>
+    </war>
+  </target>
 
-	<target name="app-ear" depends="ejb-jar, web-war, test-war">
-		<jar jarfile="${app-ear.product}">
-			<fileset dir="${app-ear.dir}" />
 
-			<fileset dir="${build.dir}">
-				<include name="${ejb-jar.file}" />
-				<include name="${web-war.file}" />
-				<include name="${test-war.file}" />
-			</fileset>
-		</jar>
-	</target>
+  <target name="test-war">
+    <taskdef name="junitEEWar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
 
-	<target name="deploy" depends="app-ear">
-		<copy file="${app-ear.product}"
-				todir="${orion.dir}/applications" />
-	</target>
+    <junitEEWar destFile="${test-war.product}">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/test/**/*.class"/>
+        <include name="org/infohazard/ejb/**/*.class"/>
+        <exclude name="org/infohazard/ejb/**/EinsteinEJB.class"/>
+      </classes>
+      <testcases dir="${javasrc.staging.dir}">
+        <include name="org/infohazard/test/**/*.class"/>
+      </testcases>
+      <ejbRef ejbRefName="ejb/EinsteinEJB"
+        ejbRefType="Session"
+        home="org.infohazard.ejb.einstein.EinsteinHome"
+        remote="org.infohazard.ejb.einstein.Einstein"
+        ejbLink="EinsteinEJB"/>
+    </junitEEWar>
+  </target>
+
+  <target name="app-ear" depends="ejb-jar, web-war, test-war">
+    <jar jarfile="${app-ear.product}">
+      <fileset dir="${app-ear.dir}"/>
+
+      <fileset dir="${build.dir}">
+        <include name="${ejb-jar.file}"/>
+        <include name="${web-war.file}"/>
+        <include name="${test-war.file}"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="run-tests">
+    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.infohazard.test.EinsteinTest"/>
+    </junitee>
+  </target>
+
+
+  <target name="deploy" depends="app-ear">
+    <copy file="${app-ear.product}"
+      todir="${orion.dir}/applications"/>
+  </target>
 
   <target name="all" depends="app-ear" description="Build the example application"/>
 </project>

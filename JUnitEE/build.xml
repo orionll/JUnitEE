@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.7 2002-09-01 13:05:30 o_rossmueller Exp $
+	$Id: build.xml,v 1.8 2002-09-04 22:58:55 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -21,6 +21,7 @@
   <property name="junit.library" value="${lib.dir}/junit.jar"/>
   <property name="servlet.library" value="${lib.dir}/servlet.jar"/>
   <property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar"/>
+  <property name="xml.library" value="${lib.dir}/xerces.jar"/>
 
   <property name="src.dir" value="src"/>
   <property name="src.testrunner" value="${src.dir}/testrunner"/>
@@ -60,12 +61,12 @@
 
 
   <target name="compile" depends="prepare">
-    <javac srcdir="${src.testrunner}"
+    <javac srcdir="${src.testrunner}" debug="on"
       destdir="${build.testrunner}"
       classpath="${junit.library}:${servlet.library}:${j2ee.library}"/>
-    <javac srcdir="${src.anttask}"
+    <javac srcdir="${src.anttask}" debug="on"
       destdir="${build.anttask}"
-      classpath="${ant.library}"/>
+      classpath="${ant.library}:${xml.library}"/>
   </target>
 
 

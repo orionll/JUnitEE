@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.1 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.2 2002-09-04 22:58:56 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -22,21 +22,11 @@ import org.junitee.runner.TestSuiteInfo;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XMLOutput extends AbstractOutput {
 
-  protected static final String ERROR = "Error";
-  protected static final String FAILURE = "Failure";
-  protected static final String PASSED = "Passed";
-  protected static final String UNKNOWN = "Unknown";
 
-  protected static final String RESOURCE_RED_BULLET = "bullets_red_ball.gif";
-  protected static final String RESOURCE_YELLOW_BULLET = "bullets_yellow_ball.gif";
-  protected static final String RESOURCE_GREEN_BULLET = "bullets_green_ball.gif";
-  protected static final String RESOURCE_INFO = "info.png";
-
-  private String servletPath;
   private NumberFormat numberFormat;
   protected PrintWriter pw;
   private HttpServletResponse response;
@@ -47,7 +37,6 @@ public class XMLOutput extends AbstractOutput {
   public XMLOutput(HttpServletResponse response, String servletPath) throws IOException {
     this.pw = response.getWriter();
     this.response = response;
-    this.servletPath = servletPath;
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -89,7 +78,7 @@ public class XMLOutput extends AbstractOutput {
       pw.print(suite.getTestClassName());
       pw.print("\" tests=\"");
       pw.print(suite.getTests().size());
-      pw.print("\" failues=\"");
+      pw.print("\" failures=\"");
       pw.print(suite.getFailures().size());
       pw.print("\" errors=\"");
       pw.print(suite.getErrors().size());

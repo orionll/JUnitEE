@@ -18,7 +18,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JUnitEEWarTask extends Task {
     /**
@@ -126,7 +126,7 @@ public class JUnitEEWarTask extends Task {
         "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
     private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application"; 
     private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet"; 
-    private final static String WEBXML_SERVLET_CLASS = "g.junitee.servlet.JUnitEEServlet"; 
+    private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
         
     private File createWebXml() throws BuildException {
         try {

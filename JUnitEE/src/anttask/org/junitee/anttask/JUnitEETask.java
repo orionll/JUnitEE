@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.2 2002-09-04 22:58:55 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -9,19 +9,31 @@
 package org.junitee.anttask;
 
 
-import java.util.*;
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JUnitEETask extends Task {
 
@@ -63,6 +75,15 @@ public class JUnitEETask extends Task {
     while (enum.hasMoreElements()) {
       ((JUnitEETest) enum.nextElement()).setHaltonerror(value);
     }
+  }
+
+
+  /**
+   * Tell the task to print a verbose test summary.
+   *
+   */
+  public void setPrintsummary(boolean printSummary) {
+    this.printSummary = printSummary;
   }
 
 
@@ -112,7 +133,7 @@ public class JUnitEETask extends Task {
       throw new BuildException("You must specify the url attribute", location);
     }
     try {
-      URL testURL = new URL(url);
+      new URL(url);
     } catch (MalformedURLException e) {
       throw new BuildException(url + " is no valid URL");
     }
@@ -132,7 +153,7 @@ public class JUnitEETask extends Task {
     StringBuffer arguments = new StringBuffer();
 
     arguments.append(url).append("?");
-    arguments.append(URLEncoder.encode("sendResult")).append("=").append("true");
+    arguments.append(URLEncoder.encode("output")).append("=").append("xml");
     arguments.append("&");
 
     if (test.getResource() != null) {
@@ -149,46 +170,68 @@ public class JUnitEETask extends Task {
     try {
       URL url = new URL(arguments.toString());
       URLConnection con = url.openConnection();
-      BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-      parseResult(in, test);
+      parseResult(con.getInputStream(), test);
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
+      e.printStackTrace();
       throw new BuildException("Failed to execute test: " + e.getMessage());
     }
   }
 
 
-  private void parseResult(BufferedReader in, JUnitEETest test) throws IOException {
-    String line = in.readLine();
+  private void parseResult(InputStream in, JUnitEETest test) throws IOException {
 
-    while (!line.equals("======")) {
-      System.out.println(line);  // test case
-      in.readLine(); // skip elapsed time
-      line = in.readLine();  // result
-      System.out.println(line);
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      Document document = builder.parse(in);
+      Element root = document.getDocumentElement();
+      NodeList testcases = root.getElementsByTagName("testsuite");
+      boolean success = true;
 
-      if (line.equals("TEST FAILED")) {
-        line = in.readLine();
-        while (!line.equals("===")) {
-          if (line.equals("Error") && (test.getHaltonerror() || test.getHaltonfailure())) {
+       log("Running tests ...", Project.MSG_INFO);
+      for (int i = 0; i < testcases.getLength(); i++) {
+        Node node = testcases.item(i);
+        NamedNodeMap attributes = node.getAttributes();
+        String testClass = attributes.getNamedItem("name").getNodeValue();
+        String runs = attributes.getNamedItem("tests").getNodeValue();
+        int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
+        int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
+        String time = attributes.getNamedItem("time").getNodeValue();
+
+        if (printSummary) {
+          StringBuffer buffer = new StringBuffer();
+          buffer.append(testClass).append(" (runs: ").append(runs).append(" errors: ").append(errors);
+          buffer.append(" failures: ").append(failures).append(" time: ").append(time).append(" sec)");
+          log(buffer.toString(), Project.MSG_INFO);
+        }
+        if (errors != 0) {
+          success = false;
+          if (test.getHaltonerror() || test.getHaltonfailure()) {
             throw new BuildException("Error while running test.");
           }
-          if (line.equals("Failure") && test.getHaltonfailure()) {
+        }
+        if (failures != 0) {
+          success = false;
+          if (test.getHaltonfailure()) {
             throw new BuildException("Failure while running test.");
           }
-          while (!(line = in.readLine()).equals("#")) {
-          }
-          ;
-          line = in.readLine();
         }
-      } else {
-        line = in.readLine(); // skip marker
       }
-      line = in.readLine();
+      if (success) {
+        log("Test successful", Project.MSG_INFO);
+      } else {
+        log("TEST FAILED", Project.MSG_INFO);
+      }
+    } catch (FactoryConfigurationError factoryConfigurationError) {
+    } catch (ParserConfigurationException e) {
+    } catch (SAXException e) {
+    } catch (IOException e) {
     }
   }
 
 
   private String url;
   private Vector tests = new Vector();
+  private boolean printSummary = false;
 }
