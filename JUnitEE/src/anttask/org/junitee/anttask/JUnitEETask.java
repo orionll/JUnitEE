@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.10 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.11 2002-12-05 19:48:00 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -23,13 +23,14 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class JUnitEETask extends Task {
 
@@ -224,7 +225,18 @@ public class JUnitEETask extends Task {
   private boolean parseResult(InputStream in, JUnitEETest test) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
-    Document document = builder.parse(in);
+
+    Document document;
+    byte[] buffer = readInput(in);
+
+    try {
+      document = builder.parse(new ByteArrayInputStream(buffer));
+    } catch (SAXException e) {
+      log("Invalid xml:\n " + new String(buffer), Project.MSG_ERR);
+
+      throw new BuildException("Unable to parse test result (no valid xml).");
+    }
+
     Element root = document.getDocumentElement();
     if (root.getAttributeNode("unfinished") != null) {
       log(String.valueOf(root.getAttributeNode("unfinished")), Project.MSG_DEBUG);
@@ -295,6 +307,18 @@ public class JUnitEETask extends Task {
       throw new BuildException("Test execution failed.");
     }
     return true;
+  }
+
+
+  private byte[] readInput(InputStream in) throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    int r;
+    byte[] buffer = new byte[2048];
+
+    while ((r = in.read(buffer)) != -1) {
+      out.write(buffer, 0, r);
+    }
+    return out.toByteArray();
   }
 
 
