@@ -1,5 +1,5 @@
 /*
- * $Id: SetupExceptionTest.java,v 1.1 2003-01-29 23:31:36 o_rossmueller Exp $
+ * $Id: SetupExceptionTest.java,v 1.2 2003-04-10 19:55:43 o_rossmueller Exp $
  *
  */
 package org.junitee.ejb.einstein.test;
@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
 /**
  * This test is to reproduce bug #676419.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class SetupExceptionTest extends TestCase {
@@ -36,9 +36,6 @@ public class SetupExceptionTest extends TestCase {
 
   public void testRun() {
     assertTrue(true);
-    fail("This is bug 676419");
   }
-
-
 }
 

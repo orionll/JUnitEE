@@ -63,3 +63,12 @@ thread parameter:
 1. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
 2. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
 3. click the stop button => 'Execution will be stopped ...' is displayed; Execution was stopped in the test report
+
+
+Distribution
+------------
+
+build the distribution, extract the distribution packages
+
+test if the src distribution builds
+test if the example distribution builds and runs as expected by repeating the tests above
