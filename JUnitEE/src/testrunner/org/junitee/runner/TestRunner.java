@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.11 2003-07-05 13:45:20 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.12 2004-04-16 11:15:29 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -22,7 +22,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
@@ -141,7 +141,7 @@ public class TestRunner extends BaseTestRunner {
     } catch (InvocationTargetException e) {
       runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (NoSuchMethodException e) {
-      runFailed("No method \"" + testName + "\" in class \"" + suiteClassName + "\"");
+      runFailed("Missing constructor \"" + suiteClassName + "\"(String) in class \"" + suiteClassName + "\"");
     }
     return null;
   }
