@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<!--
+	$Id: build.xml,v 1.1 2002-07-31 21:45:31 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/anttask/build.xml,v $
+
+	Build file for JUnit servlet/ejb extensions.
+
+	You will probably need to change the library paths
+	and the deployment directory to build.
+
+	Jeff Schnitzer (jeff@infohazard.org)
+-->
+
+<project name="junitee-anttask" default="all" basedir=".">
+
+	<property name="name" value="${ant.project.name}" />
+
+  <property name="lib.dir" value="${basedir}/../lib"/>
+  
+	<property name="ant.library" value="${lib.dir}/ant.jar" />
+
+ 	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="build.classes" value="${build.dir}/classes" />
+	<property name="build.lib" value="${build.dir}/lib" />
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="prepare">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.lib}" />
+	</target>
+
+ 	<target name="compile" depends="prepare" description="Compile the sources">
+		<javac srcdir="${src.dir}"
+				destdir="${build.classes}"
+				classpath="${ant.library}" />
+	</target>
+
+	<target name="jar" depends="prepare, compile" description="Build the jar">
+		<jar jarfile="${build.lib}/${name}.jar"
+				basedir="${build.classes}" />
+	</target>
+
+  <target name="all" depends="jar" description="Build the JUnitEE anttask library"/>
+</project>
+
