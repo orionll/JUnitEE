@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.3 2002-09-02 14:26:46 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.4 2002-09-02 14:29:53 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.runner.TestSuiteInfo;
  * This class implements the {@link JUnitEETestListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class HTMLOutput implements JUnitEETestListener {
   protected static final String ERROR     = "Error";
@@ -348,8 +348,8 @@ public class HTMLOutput implements JUnitEETestListener {
             pw.println("</td>");
           }
         }
+        pw.println("<tr><td>&nbsp;</td></tr>");
       }
-      pw.println("<tr><td>&nbsp;</td></tr>");
     }
     pw.println("</table>");
   }
