@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.8 2002-11-03 22:48:26 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.9 2002-11-17 14:00:28 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.8 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.9 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -81,8 +81,8 @@
     <p>Adding JUnitEE to your server application is quite easy. You just have to create a web application which contains the
     JUnitEE Test Servlet and your test classes. Place <code>junitee.jar</code> and <code>junit.jar</code> and the jar containing your tests
     in the <code>WEB-INF/lib</code> directory of the web archive. The minimal deployment descriptor contains the declaration of the JUnitEE servlet and
-    the corresponding servlet mapping. JUnitEE provides two servlets which differ in the format of the test report they generate by default. To get
-    html output you use <code>org.junitee.servlet.JUnitEEServlet</code>:
+    the corresponding servlet mapping. JUnitEE provides three servlets which differ in the format of the test report they generate by default and the thread
+    mode they use. In general you will use <code>org.junitee.servlet.JUnitEEServlet</code>:
     </p>
 
     <p>
@@ -109,8 +109,11 @@
     </div>
     </p>
     <br>
+    <p>This servlet generates html output by default and does not fork a new thread for test execution.</p>
     <p>Another servlet provided by JUnitEE is <code>org.junitee.servlet.JUnitEEThreadedServlet</code> which by default forks a new thread for
-    test execution. For the other servlets you get the same behaviour by using the <a href="#parameters"><code>thread</code></a> parameter in the request. To use this servlet the deployment descriptor looks like this:
+    test execution. This is usefull if test execution takes a long time and therefore could be interrupted by socket or browser timeouts. For the other
+    servlets you get the same behaviour by using the <a href="#parameters"><code>thread</code></a> parameter in the request. To use this servlet the
+    deployment descriptor looks like this:
     </p>
     <p>
     <div class="code"><code>
@@ -201,9 +204,9 @@
     </div>
     </p>
     <br>
-    <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCases.txt</code> to your .war file. If this
-    file exists, JUnitEE will not search any jar files but will use the list of test case names declared in <code>testCases.txt</code> instead. <code>testCases.txt</code>
-    has to be a simple text file containing one test class name per line like in this example:
+    <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCases.txt</code> to your .war file.
+    If no jar files are specified, JUnitEE will look for that file and use the list of test case names declared in <code>testCases.txt</code> instead.
+    <code>testCases.txt</code> has to be a simple text file containing one test class name per line like in this example:
     </p>
 
     <p>
@@ -403,7 +406,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     <p>The <code>formatter</code> element supports the following attributes:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
-        <tr><td colspan="3" class="tabletitle">JUnitEETask attributes</td></tr>
+        <tr><td colspan="3" class="tabletitle">Formatter attributes</td></tr>
         <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
         <tr><td class="whiterow">type</td><td class="whiterow">Use a predefined formatter (either <code>xml</code>, <code>plain</code>, or <code>brief</code>).</td><td class="whiterow">YES, if <code>classname</code> is not set.</td></tr>
         <tr><td class="coloredrow">classname</td><td class="coloredrow">Name of a custom formatter class.</td><td class="coloredrow">YES, if <code>type</code> is not set.</td></tr>
@@ -414,7 +417,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     </div>
     </p>
 
-	<p>The task requires a set of nested <code>&lt;test&gt;</code> elements to define which tests to run. Each <code>&lt;test&gt;</code> may contain nested <code>&lt;formatter&gt;</code>elements which are added
+	<p>The task requires a set of nested <code>&lt;test&gt;</code> elements to define which tests to run. Each <code>&lt;test&gt;</code> may contain nested <code>&lt;formatter&gt;</code> elements which are added
 	to the list of formatters specified by <code>&lt;junitee&gt;</code>. The following attributes are supported by <code>&lt;test&gt;</code>:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
@@ -430,8 +433,8 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs while running this test</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">filtertrace</td><td class="coloredrow">Filter the stack trace in case of an error/failure. This overwrites the setting of the
         task.</td><td class="coloredrow">No</td></tr>
-        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute and the extension of the formatter.</td>
-        <td class="whiterow">No; default is TEST-<em>name</em>, where <em>name</em> is the name of the test specified in the name attribute or <code>all</code> if <code>runall</code> is set.</td></tr>
+        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute, the name of the test and the extension of the formatter.</td>
+        <td class="whiterow">No; default is <code>TEST-</code>, or <code>TEST-ALL-</code> if <code>runall</code> is set for this test.</td></tr>
         <tr><td class="coloredrow">todir</td><td class="coloredrow">Directory to write the reports to.</td><td class="coloredrow">No; default is the current directory.</td></tr>
         <tr><td class="whiterow">if</td><td class="whiterow">Only run test if the named property is set.</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">unless</td><td class="coloredrow">Only run test if the named property is <b>not</b> set.</td><td class="coloredrow">No</td></tr>
@@ -545,7 +548,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
 			<tr> <td class="sectionTitle">Jakarta Cactus support</td> </tr>
 		</table>
 
-    <p>Both <code>org.junitee.servlet.JUnitEEServlet</code> and <code>org.junitee.servlet.JUnitEEXMLServlet</code> set the system property
+    <p>All JUnitEE servlets set the system property
     <code>cactus.contextURL</code> to the context of the web application the JUnitEE servlet is part of. Therefore you don't have to specify
     this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application).
     </p>
