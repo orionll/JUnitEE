@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunnerResults.java,v 1.5 2003-06-01 11:59:28 o_rossmueller Exp $
+ * $Id: TestRunnerResults.java,v 1.6 2004-03-21 14:55:03 o_rossmueller Exp $
  */
 package org.junitee.runner;
 
@@ -12,15 +12,15 @@ import junit.framework.Test;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @since 1.5
  */
 public class TestRunnerResults implements TestRunnerListener {
 
+  private ThreadLocal currentInfo = new ThreadLocal();
   private long timestamp;
   private ArrayList suiteInfo = new ArrayList();
   private HashMap suites = new HashMap();
-  private TestInfo currentInfo;
   private boolean failure = false;
   private boolean singleTest = false;
   private ArrayList errorMessages = new ArrayList();
@@ -131,12 +131,12 @@ public class TestRunnerResults implements TestRunnerListener {
 
 
   public synchronized TestInfo getCurrentInfo() {
-    return currentInfo;
+    return (TestInfo) currentInfo.get();
   }
 
 
   public synchronized void setCurrentInfo(TestInfo currentInfo) {
-    this.currentInfo = currentInfo;
+    this.currentInfo.set(currentInfo);
   }
 
 
