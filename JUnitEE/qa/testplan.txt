@@ -13,9 +13,9 @@ juniteewar task
 
 in the example directory call
 
-1. ant war-qa-1 => there may be no diff output
+1. ant qa-war-1 => there may be no diff output
 
-2. ant war-qa-2 => there may be no diff output
+2. ant qa-war-2 => there may be no diff output
 
 
 junitee task
@@ -39,8 +39,8 @@ deploy junitee-example.ear
 
 basic functions:
 
-1. http://localhost:8080/exampletest  => index.html should be displayed
-2. http://localhost:8080/exampletest/TestServlet  => list of test cases should be displayed
+1. qa.html: http://localhost:8080/exampletest  => index.html should be displayed (qa.html)
+2. qa.html: http://localhost:8080/exampletest/TestServlet  => list of test cases should be displayed
 3. select 'Run all tests' and click 'Run' => after some time test results are displayed
 4. click the info icon for org.junitee.ejb.einstein.test.EinsteinTest => page scrolls to the suite details
 5. click the info icon for 'testEmc2' => page scrolls to test details
@@ -54,10 +54,12 @@ basic functions:
 
 search parameter:
 
-1. http://localhost:8080/exampletest/TestServlet?search=test2.jar => empty list of tests is displayed
-2. http://localhost:8080/exampletest/TestServlet?search=test.jar => list of available tests is displayed
-3. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true => after some time test results are displayed
+1. qa.html: http://localhost:8080/exampletest/TestServlet?search=test2.jar => empty list of tests is displayed
+2. qa.html: http://localhost:8080/exampletest/TestServlet?search=test.jar => list of available tests is displayed
+3. qa.html: http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true => after some time test results are displayed
 
 thread parameter:
 
 1. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
+2. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
+3. click the stop button => 'Execution will be stopped ...' is displayed; Execution was stopped in the test report

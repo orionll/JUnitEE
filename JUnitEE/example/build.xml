@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.15 2003-03-02 18:37:22 o_rossmueller Exp $
+	$Id: build.xml,v 1.16 2003-03-16 12:50:19 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -180,13 +180,22 @@
   <!-- execute the tests -->
 
   <target name="run-tests" description="Run the tests">
+    <delete>
+      <fileset dir="${build.dir}">
+        <include name="TEST*"/>
+      </fileset>
+    </delete>
+
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
-      <test runall="true"/>
+      <test runall="true" todir="${build.dir}">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
       <test runall="true" resource="/WEB-INF/lib/test.jar"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
 
-      <test runall="true" outfile="TEST_ALL-">
+      <test runall="true" outfile="TEST_ALL-" todir="${build}">
         <formatter type="xml"/>
         <formatter type="plain"/>
       </test>
@@ -195,6 +204,9 @@
         <formatter type="plain"/>
       </test>
     </junitee>
+
+    <available file="${build.dir}/TEST-ALL-org.junitee.ejb.einstein.test.EinsteinTest.xml" property="formatter-output.available"/>
+    <fail message="formatter output not in build dir" unless="formatter-output.available"/>
 
     <echo message="Property test.failure: ${test.failure}"/>
     <echo message="Property test.error: ${test.error}"/>
