@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.0.9">
+<TITLE>org.junitee.ejb.einstein.EinsteinEJB (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinEJB</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="FormalComment">/**
+<A NAME="2"></A> * $Id: EinsteinEJB.java.html,v 1.1 2002-09-22 22:32:41 o_rossmueller Exp $
+<A NAME="3"></A> * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial/org/junitee/ejb/einstein/EinsteinEJB.java.html,v $
+<A NAME="4"></A> */</FONT>
+<A NAME="5"></A>
+<A NAME="6"></A><FONT ID="Package">package</FONT> <A HREF="../../../../org.junitee.ejb.einstein.index.html" target="packageFrame">org.junitee.ejb.einstein</A>;
+<A NAME="7"></A>
+<A NAME="8"></A>
+<A NAME="9"></A><FONT ID="Import">import</FONT> javax.ejb.*;
+<A NAME="10"></A>
+<A NAME="11"></A><FONT ID="Import">import</FONT> <A HREF="../../../../org/junitee/ejb/einstein/BadNumberException.java.html">org.junitee.ejb.einstein.BadNumberException</A>;
+<A NAME="12"></A><FONT ID="Import">import</FONT> <A HREF="../../../../org/junitee/ejb/einstein/EinsteinBusiness.java.html">org.junitee.ejb.einstein.EinsteinBusiness</A>;
+<A NAME="13"></A>
+<A NAME="14"></A>
+<A NAME="15"></A><FONT ID="FormalComment">/**
+<A NAME="16"></A> * EinsteinEJB is the implementation of the Einstein EJB
+<A NAME="17"></A> */</FONT>
+<A NAME="18"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> EinsteinEJB <FONT ID="Implements">implements</FONT> SessionBean, <A HREF="../../../../org/junitee/ejb/einstein/EinsteinBusiness.java.html">EinsteinBusiness</A> {
+<A NAME="19"></A>  <FONT ID="FormalComment">/**
+<A NAME="20"></A>   */</FONT>
+<A NAME="21"></A>  SessionContext ejbContext;
+<A NAME="22"></A>
+<A NAME="23"></A>
+<A NAME="24"></A>  <FONT ID="FormalComment">/**
+<A NAME="25"></A>   * SessionBean methods
+<A NAME="26"></A>   */</FONT>
+<A NAME="27"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setSessionContext(SessionContext context) {
+<A NAME="28"></A>    <FONT ID="This">this</FONT>.ejbContext = context;
+<A NAME="29"></A>  }
+<A NAME="30"></A>
+<A NAME="31"></A>
+<A NAME="32"></A>  <FONT ID="SingleLineComment">// None of these are necessary for us
+<A NAME="33"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> ejbCreate() {
+<A NAME="34"></A>  }
+<A NAME="35"></A>
+<A NAME="36"></A>
+<A NAME="37"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> ejbActivate() {
+<A NAME="38"></A>  }
+<A NAME="39"></A>
+<A NAME="40"></A>
+<A NAME="41"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> ejbPassivate() {
+<A NAME="42"></A>  }
+<A NAME="43"></A>
+<A NAME="44"></A>
+<A NAME="45"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> ejbRemove() {
+<A NAME="46"></A>  }
+<A NAME="47"></A>
+<A NAME="48"></A>
+<A NAME="49"></A>  <FONT ID="FormalComment">/**
+<A NAME="50"></A>   */</FONT>
+<A NAME="51"></A>  <FONT ID="Public">public</FONT> String addTwoNumbers(String first, String second) <FONT ID="Throws">throws</FONT> <A HREF="../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A> {
+<A NAME="52"></A>    <FONT ID="Try">try</FONT> {
+<A NAME="53"></A>      <FONT ID="Int">int</FONT> firstInt = Integer.parseInt(first);
+<A NAME="54"></A>      <FONT ID="Int">int</FONT> secondInt = Integer.parseInt(second);
+<A NAME="55"></A>
+<A NAME="56"></A>      <FONT ID="Return">return</FONT> Integer.toString(firstInt + secondInt - <FONT ID="IntegerLiteral">1</FONT>);    <FONT ID="SingleLineComment">// oops
+<A NAME="57"></A></FONT>    } <FONT ID="Catch">catch</FONT> (NumberFormatException ex) {
+<A NAME="58"></A>      <FONT ID="Throw">throw</FONT> <FONT ID="New">new</FONT> <A HREF="../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A>(ex.getMessage());
+<A NAME="59"></A>    }
+<A NAME="60"></A>  }
+<A NAME="61"></A>
+<A NAME="62"></A>
+<A NAME="63"></A>  <FONT ID="FormalComment">/**
+<A NAME="64"></A>   */</FONT>
+<A NAME="65"></A>  <FONT ID="Public">public</FONT> <FONT ID="Double">double</FONT> emc2(<FONT ID="Double">double</FONT> m, <FONT ID="Double">double</FONT> c) {
+<A NAME="66"></A>    <FONT ID="SingleLineComment">// to demostrate EJBException output in the test result
+<A NAME="67"></A></FONT>    <FONT ID="Throw">throw</FONT> <FONT ID="New">new</FONT> EJBException(<FONT ID="StringLiteral">"e = mc2"</FONT>);
+<A NAME="68"></A>  }
+<A NAME="69"></A>}</pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinEJB</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.0.9">
+<TITLE>org.junitee.ejb.einstein.test.EinsteinTest (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinTest</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="MultiLineComment">/*
+<A NAME="2"></A> * $Id: EinsteinTest.java.html,v 1.1 2002-09-22 22:32:41 o_rossmueller Exp $
+<A NAME="3"></A> * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial/org/junitee/ejb/einstein/test/EinsteinTest.java.html,v $
+<A NAME="4"></A> */</FONT>
+<A NAME="5"></A>
+<A NAME="6"></A><FONT ID="Package">package</FONT> <A HREF="../../../../../org.junitee.ejb.einstein.test.index.html" target="packageFrame">org.junitee.ejb.einstein.test</A>;
+<A NAME="7"></A>
+<A NAME="8"></A><FONT ID="Import">import</FONT> java.rmi.RemoteException;
+<A NAME="9"></A>
+<A NAME="10"></A><FONT ID="Import">import</FONT> javax.naming.Context;
+<A NAME="11"></A><FONT ID="Import">import</FONT> javax.naming.InitialContext;
+<A NAME="12"></A><FONT ID="Import">import</FONT> javax.rmi.PortableRemoteObject;
+<A NAME="13"></A>
+<A NAME="14"></A><FONT ID="Import">import</FONT> junit.framework.TestCase;
+<A NAME="15"></A>
+<A NAME="16"></A><FONT ID="Import">import</FONT> <A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">org.junitee.ejb.einstein.BadNumberException</A>;
+<A NAME="17"></A><FONT ID="Import">import</FONT> <A HREF="../../../../../org/junitee/ejb/einstein/Einstein.java.html">org.junitee.ejb.einstein.Einstein</A>;
+<A NAME="18"></A><FONT ID="Import">import</FONT> <A HREF="../../../../../org/junitee/ejb/einstein/EinsteinHome.java.html">org.junitee.ejb.einstein.EinsteinHome</A>;
+<A NAME="19"></A>
+<A NAME="20"></A><FONT ID="FormalComment">/**
+<A NAME="21"></A> */</FONT>
+<A NAME="22"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> EinsteinTest <FONT ID="Extends">extends</FONT> TestCase
+<A NAME="23"></A>{
+<A NAME="24"></A>    <FONT ID="FormalComment">/**
+<A NAME="25"></A>     * The fixture
+<A NAME="26"></A>     */</FONT>
+<A NAME="27"></A>    <FONT ID="Protected">protected</FONT> <A HREF="../../../../../org/junitee/ejb/einstein/Einstein.java.html">Einstein</A> ein;
+<A NAME="28"></A>
+<A NAME="29"></A>    <FONT ID="FormalComment">/**
+<A NAME="30"></A>     */</FONT>
+<A NAME="31"></A>    <FONT ID="Public">public</FONT> EinsteinTest(String name) { <FONT ID="Super">super</FONT>(name); }
+<A NAME="32"></A>
+<A NAME="33"></A>    <FONT ID="FormalComment">/**
+<A NAME="34"></A>     */</FONT>
+<A NAME="35"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> setUp() <FONT ID="Throws">throws</FONT> Exception
+<A NAME="36"></A>    {
+<A NAME="37"></A>        Context jndiContext = <FONT ID="New">new</FONT> InitialContext();
+<A NAME="38"></A>
+<A NAME="39"></A>        Object einRef = jndiContext.lookup(<FONT ID="StringLiteral">"java:comp/env/ejb/EinsteinEJB"</FONT>);
+<A NAME="40"></A>        <A HREF="../../../../../org/junitee/ejb/einstein/EinsteinHome.java.html">EinsteinHome</A> home = (<A HREF="../../../../../org/junitee/ejb/einstein/EinsteinHome.java.html">EinsteinHome</A>)PortableRemoteObject.narrow(einRef, <A HREF="../../../../../org/junitee/ejb/einstein/EinsteinHome.java.html">EinsteinHome</A>.<FONT ID="Class">class</FONT>);
+<A NAME="41"></A>
+<A NAME="42"></A>        <FONT ID="This">this</FONT>.ein = home.create();
+<A NAME="43"></A>    }
+<A NAME="44"></A>
+<A NAME="45"></A>    <FONT ID="FormalComment">/**
+<A NAME="46"></A>     */</FONT>
+<A NAME="47"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> tearDown() <FONT ID="Throws">throws</FONT> Exception
+<A NAME="48"></A>    {
+<A NAME="49"></A>        <FONT ID="This">this</FONT>.ein = <FONT ID="Null">null</FONT>;
+<A NAME="50"></A>    }
+<A NAME="51"></A>
+<A NAME="52"></A>    <FONT ID="FormalComment">/**
+<A NAME="53"></A>     */</FONT>
+<A NAME="54"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> testSimpleAddition() <FONT ID="Throws">throws</FONT> RemoteException, <A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A>
+<A NAME="55"></A>    {
+<A NAME="56"></A>        String result = <FONT ID="This">this</FONT>.ein.addTwoNumbers(<FONT ID="StringLiteral">"7"</FONT>, <FONT ID="StringLiteral">"10"</FONT>);
+<A NAME="57"></A>        assertTrue(<FONT ID="StringLiteral">"Result is "</FONT> + result + <FONT ID="StringLiteral">" but should be 17"</FONT>, result.equals(<FONT ID="StringLiteral">"17"</FONT>));
+<A NAME="58"></A>    }
+<A NAME="59"></A>
+<A NAME="60"></A>    <FONT ID="FormalComment">/**
+<A NAME="61"></A>     */</FONT>
+<A NAME="62"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> testMalformedInput() <FONT ID="Throws">throws</FONT> RemoteException
+<A NAME="63"></A>    {
+<A NAME="64"></A>        <FONT ID="Boolean">boolean</FONT> ok = <FONT ID="False">false</FONT>;
+<A NAME="65"></A>        <FONT ID="Try">try</FONT>
+<A NAME="66"></A>        {
+<A NAME="67"></A>            String result = <FONT ID="This">this</FONT>.ein.addTwoNumbers(<FONT ID="StringLiteral">"20"</FONT>, <FONT ID="StringLiteral">"asdf"</FONT>);
+<A NAME="68"></A>        }
+<A NAME="69"></A>        <FONT ID="Catch">catch</FONT> (<A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A> ex)
+<A NAME="70"></A>        {
+<A NAME="71"></A>            ok = <FONT ID="True">true</FONT>;
+<A NAME="72"></A>        }
+<A NAME="73"></A>        assertTrue(<FONT ID="StringLiteral">"Accepted bad number 'asdf'"</FONT>, ok);
+<A NAME="74"></A>
+<A NAME="75"></A>        ok = <FONT ID="False">false</FONT>;
+<A NAME="76"></A>        <FONT ID="Try">try</FONT>
+<A NAME="77"></A>        {
+<A NAME="78"></A>            String result = <FONT ID="This">this</FONT>.ein.addTwoNumbers(<FONT ID="StringLiteral">"20a"</FONT>, <FONT ID="StringLiteral">"5"</FONT>);
+<A NAME="79"></A>        }
+<A NAME="80"></A>        <FONT ID="Catch">catch</FONT> (<A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A> ex)
+<A NAME="81"></A>        {
+<A NAME="82"></A>            ok = <FONT ID="True">true</FONT>;
+<A NAME="83"></A>        }
+<A NAME="84"></A>        assertTrue(<FONT ID="StringLiteral">"Accepted bad number '20a'"</FONT>, ok);
+<A NAME="85"></A>
+<A NAME="86"></A>        ok = <FONT ID="False">false</FONT>;
+<A NAME="87"></A>        <FONT ID="Try">try</FONT>
+<A NAME="88"></A>        {
+<A NAME="89"></A>            String result = <FONT ID="This">this</FONT>.ein.addTwoNumbers(<FONT ID="StringLiteral">"20a"</FONT>, <FONT ID="StringLiteral">"d5"</FONT>);
+<A NAME="90"></A>        }
+<A NAME="91"></A>        <FONT ID="Catch">catch</FONT> (<A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A> ex)
+<A NAME="92"></A>        {
+<A NAME="93"></A>            ok = <FONT ID="True">true</FONT>;
+<A NAME="94"></A>        }
+<A NAME="95"></A>        assertTrue(<FONT ID="StringLiteral">"Accepted bad numbers '20a' and 'd5'"</FONT>, ok);
+<A NAME="96"></A>    }
+<A NAME="97"></A>
+<A NAME="98"></A>
+<A NAME="99"></A>    <FONT ID="FormalComment">/**
+<A NAME="100"></A>     */</FONT>
+<A NAME="101"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> testEmc2() <FONT ID="Throws">throws</FONT> RemoteException, <A HREF="../../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A>
+<A NAME="102"></A>    {
+<A NAME="103"></A>      <FONT ID="Double">double</FONT> result = ein.emc2(<FONT ID="FloatPointLiteral">2.998</FONT>, <FONT ID="FloatPointLiteral">1.998</FONT>);
+<A NAME="104"></A>      assertTrue(<FONT ID="StringLiteral">"Result is "</FONT> + result + <FONT ID="StringLiteral">" but should be 11.96802799"</FONT>, result == <FONT ID="FloatPointLiteral">11.96802799</FONT>);
+<A NAME="105"></A>    }
+<A NAME="106"></A>}
+<A NAME="107"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinTest</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -37,6 +37,15 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.5
+
+- Removed the search parameter
+- added output parameter
+- added JUnitEEWar Ant task
+- refurbished TestRunner user interface
+- TestServletBase deprecated
+- moved classes to org.junitee.*
+
 Release 1.4
 
 - New option to run all tests found in a specified jar file

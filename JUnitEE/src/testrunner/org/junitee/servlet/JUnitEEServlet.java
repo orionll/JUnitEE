@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.12 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.13 2002-09-22 22:32:41 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -92,11 +92,11 @@ public class JUnitEEServlet extends HttpServlet {
 
     if (resource != null) {
       streamResource(resource, response);
+      return;
     }
 
     // Set up the response
     response.setHeader("Cache-Control", "no-cache");
-    PrintWriter pw = response.getWriter();
     String test = request.getParameter(PARAM_TEST);
     String runAll = request.getParameter(PARAM_RUN_ALL);
     String[] testClassNames = null;
@@ -114,12 +114,12 @@ public class JUnitEEServlet extends HttpServlet {
       } else {
         message = "You requested all test cases to be run by setting the \"all\" parameter, but not test case was found.";
       }
-      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, pw);
+      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter());
       return;
     }
     if ((test != null) && (testClassNames.length != 1)) {
       message = "You requested to run a single test case but provided more than one test suite.";
-      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, pw);
+      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter());
       return;
     }
 
@@ -147,7 +147,6 @@ public class JUnitEEServlet extends HttpServlet {
       out.write(buffer, 0, r);
     }
     in.close();
-    out.close();
   }
 
 
