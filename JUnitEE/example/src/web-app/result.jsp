@@ -1,5 +1,5 @@
 <!--
-	$Id: result.jsp,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+	$Id: result.jsp,v 1.2 2002-11-02 14:27:28 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/web-app/result.jsp,v $
 
 	This is a cheesey JSP Model 1 "page centric" example.  A real web
@@ -7,7 +7,7 @@
 	project is for demonstrating good test design, not good web design :-)
 -->
 
-<%@ page language="java" import="org.infohazard.ejb.einstein.*, javax.naming.*, javax.rmi.*,
+<%@ page language="java" import="javax.naming.*, javax.rmi.*,
                                  org.junitee.ejb.einstein.BadNumberException,
                                  org.junitee.ejb.einstein.Einstein,
                                  org.junitee.ejb.einstein.EinsteinHome" %>
