@@ -15,6 +15,13 @@ Oliver Rossmueller (oliver@rossmueller.com)
 Change log
 ==========
 
+Release 1.10
+
+- HTML output page refresh rate config (contributed by Aaron Smith)
+- Bug 952450 fixed (Not serializable objects in session)
+- Bug 938685 fixed (formatter displays first test result only)
+
+
 Release 1.9
 
 - Bug 854955 fixed (NPE)
