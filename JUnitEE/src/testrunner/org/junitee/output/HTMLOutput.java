@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.7 2002-09-05 13:35:26 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.8 2002-09-16 16:33:17 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.runner.TestSuiteInfo;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -142,13 +142,9 @@ public class HTMLOutput extends AbstractOutput {
         pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Run test suite")) + "</td>");
       }
       pw.print("<td class=\"cell\">");
-      if (suite.successful()) {
-        pw.print("&nbsp;");
-      } else {
-        pw.print("<a href=\"#" + suite.getTestClassName() + "\">");
-        pw.print(image(RESOURCE_INFO, "Show details"));
-        pw.print("</a>");
-      }
+      pw.print("<a href=\"#" + suite.getTestClassName() + "\">");
+      pw.print(image(RESOURCE_INFO, "Show details"));
+      pw.print("</a>");
       pw.println("</td><td width=\"100%\" class=\"cell\">" + suite.getTestClassName() + "</td><td class=\"cell\" align=\"right\">");
       pw.println(elapsedTimeAsString(suite.getElapsedTime()) + "&nbsp;sec</td></tr>");
     }
