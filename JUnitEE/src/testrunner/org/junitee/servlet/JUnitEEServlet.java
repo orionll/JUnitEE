@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.29 2003-12-05 18:37:27 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.30 2004-03-21 12:58:57 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -311,6 +311,8 @@ public class JUnitEEServlet extends HttpServlet {
         }
       } catch (ClassNotFoundException e) {
         iterator.remove();
+      } catch (NoClassDefFoundError e) {
+         // ignore, just avoid HTTP 500 -> will cause an error again in test runner
       }
     }
     return (String[])names.toArray(new String[names.size()]);

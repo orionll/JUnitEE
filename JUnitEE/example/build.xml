@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.17 2003-07-19 22:02:20 o_rossmueller Exp $
+	$Id: build.xml,v 1.18 2004-03-21 12:58:12 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -53,6 +53,7 @@
     <pathelement location="${servlet.library}"/>
     <pathelement location="${j2ee.library}"/>
     <pathelement location="${junitee.library}"/>
+    <pathelement location="${junitee-anttask.library}"/>
   </path>
 
 
