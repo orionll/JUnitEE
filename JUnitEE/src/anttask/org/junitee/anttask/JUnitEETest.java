@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETest.java,v 1.4 2002-11-03 22:48:26 o_rossmueller Exp $
+ * $Id: JUnitEETest.java,v 1.5 2002-11-17 13:11:53 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -19,7 +19,7 @@ import org.apache.tools.ant.Project;
  * one specific test suite or all available tests.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class JUnitEETest {
 
@@ -186,9 +186,9 @@ public class JUnitEETest {
 
   private String getFileName() {
     if (runAll) {
-      return "TEST-all";
+      return "TEST-ALL-";
     } else {
-      return "TEST-" + name;
+      return "TEST-";
     }
   }
 }

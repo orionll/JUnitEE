@@ -1,5 +1,5 @@
 /*
- * $Id: PlainResultFormatter.java,v 1.1 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: PlainResultFormatter.java,v 1.2 2002-11-17 13:11:53 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -20,6 +20,7 @@
  */
 package org.junitee.anttask;
 
+
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
@@ -32,7 +33,7 @@ import org.apache.tools.ant.BuildException;
 
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class PlainResultFormatter extends AbstractResultFormatter {
@@ -40,13 +41,9 @@ public class PlainResultFormatter extends AbstractResultFormatter {
   private NumberFormat numberFormat = NumberFormat.getInstance();
 
 
-  public void format(Element rootNode, Node testNode) throws IOException {
-    if (getOutput() == null) {
-      return;
-    }
-
-    NamedNodeMap attributes = testNode.getAttributes();
-    String testClass = attributes.getNamedItem("name").getNodeValue();
+  public void format(Node testSuiteNode) throws IOException {
+    NamedNodeMap attributes = testSuiteNode.getAttributes();
+    String testName = getTestName(testSuiteNode);
     String runs = attributes.getNamedItem("tests").getNodeValue();
     int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
     int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
@@ -54,7 +51,7 @@ public class PlainResultFormatter extends AbstractResultFormatter {
     Number number = new Double(time);
 
     StringBuffer buffer = new StringBuffer("Testsuite: ");
-    buffer.append(testClass).append("\n");
+    buffer.append(testName).append("\n");
     buffer.append("Tests run: ").append(runs).append("\n");
     buffer.append("Errors: ").append(errors).append("\n");
     buffer.append("Failures: ").append(failures).append("\n");
@@ -63,7 +60,7 @@ public class PlainResultFormatter extends AbstractResultFormatter {
     StringBuffer errorBuffer = new StringBuffer();
     StringBuffer failureBuffer = new StringBuffer();
 
-    NodeList tests = testNode.getChildNodes();
+    NodeList tests = testSuiteNode.getChildNodes();
 
     for (int i = 0; i < tests.getLength(); i++) {
       Node node = tests.item(i);
@@ -106,6 +103,14 @@ public class PlainResultFormatter extends AbstractResultFormatter {
       buffer.append(failureBuffer);
       buffer.append("---------- -------- ---------------\n");
     }
-    getOutput().write(buffer.toString().getBytes());
+
+    OutputStream out = getOutput(testName);
+    if (out == null) {
+      return;
+    }
+
+    out.write(buffer.toString().getBytes());
+    out.flush();
+    out.close();
   }
 }

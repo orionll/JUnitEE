@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.12 2002-11-03 17:54:05 o_rossmueller Exp $
+	$Id: build.xml,v 1.13 2002-11-17 13:11:51 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -54,6 +54,11 @@
   </path>
 
 
+  <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
+
+
+  <!-- targets   -->
+  <!-- ========= -->
 
   <target name="clean" description="Cleanup all generated files">
     <delete dir="${build.dir}"/>
@@ -173,15 +178,13 @@
   <!-- execute the tests -->
 
   <target name="run-tests" description="Run the tests">
-    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
-
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
       <test runall="true"/>
       <test runall="true" resource="/WEB-INF/lib/test.jar"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
 
-      <test runall="true" outfile="TEST_ALL">
+      <test runall="true" outfile="TEST_ALL-">
         <formatter type="xml"/>
         <formatter type="plain"/>
       </test>
@@ -196,8 +199,6 @@
   </target>
 
   <target name="run-tests-fail" description="Run the tests and halt on failure">
-    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
-
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
       <test runall="true" haltonfailure="true"/>
     </junitee>
@@ -207,14 +208,59 @@
 
 
   <target name="run-tests-error" description="Run the tests and halt on error">
-    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
-
-    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="false">
       <test runall="true" haltonerror="true"/>
     </junitee>
 
     <echo message="Did not halt on error"/>
  </target>
+
+  <target name="run-tests-unless" description="Run the tests using unless condition">
+    <echo message="property is not set, so run the tests ..."/>
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" unless="test.unless"/>
+    </junitee>
+
+    <property name="test.unless" value="true"/>
+    <echo message="property is set, so do not run the tests ..."/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" unless="test.unless"/>
+    </junitee>
+ </target>
+
+  <target name="run-tests-if" description="Run the tests using if condition">
+    <echo message="property is not set, so do not run the tests ..."/>
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" if="test.if">
+        <formatter type="xml"/>
+      </test>
+    </junitee>
+
+    <property name="test.if" value="true"/>
+    <echo message="property is set, so run the tests ..."/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" if="test.if">
+        <formatter type="xml"/>
+      </test>
+    </junitee>
+ </target>
+
+
+  <target name="run-tests-invalid" description="Try to run invalid tests">
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTestInvalid"/>
+    </junitee>
+  </target>
+
+
+  <target name="testreport" depends="run-tests">
+    <junitreport>
+      <fileset dir="." includes="TEST_ALL-*.xml"/>
+      <report/>
+    </junitreport>
+  </target>
 
   <target name="deploy" depends="app-ear">
     <!-- deploy the ear -->

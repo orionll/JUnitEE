@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.9 2002-11-03 22:48:26 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.10 2002-11-17 13:11:53 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -29,7 +29,7 @@ import org.w3c.dom.*;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class JUnitEETask extends Task {
 
@@ -192,6 +192,8 @@ public class JUnitEETask extends Task {
       sessionCookie = con.getHeaderField("Set-Cookie");
       log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
       done = parseResult(con.getInputStream(), test);
+    } catch (BuildException e) {
+      throw e;
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
       throw new BuildException(e);
@@ -209,11 +211,12 @@ public class JUnitEETask extends Task {
         URLConnection con = url.openConnection();
         con.setRequestProperty("Cookie", sessionCookie);
         done = parseResult(con.getInputStream(), test);
+      } catch (BuildException e) {
+        throw e;
       } catch (Exception e) {
         log("Failed to execute test: " + e, Project.MSG_ERR);
         throw new BuildException(e);
       }
-
     }
   }
 
@@ -237,14 +240,22 @@ public class JUnitEETask extends Task {
         Node node = testcases.item(i);
         NamedNodeMap attributes = node.getAttributes();
         String testClass = attributes.getNamedItem("name").getNodeValue();
+        String testPkg = attributes.getNamedItem("package").getNodeValue();
         int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
         int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
+        String testName;
+
+        if (testPkg != null && testPkg.length() != 0) {
+          testName = testPkg + "." + testClass;
+        } else {
+          testName = testClass;
+        }
         Enumeration enumeration = resultFormatters.elements();
 
         while (enumeration.hasMoreElements()) {
           JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
           log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
-          formatter.format(root, node);
+          formatter.format(node);
         }
 
         if (errors != 0) {
@@ -253,7 +264,7 @@ public class JUnitEETask extends Task {
           }
           if (test.getHaltonerror() || test.getHaltonfailure()) {
 
-            throw new BuildException("Test " + testClass + " failed.");
+            throw new BuildException("Test " + testName + " failed.");
           }
         }
         if (failures != 0) {
@@ -261,7 +272,7 @@ public class JUnitEETask extends Task {
             getProject().setNewProperty(test.getFailureproperty(), "true");
           }
           if (test.getHaltonfailure()) {
-            throw new BuildException("Test " + testClass + " failed.");
+            throw new BuildException("Test " + testName + " failed.");
           }
         }
       }
@@ -273,6 +284,16 @@ public class JUnitEETask extends Task {
         formatter.flush();
       }
     }
+
+    NodeList errorMessages = root.getElementsByTagName("errorMessage");
+
+    for (int i = 0; i < errorMessages.getLength(); i++) {
+      Node message = errorMessages.item(i);
+      log(message.getFirstChild().getNodeValue(), Project.MSG_ERR);
+    }
+    if (errorMessages.getLength() != 0) {
+      throw new BuildException("Test execution failed.");
+    }
     return true;
   }
 
@@ -283,7 +304,7 @@ public class JUnitEETask extends Task {
 
     while (enumeration.hasMoreElements()) {
       FormatterElement element = (FormatterElement)enumeration.nextElement();
-      element.setOutFile(getOutput(element, test));
+      element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
     }
@@ -291,14 +312,14 @@ public class JUnitEETask extends Task {
     enumeration = test.getFormatters();
     while (enumeration.hasMoreElements()) {
       FormatterElement element = (FormatterElement)enumeration.nextElement();
-      element.setOutFile(getOutput(element, test));
+      element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
     }
     if (printSummary) {
       log("Adding summary formatter", Project.MSG_DEBUG);
       SummaryResultFormatter summary = new SummaryResultFormatter();
-      summary.setOutput(System.out);
+      summary.setOut(System.out);
       answer.add(summary);
     }
     log("Formatters: " + answer, Project.MSG_DEBUG);

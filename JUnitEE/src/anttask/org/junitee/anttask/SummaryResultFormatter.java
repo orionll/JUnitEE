@@ -1,5 +1,5 @@
 /*
- * $Id: SummaryResultFormatter.java,v 1.1 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: SummaryResultFormatter.java,v 1.2 2002-11-17 13:11:53 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class SummaryResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
@@ -22,20 +22,16 @@ public class SummaryResultFormatter extends AbstractResultFormatter implements J
   private OutputStreamWriter writer;
 
 
-  public void format(Element rootNode, Node testNode) throws IOException {
-    if (getWriter() == null) {
-      return;
-    }
-
+  public void format(Node testNode) throws IOException {
     NamedNodeMap attributes = testNode.getAttributes();
-    String testClass = attributes.getNamedItem("name").getNodeValue();
+    String testName = getTestName(testNode);
     String runs = attributes.getNamedItem("tests").getNodeValue();
     int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());
     int failures = Integer.parseInt(attributes.getNamedItem("failures").getNodeValue());
     String time = attributes.getNamedItem("time").getNodeValue();
 
     StringBuffer buffer = new StringBuffer();
-    buffer.append(testClass).append(" (runs: ").append(runs).append(" errors: ").append(errors);
+    buffer.append(testName).append(" (runs: ").append(runs).append(" errors: ").append(errors);
     buffer.append(" failures: ").append(failures).append(" time: ").append(time).append(" sec)\n");
     if (errors == 0 && failures == 0) {
       buffer.append("Test successful");
@@ -43,8 +39,11 @@ public class SummaryResultFormatter extends AbstractResultFormatter implements J
       buffer.append("TEST FAILED");
     }
 
-    getWriter().write(buffer.toString());
-    getWriter().write("\n\n");
+    if (getWriter(testName) == null) {
+      return;
+    }
+    getWriter(testName).write(buffer.toString());
+    getWriter(testName).write("\n\n");
   }
 
 
@@ -52,20 +51,16 @@ public class SummaryResultFormatter extends AbstractResultFormatter implements J
     if (writer != null) {
       writer.flush();
     }
-    if (getOutput() != System.out && getOutput() != System.err && writer != null) {
-      writer.close();
-    }
     super.flush();
   }
 
 
-  private OutputStreamWriter getWriter() {
-    if (getOutput() == null) {
-      System.out.println("getOutput() == null");
+  private OutputStreamWriter getWriter(String testName) throws FileNotFoundException {
+    if (getOutput(testName) == null) {
       return null;
     }
     if (writer == null) {
-      writer = new OutputStreamWriter(getOutput());
+      writer = new OutputStreamWriter(getOutput(testName));
     }
     return writer;
   }

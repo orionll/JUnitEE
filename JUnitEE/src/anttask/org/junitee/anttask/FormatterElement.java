@@ -1,10 +1,11 @@
 /*
- * $Id: FormatterElement.java,v 1.2 2002-11-03 22:48:26 o_rossmueller Exp $
+ * $Id: FormatterElement.java,v 1.3 2002-11-17 13:11:53 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
  */
 package org.junitee.anttask;
+
 
 import java.io.*;
 
@@ -15,7 +16,7 @@ import org.apache.tools.ant.BuildException;
  * This is the JUnitEE equivalent to the JUnit FormatterElement. Unfortunatelly some methods have package visibility in the original
  * FormatterElement so we cannot reuse it here.
  *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class FormatterElement {
@@ -96,14 +97,11 @@ public class FormatterElement {
         JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)instance;
 
         if (isUseFile() && getOutFile() != null) {
-          try {
-            formatter.setOutput(new FileOutputStream(outFile));
-            formatter.setFilterTrace(filterTrace);
-          } catch (FileNotFoundException e) {
-            throw new BuildException(e);
-          }
+          formatter.setOutfile(getOutFile());
+          formatter.setExtension(getExtension());
+          formatter.setFilterTrace(filterTrace);
         } else {
-          formatter.setOutput(System.out);
+          formatter.setOut(System.out);
         }
         return formatter;
       } else {
