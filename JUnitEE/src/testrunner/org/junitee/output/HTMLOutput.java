@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.16 2002-12-05 18:50:36 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.17 2003-01-29 21:58:55 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -23,7 +23,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -42,15 +42,17 @@ public class HTMLOutput extends AbstractOutput {
   private NumberFormat numberFormat;
   protected PrintWriter pw;
   private HttpServletResponse response;
+  private String queryString;
 
 
   /**
    */
-  public HTMLOutput(TestRunnerResults results, HttpServletResponse response, String servletPath, boolean filterTrace) throws IOException {
+  public HTMLOutput(TestRunnerResults results, HttpServletResponse response, String servletPath, String queryString, boolean filterTrace) throws IOException {
     super(results, filterTrace);
     this.pw = response.getWriter();
     this.response = response;
     this.servletPath = servletPath;
+    this.queryString = queryString;
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
@@ -95,8 +97,13 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<html>");
     pw.println("<head>");
     pw.println("<title>JUnit Tests - " + result + "</title>");
+    pw.println("<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">");
     if (!isFinished()) {
-      pw.println("<META HTTP-EQUIV=Refresh CONTENT=\"2; URL=" + response.encodeURL(servletPath) + "\">");
+      String redirect = servletPath;
+      if (queryString != null) {
+        redirect = redirect + "?" + queryString;
+      }
+      pw.println("<META HTTP-EQUIV=\"Refresh\" CONTENT=\"2; URL=" + response.encodeURL(redirect) + "\">");
     }
     pw.println("</head>");
 
@@ -209,19 +216,19 @@ public class HTMLOutput extends AbstractOutput {
 
       if (createInfoAndLinks) {
         if (suite.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Run test suite")) + "</td>");
+          pw.println("<tr><td class=\"passedcell\">" + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
         } else if (suite.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Run test suite")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Run test suite")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
         }
       } else {
         if (suite.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + image(RESOURCE_GREEN_BULLET, "Run test suite") + "</td>");
+          pw.println("<tr><td class=\"passedcell\">" + image(RESOURCE_GREEN_BULLET, "Success") + "</td>");
         } else if (suite.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Run test suite") + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Error") + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_YELLOW_BULLET, "Run test suite") + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_YELLOW_BULLET, "Failure") + "</td>");
         }
       }
       pw.print("<td class=\"cell\">");
@@ -270,11 +277,11 @@ public class HTMLOutput extends AbstractOutput {
         TestInfo test = (TestInfo)tests.next();
 
         if (test.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Run test")) + "</td>");
+          pw.println("<tr><td class=\"passedcell\">" + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
         } else if (test.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_RED_BULLET, "Run test")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_YELLOW_BULLET, "Run test")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
         }
         pw.print("<td class=\"cell\">");
         if (test.successful()) {

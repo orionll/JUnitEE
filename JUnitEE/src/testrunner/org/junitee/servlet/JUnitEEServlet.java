@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.20 2002-12-05 19:48:29 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.21 2003-01-29 21:59:08 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -145,7 +145,7 @@ public class JUnitEEServlet extends HttpServlet {
 
     TestRunnerResults results = null;
 
-    if (session != null) {
+    if (threaded && session != null) {
       results = (TestRunnerResults)session.getAttribute(TESTRESULT_KEY);
     }
     if (results != null) {
@@ -183,18 +183,27 @@ public class JUnitEEServlet extends HttpServlet {
     // to have a cactus.properties file in WEB-INF/classes
     System.setProperty(CACTUS_CONTEXT_URL_PROPERTY, "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath());
 
-    session = request.getSession(true);
-    session.setAttribute("test", "xy");
+    if (threaded) {
+      session = request.getSession(true);
+      session.setAttribute("test", "xy");
+    }
+
     results = runTests(test, testClassNames, request, threaded);
 
     renderResults(results, request, response, xsl, filterTrace);
+
+    if (!threaded) {
+      session.removeAttribute(TESTRESULT_KEY);
+    }
   }
 
 
   protected void renderResults(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     // Set up the response
     response.setHeader("Cache-Control", "no-cache");
-    OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl, filterTrace);
+
+    OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), request.getQueryString(), xsl, filterTrace);
+
     if (output != null) {
       output.render();
     }
@@ -206,9 +215,11 @@ public class JUnitEEServlet extends HttpServlet {
     TestRunner tester = new TestRunner(this.getDynamicClassLoader(), results, forkThread);
 
     if (test == null) {
-      HttpSession session = request.getSession(true);
-      session.setAttribute(TESTRUNNER_KEY, tester);
-      session.setAttribute(TESTRESULT_KEY, results);
+      if (forkThread) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(TESTRUNNER_KEY, tester);
+        session.setAttribute(TESTRESULT_KEY, results);
+      }
       tester.run(testClassNames);
     } else {
       tester.run(testClassNames[0], test);
@@ -365,6 +376,7 @@ public class JUnitEEServlet extends HttpServlet {
     return false;
   }
 
+
   /**
    * Answer the output producer for the given output format.
    *
@@ -374,7 +386,7 @@ public class JUnitEEServlet extends HttpServlet {
    * @return  output producer
    * @throws IOException
    */
-  protected OutputProducer getOutputProducer(TestRunnerResults results, String outputParam, HttpServletResponse response, String servletPath, String xsl, boolean filterTrace) throws IOException {
+  protected OutputProducer getOutputProducer(TestRunnerResults results, String outputParam, HttpServletResponse response, String servletPath, String queryString, String xsl, boolean filterTrace) throws IOException {
     String output = outputParam;
 
     if (output == null) {
@@ -382,13 +394,14 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-      return new HTMLOutput(results, response, servletPath, filterTrace);
+      return new HTMLOutput(results, response, servletPath, queryString, filterTrace);
     }
     if (output.equals(OUTPUT_XML)) {
       return new XMLOutput(results, response, xsl, filterTrace);
     }
     return null;
   }
+
 
   protected void errorResponse(String[] testCases, String servletPath, String message, PrintWriter pw, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     if (OUTPUT_XML.equals(output)) {
