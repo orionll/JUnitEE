@@ -15,6 +15,10 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.6.2
+
+- Fix for bug 677051
+
 
 Release 1.6.1
 
