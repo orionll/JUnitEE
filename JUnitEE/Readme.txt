@@ -15,6 +15,13 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.7
+
+- Added 'Run all' button to test runner
+- Added 'show/hide tests' toggle to test runner
+- Fixed bug 771518 (see http://sourceforge.net/tracker/index.php?func=detail&aid=771518&group_id=31476&atid=402250)
+
+
 Release 1.6.6
 
 - Switch to JUnit 3.8.1
