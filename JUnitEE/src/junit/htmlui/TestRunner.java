@@ -1,5 +1,5 @@
 /**
- * $Id: TestRunner.java,v 1.1.1.1 2001-07-23 21:31:03 lhoriman Exp $
+ * $Id: TestRunner.java,v 1.2 2001-10-10 20:19:54 kaila Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestRunner.java,v $
  */
 
@@ -16,6 +16,9 @@ import java.lang.reflect.Method;
 /**
  * This class is primarily intended to be used from a servlet so that
  * things like EJBs can be unit tested.
+ *
+ * modified to show also <,> and & on the resulting webpape
+ * by Kaarle Kaila (kaila@sourceforge.net)
  *
  * @author Jeff Schnitzer (jeff@infohazard.org)
  */
@@ -236,11 +239,41 @@ public class TestRunner extends BaseTestRunner
 		}
 
 	}
+    /**
+    * This method converts texts to be displayed on
+    * html-page. Following conversion are done
+    * "<" => "&lt;" , ">" => "&gt;" and "&" => "&amp;"
+    * @author Kaarle Kaila
+    * @since 10.10.2001
+    */
+    private String htmlText(String text){
+        StringBuffer sb = new StringBuffer();
+        char c;
+        if (text==null) return "";
+        for (int i = 0;i < text.length();i++) {
+            c = text.charAt(i);
+            switch (c) {
+                case '<':
+                sb.append("&lt;");
+                break;
+                case '>':
+                sb.append("&gt;");
+                break;
+                case '&':
+                sb.append("&amp;");
+                break;
+                default:
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 
 	/**
 	 */
 	protected void printTestFailures(String type, Enumeration errors)
 	{
+	    
 		while (errors.hasMoreElements())
 		{
 			TestFailure bad = (TestFailure)errors.nextElement();
@@ -249,11 +282,17 @@ public class TestRunner extends BaseTestRunner
 			pw.println("    " + type);
 			pw.println("  </td>");
 			pw.println("  <td>");
-			pw.println("    " + bad.toString());
+			pw.println("    " + htmlText(bad.toString()));
 			pw.println("  </td>");
 			pw.println("  <td>");
 			pw.println("    <pre>");
-			bad.thrownException().printStackTrace(pw);
+			
+            StringWriter sw = new StringWriter();
+            PrintWriter spw = new PrintWriter(sw);
+            bad.thrownException().printStackTrace(spw);
+            String tmp = sw.toString();
+            pw.write(htmlText(tmp))          ;
+//			bad.thrownException().printStackTrace(pw);
 			this.printEJBExceptionDetail(bad.thrownException());
 			pw.println("    </pre>");
 			pw.println("  </td>");
@@ -279,7 +318,13 @@ public class TestRunner extends BaseTestRunner
 				if (ejbe.getCausedByException() != null)
 				{
 					pw.println("Nested exception is:");
-					ejbe.getCausedByException().printStackTrace(pw);
+					
+                    StringWriter sw = new StringWriter();
+                    PrintWriter spw = new PrintWriter(sw);
+                    ejbe.getCausedByException().printStackTrace(spw);
+                    
+                    pw.write(htmlText(sw.toString()));
+//					ejbe.getCausedByException().printStackTrace(pw);
 				}
 			}
 		}
