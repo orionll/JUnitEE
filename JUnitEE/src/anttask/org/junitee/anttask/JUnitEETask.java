@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.7 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.8 2002-11-03 17:54:05 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -29,7 +29,7 @@ import org.w3c.dom.*;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class JUnitEETask extends Task {
 
@@ -37,6 +37,7 @@ public class JUnitEETask extends Task {
   private Vector tests = new Vector();
   private boolean printSummary = false;
   private Vector formatters = new Vector();
+
 
   /**
    * Set the URL to call the JUnitEE test servlet.
@@ -165,8 +166,10 @@ public class JUnitEETask extends Task {
 
   protected void execute(JUnitEETest test) throws BuildException {
     StringBuffer arguments = new StringBuffer();
+    boolean done;
+    String sessionCookie;
 
-    arguments.append(url).append("?output=xml");
+    arguments.append(url).append("?output=xml&thread=true");
 
     if (test.getResource() != null) {
       arguments.append("&resource=").append(test.getResource());
@@ -178,26 +181,52 @@ public class JUnitEETask extends Task {
     } else {
       throw new BuildException("You must specify the test name or runall attribute", location);
     }
-    if (! test.getFiltertrace()) {
+    if (!test.getFiltertrace()) {
       arguments.append("&filterTrace=false");
     }
     try {
       URL url = new URL(arguments.toString());
       URLConnection con = url.openConnection();
-      parseResult(con.getInputStream(), test);
+      sessionCookie = con.getHeaderField("Set-Cookie");
+      log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
+      done = parseResult(con.getInputStream(), test);
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
       throw new BuildException(e);
     }
+    while (!done) {
+      try {
+        log("Sleeping ... ", Project.MSG_DEBUG);
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        // continue work
+      }
+      try {
+        log("Get xml again", Project.MSG_DEBUG);
+        URL url = new URL(url + "?output=xml");
+        URLConnection con = url.openConnection();
+        con.setRequestProperty("Cookie", sessionCookie);
+        done = parseResult(con.getInputStream(), test);
+      } catch (Exception e) {
+        log("Failed to execute test: " + e, Project.MSG_ERR);
+        throw new BuildException(e);
+      }
+
+    }
   }
 
 
-  private void parseResult(InputStream in, JUnitEETest test) throws Exception {
+  private boolean parseResult(InputStream in, JUnitEETest test) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
     Document document = builder.parse(in);
     Element root = document.getDocumentElement();
+    if (root.getAttributeNode("unfinished") != null) {
+      log(String.valueOf(root.getAttributeNode("unfinished")), Project.MSG_DEBUG);
+      return false;
+    }
     root.normalize();
+
     NodeList testcases = root.getElementsByTagName("testsuite");
     Vector resultFormatters = createFormatters(test);
 
@@ -212,7 +241,7 @@ public class JUnitEETask extends Task {
 
         while (enumeration.hasMoreElements()) {
           JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumeration.nextElement();
-          log("Calling formatter " + formatter, Project.MSG_DEBUG);
+          log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
           formatter.format(root, node);
         }
 
@@ -242,7 +271,7 @@ public class JUnitEETask extends Task {
         formatter.flush();
       }
     }
-
+    return true;
   }
 
 

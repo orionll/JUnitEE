@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.7 2002-11-02 16:18:01 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.8 2002-11-03 17:54:06 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -22,13 +22,15 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
 
   private TestSuiteLoader loader;
-  private JUnitEEOutputProducer listener;
+  private TestRunnerListener listener;
+  private volatile boolean run = false;
+  private boolean forkThread;
 
 
   /**
@@ -37,9 +39,17 @@ public class TestRunner extends BaseTestRunner {
    * @param loader  classloader to load test classes
    * @param listener  test listener to be notfied
    */
-  public TestRunner(ClassLoader loader, JUnitEEOutputProducer listener) {
+  public TestRunner(ClassLoader loader, TestRunnerListener listener, boolean forkThread) {
     this.listener = listener;
     this.loader = new org.junitee.runner.TestSuiteLoader(loader);
+    this.forkThread = forkThread;
+  }
+
+
+  public void stop() {
+    run = false;
+    // notify the listener immediatley so we can display this information
+    listener.setStopped();
   }
 
 
@@ -48,19 +58,42 @@ public class TestRunner extends BaseTestRunner {
    *
    * @param testClassNames names of the test classes
    */
-  public void run(String[] testClassNames) {
-    TestResult result = new TestResult();
-    result.addListener(listener);
-    listener.start(false);
+  public void run(final String[] testClassNames) {
+    Runnable runnable = new Runnable() {
 
-    for (int i = 0; i < testClassNames.length; i++) {
-      Test test = getTest(testClassNames[i]);
-      if (test != null) {
-        test.run(result);
+      public void run() {
+        TestResult result = new TestResult();
+        result.addListener(listener);
+        listener.start(false);
+
+        for (int i = 0; i < testClassNames.length; i++) {
+          Test test = getTest(testClassNames[i]);
+          if (test != null) {
+            test.run(result);
+          }
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            // back to work
+          }
+          if (!run) {
+            // if this was not the last test
+            if (i != testClassNames.length - 1) {
+              runFailed("Execution was stopped");
+              break;
+            }
+          }
+        }
+        listener.finish();
       }
+    };
+    run = true;
+    if (testClassNames.length > 1 && forkThread) {
+      Thread thread = new Thread(runnable, this.toString());
+      thread.start();
+    } else {
+      runnable.run();
     }
-
-    listener.finish();
   }
 
 
@@ -78,6 +111,7 @@ public class TestRunner extends BaseTestRunner {
     listener.finish();
   }
 
+
   public TestSuiteLoader getLoader() {
     return loader;
   }
@@ -86,8 +120,6 @@ public class TestRunner extends BaseTestRunner {
   protected void runFailed(String className) {
     listener.runFailed(className);
   }
-
-
 
 
   protected Test getTest(String suiteClassName, String testName) {
@@ -105,10 +137,11 @@ public class TestRunner extends BaseTestRunner {
     } catch (InvocationTargetException e) {
       runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (NoSuchMethodException e) {
-      runFailed("No method \"" + testName + "\" in class \"" + suiteClassName  + "\"");
+      runFailed("No method \"" + testName + "\" in class \"" + suiteClassName + "\"");
     }
     return null;
   }
+
 
   // TestListener methods; we do nothing here as the events are handled by the listener
   public void addError(Test test, Throwable throwable) {
@@ -127,5 +160,4 @@ public class TestRunner extends BaseTestRunner {
   }
 
 
-  
 }

@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.16 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.17 2002-11-03 17:54:06 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -15,11 +15,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.junitee.output.HTMLOutput;
 import org.junitee.output.XMLOutput;
-import org.junitee.runner.JUnitEEOutputProducer;
+import org.junitee.output.AbstractOutput;
+import org.junitee.output.OutputProducer;
+import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestRunner;
+import org.junitee.runner.TestRunnerResults;
 
 
 /**
@@ -56,6 +60,8 @@ public class JUnitEEServlet extends HttpServlet {
   protected static final String PARAM_OUTPUT = "output";
   protected static final String PARAM_XSL = "xsl";
   protected static final String PARAM_FILTER_TRACE = "filterTrace";
+  protected static final String PARAM_STOP = "stop";
+  protected static final String PARAM_THREAD = "thread";
 
   protected static final String INIT_PARAM_RESOURCES = "searchResources";
   protected static final String INIT_PARAM_XSL = "xslStylesheet";
@@ -65,8 +71,12 @@ public class JUnitEEServlet extends HttpServlet {
 
   private static final String RESOURCE_PREFIX = "resource";
 
+  private static final String TESTRUNNER_KEY = "testrunner";
+  private static final String TESTRESULT_KEY = "testresult";
+
   // for cactus support
   public static final String CACTUS_CONTEXT_URL_PROPERTY = "cactus.contextURL";
+
 
   private String searchResources;
   private String xslStylesheet;
@@ -103,14 +113,14 @@ public class JUnitEEServlet extends HttpServlet {
       return;
     }
 
-    // Set up the response
-    response.setHeader("Cache-Control", "no-cache");
     String test = request.getParameter(PARAM_TEST);
     String runAll = request.getParameter(PARAM_RUN_ALL);
     String xsl = request.getParameter(PARAM_XSL);
+    String stop = request.getParameter(PARAM_STOP);
     String[] testClassNames = null;
     String message;
     boolean filterTrace = true;
+    boolean threaded = "true".equals(request.getParameter(PARAM_THREAD));
 
     if ("false".equals(request.getParameter(PARAM_FILTER_TRACE))) {
       filterTrace = false;
@@ -119,6 +129,27 @@ public class JUnitEEServlet extends HttpServlet {
     // xsl parameter overwrites init param, so use the init param only if the request parameter is null
     if (xsl == null) {
       xsl = xslStylesheet;
+    }
+
+    HttpSession session = request.getSession(false);
+
+    if (session != null && stop != null) {
+      TestRunner runner = (TestRunner)session.getAttribute(TESTRUNNER_KEY);
+      runner.stop();
+    }
+
+    TestRunnerResults results = null;
+
+    if (session != null) {
+      results = (TestRunnerResults)session.getAttribute(TESTRESULT_KEY);
+    }
+    if (results != null) {
+      renderResults(results, request, response, xsl, filterTrace);
+      if (results.isFinished()) {
+        session.removeAttribute(TESTRESULT_KEY);
+        session.removeAttribute(TESTRUNNER_KEY);
+      }
+      return;
     }
 
     if (runAll != null) {
@@ -147,15 +178,37 @@ public class JUnitEEServlet extends HttpServlet {
     // to have a cactus.properties file in WEB-INF/classes
     System.setProperty(CACTUS_CONTEXT_URL_PROPERTY, "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath());
 
-    TestRunner tester = null;
+    session = request.getSession(true);
+    session.setAttribute("test", "xy");
+    results = runTests(test, testClassNames, request, threaded);
 
-    JUnitEEOutputProducer output = getOutputProducer(request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl, filterTrace);
-    tester = new TestRunner(this.getDynamicClassLoader(), output);
+    renderResults(results, request, response, xsl, filterTrace);
+  }
+
+
+  protected void renderResults(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+    // Set up the response
+    response.setHeader("Cache-Control", "no-cache");
+    OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), response, request.getContextPath() + request.getServletPath(), xsl, filterTrace);
+    if (output != null) {
+      output.render();
+    }
+  }
+
+
+  protected TestRunnerResults runTests(String test, String[] testClassNames, HttpServletRequest request, boolean forkThread) {
+    TestRunnerResults results = new TestRunnerResults();
+    TestRunner tester = new TestRunner(this.getDynamicClassLoader(), results, forkThread);
+
     if (test == null) {
+      HttpSession session = request.getSession(true);
+      session.setAttribute(TESTRUNNER_KEY, tester);
+      session.setAttribute(TESTRESULT_KEY, results);
       tester.run(testClassNames);
     } else {
       tester.run(testClassNames[0], test);
     }
+    return results;
   }
 
 
@@ -304,7 +357,7 @@ public class JUnitEEServlet extends HttpServlet {
    * @return  output producer
    * @throws IOException
    */
-  protected JUnitEEOutputProducer getOutputProducer(String outputParam, HttpServletResponse response, String servletPath, String xsl, boolean filterTrace) throws IOException {
+  protected OutputProducer getOutputProducer(TestRunnerResults results, String outputParam, HttpServletResponse response, String servletPath, String xsl, boolean filterTrace) throws IOException {
     String output = outputParam;
 
     if (output == null) {
@@ -312,10 +365,10 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-      return new HTMLOutput(response, servletPath, filterTrace);
+      return new HTMLOutput(results, response, servletPath, filterTrace);
     }
     if (output.equals(OUTPUT_XML)) {
-      return new XMLOutput(response, xsl, filterTrace);
+      return new XMLOutput(results, response, xsl, filterTrace);
     }
     return null;
   }

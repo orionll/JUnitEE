@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEOutputProducer.java,v 1.1 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: TestRunnerListener.java,v 1.1 2002-11-03 17:54:06 o_rossmueller Exp $
  */
 
 package org.junitee.runner;
@@ -15,7 +15,7 @@ import junit.framework.TestListener;
  * @version $Revision: 1.1 $
  * @since 1.5
  */
-public interface JUnitEEOutputProducer extends TestListener {
+public interface TestRunnerListener extends TestListener {
 
   /**
    * This method is called before the first test is executed.
@@ -34,4 +34,7 @@ public interface JUnitEEOutputProducer extends TestListener {
    * instance could not be created.
    */
   public void runFailed(String message);
+
+
+  void setStopped();
 }

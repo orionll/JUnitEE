@@ -1,5 +1,5 @@
 /**
- * $Id: TestSuiteInfo.java,v 1.4 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: TestSuiteInfo.java,v 1.5 2002-11-03 17:54:06 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestSuiteInfo.java,v $
  */
 
@@ -14,14 +14,14 @@ import java.util.*;
 import junit.framework.*;
 import junit.runner.BaseTestRunner;
 
-import org.junitee.runner.JUnitEEOutputProducer;
+import org.junitee.runner.TestRunnerListener;
 
 
 /**
  * This class holds information about on test.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @since   1.5
  */
 public class TestSuiteInfo {

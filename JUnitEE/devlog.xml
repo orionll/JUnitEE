@@ -2,6 +2,13 @@
 <devlog>
   <release name="1.6" status="open">
     <enhancement date="2002-11-03" author="o_rossmueller">
+      It is now possible to force the test runner to fork a new thread by setting <code>thread=true</code> to avoid timeouts for
+      long-running tests.
+    </enhancement>
+    <refactoring date="2002-11-03" author="o_rossmueller">
+      Splitted output producer in model and render part.
+    </refactoring>
+    <enhancement date="2002-11-03" author="o_rossmueller">
       JUnitEEServlet produces filtered stack traces by default, filtering can be disabled by setting <code>filterTrace=false</code>
     </enhancement>
     <enhancement date="2002-11-03" author="o_rossmueller">

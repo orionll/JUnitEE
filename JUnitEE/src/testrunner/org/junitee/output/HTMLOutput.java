@@ -1,31 +1,29 @@
 /**
- * $Id: HTMLOutput.java,v 1.13 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.14 2002-11-03 17:54:06 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
 package org.junitee.output;
 
 
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.NumberFormat;
-import java.util.Iterator;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junitee.runner.JUnitEEOutputProducer;
 import org.junitee.runner.TestInfo;
+import org.junitee.runner.TestRunnerListener;
+import org.junitee.runner.TestRunnerResults;
 import org.junitee.runner.TestSuiteInfo;
 import org.junitee.util.StringUtils;
 
 
 /**
- * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
+ * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -45,30 +43,38 @@ public class HTMLOutput extends AbstractOutput {
   protected PrintWriter pw;
   private HttpServletResponse response;
 
+
   /**
    */
-  public HTMLOutput(HttpServletResponse response, String servletPath, boolean filterTrace) throws IOException {
+  public HTMLOutput(TestRunnerResults results, HttpServletResponse response, String servletPath, boolean filterTrace) throws IOException {
+    super(results, filterTrace);
     this.pw = response.getWriter();
     this.response = response;
     this.servletPath = servletPath;
-    setFilterTrace(filterTrace);
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
   }
 
 
-  public void finish() {
+  public void render() {
     response.setContentType("text/html");
 
     printHeader();
-    printRunErrors();
-    if (!isSingleTest()) {
-      printSummary();
-    }
-    printMethodList();
-    if (isFailure()) {
-      printErrorsAndFailures();
+    if (isFinished()) {
+      printRunErrors();
+      if (!isSingleTest()) {
+        printSummary();
+      }
+      printMethodList();
+      if (isFailure()) {
+        printErrorsAndFailures();
+      }
+    } else {
+      printUnderProgress();
+      if (!isSingleTest()) {
+        printSummary();
+      }
     }
     printFooter();
   }
@@ -87,7 +93,12 @@ public class HTMLOutput extends AbstractOutput {
     }
 
     pw.println("<html>");
-    pw.println("<head><title>JUnit Tests - " + result + "</title></head>");
+    pw.println("<head>");
+    pw.println("<title>JUnit Tests - " + result + "</title>");
+    if (!isFinished()) {
+      pw.println("<META HTTP-EQUIV=Refresh CONTENT=\"2; URL=" + response.encodeURL(servletPath) + "\">");
+    }
+    pw.println("</head>");
 
     pw.println("<style type=\"text/css\">");
     pw.println("	<!--");
@@ -130,6 +141,29 @@ public class HTMLOutput extends AbstractOutput {
   protected void printFooter() {
     pw.println("</body>");
     pw.println("</html>");
+  }
+
+
+  protected void printUnderProgress() {
+    pw.println("<form action=\"" + response.encodeURL(servletPath) + "\" method=\"get\">");
+    pw.println("<p>");
+    pw.println("<table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
+    pw.println("<tbody>");
+    pw.println("<tr><td class=\"sectionTitle\">Execution of tests in progress ...</td></tr>");
+    TestInfo currentTest = getCurrentInfo();
+    if (currentTest != null) {
+      pw.println("<tr><td class=\"failedcell\">Current test: " + currentTest.getTest() + "</td></tr>");
+    }
+    if (isStopped() && ! isFinished()) {
+      pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
+    } else {
+      pw.println("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td></tr>");
+    }
+    pw.println("<tr><td>&nbsp;</td></tr>");
+    pw.println("</tbody>");
+    pw.println("</table>");
+    pw.println("</p>");
+    pw.println("</form>");
   }
 
 
@@ -248,8 +282,10 @@ public class HTMLOutput extends AbstractOutput {
 
   private String image(String resource, String alt) {
     StringBuffer buffer = new StringBuffer();
+    StringBuffer url = new StringBuffer();
 
-    buffer.append("<img src=\"").append(servletPath).append("/").append(resource).append("\" border=\"0\" height=\"14\" widht=\"14\" alt=\"");
+    url.append(servletPath).append("/").append(resource);
+    buffer.append("<img src=\"").append(response.encodeURL(url.toString())).append("\" border=\"0\" height=\"14\" widht=\"14\" alt=\"");
     buffer.append(alt).append("\">");
     return buffer.toString();
   }
@@ -257,17 +293,22 @@ public class HTMLOutput extends AbstractOutput {
 
   private String singleTestLink(TestInfo test, String text) {
     StringBuffer buffer = new StringBuffer();
+    StringBuffer url = new StringBuffer();
 
-    buffer.append("<a href=\"").append(servletPath).append("?suite=").append(test.getTestClassName());
-    buffer.append("&test=").append(test.getTestName()).append("\">").append(text).append("</a>");
+    url.append(servletPath).append("?suite=").append(test.getTestClassName());
+    url.append("&test=").append(test.getTestName());
+    buffer.append("<a href=\"").append(response.encodeURL(url.toString())).append("\">").append(text).append("</a>");
     return buffer.toString();
   }
 
 
   private String suiteTestLink(TestSuiteInfo suite, String text) {
     StringBuffer buffer = new StringBuffer();
+    StringBuffer url = new StringBuffer();
 
-    buffer.append("<a href=\"").append(servletPath).append("?suite=").append(suite.getTestClassName());
+    url.append(servletPath).append("?suite=").append(suite.getTestClassName());
+
+    buffer.append("<a href=\"").append(response.encodeURL(url.toString()));
     buffer.append("\">").append(text).append("</a>");
     return buffer.toString();
   }

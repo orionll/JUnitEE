@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETest.java,v 1.2 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: JUnitEETest.java,v 1.3 2002-11-03 17:54:05 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -17,7 +17,7 @@ import java.util.*;
  * one specific test suite or all available tests.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class JUnitEETest {
 
@@ -31,7 +31,7 @@ public class JUnitEETest {
   private File outfile;
   private File toDir;
   private Vector formatters = new Vector();
-  private boolean filterTrace = false;
+  private boolean filterTrace = true;
 
 
   public void addFormatter(FormatterElement formatter) {

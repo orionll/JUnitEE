@@ -1,5 +1,5 @@
 /*
- * $Id: EinsteinTest.java,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+ * $Id: EinsteinTest.java,v 1.2 2002-11-03 17:54:05 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/java/org/junitee/ejb/einstein/test/EinsteinTest.java,v $
  */
 
@@ -12,6 +12,8 @@ import javax.naming.InitialContext;
 import javax.rmi.PortableRemoteObject;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.junitee.ejb.einstein.BadNumberException;
 import org.junitee.ejb.einstein.Einstein;
@@ -25,6 +27,7 @@ public class EinsteinTest extends TestCase
 	 * The fixture
 	 */
 	protected Einstein ein;
+
 
 	/**
 	 */

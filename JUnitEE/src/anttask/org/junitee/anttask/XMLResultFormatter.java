@@ -1,5 +1,5 @@
 /*
- * $Id: XMLResultFormatter.java,v 1.1 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: XMLResultFormatter.java,v 1.2 2002-11-03 17:54:05 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -14,13 +14,18 @@ import org.apache.tools.ant.util.DOMElementWriter;
 
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class XMLResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
 
+  boolean done = false;
+
   public void format(Element rootNode, Node testNode) throws IOException {
 
+    if (done) {
+      return;
+    }
     if (getOutput() != null) {
       Writer writer = null;
 
@@ -36,6 +41,7 @@ public class XMLResultFormatter extends AbstractResultFormatter implements JUnit
         }
       }
     }
+    done = true;
   }
 
 }

@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.7 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.8 2002-11-03 17:54:06 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -13,17 +13,18 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junitee.runner.JUnitEEOutputProducer;
+import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestSuiteInfo;
+import org.junitee.runner.TestRunnerResults;
 import org.junitee.util.StringUtils;
 
 
 /**
- * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
+ * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -37,18 +38,18 @@ public class XMLOutput extends AbstractOutput {
 
   /**
    */
-  public XMLOutput(HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+  public XMLOutput(TestRunnerResults results, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+    super(results, filterTrace);
     this.pw = response.getWriter();
     this.response = response;
     this.xsl = xsl;
-    setFilterTrace(filterTrace);
     numberFormat = NumberFormat.getInstance();
     numberFormat.setMaximumFractionDigits(3);
     numberFormat.setMinimumFractionDigits(3);
   }
 
 
-  public void finish() {
+  public void render() {
     response.setContentType("text/xml");
 
     printHeader();
@@ -62,7 +63,11 @@ public class XMLOutput extends AbstractOutput {
     if (xsl != null) {
       pw.println("<?xml-stylesheet type=\"text/xsl\"  href=\"" + xsl + "\"?>");
     }
-    pw.println("<testsuites>");
+    pw.print("<testsuites");
+    if (! isFinished()) {
+      pw.print(" unfinished=\"true\" ");
+    }
+    pw.println(">");
   }
 
 
