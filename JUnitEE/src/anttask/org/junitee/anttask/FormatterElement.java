@@ -1,5 +1,5 @@
 /*
- * $Id: FormatterElement.java,v 1.4 2003-07-19 22:02:20 o_rossmueller Exp $
+ * $Id: FormatterElement.java,v 1.5 2003-07-19 22:07:20 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -16,7 +16,7 @@ import org.apache.tools.ant.BuildException;
  * This is the JUnitEE equivalent to the JUnit FormatterElement. Unfortunatelly some methods have package visibility in the original
  * FormatterElement so we cannot reuse it here.
  *
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class FormatterElement {
@@ -26,7 +26,6 @@ public class FormatterElement {
   private File outFile;
   private String extension;
   private boolean filterTrace;
-  private boolean batchmode;
 
 
   public void setType(String type) {
@@ -101,7 +100,6 @@ public class FormatterElement {
           formatter.setOutfile(getOutFile());
           formatter.setExtension(getExtension());
           formatter.setFilterTrace(filterTrace);
-          formatter.setBatch(batchmode);
         } else {
           formatter.setOut(System.out);
         }
@@ -122,10 +120,4 @@ public class FormatterElement {
   public void setFilterTrace(boolean filtertrace) {
     this.filterTrace = filtertrace;
   }
-
-
-  public void setBatchMode(boolean runall) {
-    batchmode = runall;
-  }
-
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETest.java,v 1.5 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: JUnitEETest.java,v 1.6 2003-07-19 22:02:20 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -19,7 +19,7 @@ import org.apache.tools.ant.Project;
  * one specific test suite or all available tests.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class JUnitEETest {
 
@@ -30,7 +30,7 @@ public class JUnitEETest {
   private boolean haltOnError;
   private boolean haltOnFailure;
   private boolean runAll;
-  private File outfile;
+  private String outfile;
   private File toDir;
   private Vector formatters = new Vector();
   private boolean filterTrace = true;
@@ -143,7 +143,7 @@ public class JUnitEETest {
   }
 
 
-  public void setOutfile(File file) {
+  public void setOutfile(String file) {
     outfile = file;
   }
 
@@ -151,12 +151,17 @@ public class JUnitEETest {
   public File getOutfile() {
     if (outfile == null) {
       if (toDir == null) {
-        outfile = new File(getFileName());
+        return new File(getFileName());
       } else {
-        outfile = new File(toDir, getFileName());
+        return new File(toDir, getFileName());
+      }
+    } else {
+      if (toDir == null) {
+        return new File(outfile);
+      } else {
+        return new File(toDir, outfile);
       }
     }
-    return outfile;
   }
 
 

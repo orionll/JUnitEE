@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.15 2003-07-19 22:02:20 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.16 2003-07-19 22:07:20 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class JUnitEETask extends Task {
 
@@ -356,7 +356,6 @@ public class JUnitEETask extends Task {
       FormatterElement element = (FormatterElement)enumeration.nextElement();
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
-      element.setBatchMode(test.getRunall());
       answer.add(element.createFormatter());
     }
 
@@ -366,7 +365,6 @@ public class JUnitEETask extends Task {
       log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
-      element.setBatchMode(test.getRunall());
       answer.add(element.createFormatter());
     }
     if (printSummary) {
