@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.28 2003-07-27 22:27:15 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.29 2003-12-05 18:37:27 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -387,7 +387,7 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (in == null) {
-      return null;
+      return new String[0];
     }
     try {
       return parseTestCaseList(in);
