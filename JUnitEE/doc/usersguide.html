@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.12 2003-01-18 11:33:20 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.13 2003-07-19 22:02:18 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.12 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.13 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -433,7 +433,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs while running this test</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">filtertrace</td><td class="coloredrow">Filter the stack trace in case of an error/failure. This overwrites the setting of the
         task.</td><td class="coloredrow">No</td></tr>
-        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute, the name of the test and the extension of the formatter.</td>
+        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute, the name of the test (in case runall=true) and the extension of the formatter.</td>
         <td class="whiterow">No; default is <code>TEST-</code>, or <code>TEST-ALL-</code> if <code>runall</code> is set for this test.</td></tr>
         <tr><td class="coloredrow">todir</td><td class="coloredrow">Directory to write the reports to.</td><td class="coloredrow">No; default is the current directory.</td></tr>
         <tr><td class="whiterow">if</td><td class="whiterow">Only run test if the named property is set.</td><td class="whiterow">No</td></tr>

@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.14 2003-03-12 08:56:43 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.15 2003-07-19 22:02:20 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class JUnitEETask extends Task {
 
@@ -356,14 +356,17 @@ public class JUnitEETask extends Task {
       FormatterElement element = (FormatterElement)enumeration.nextElement();
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
+      element.setBatchMode(test.getRunall());
       answer.add(element.createFormatter());
     }
 
     enumeration = test.getFormatters();
     while (enumeration.hasMoreElements()) {
       FormatterElement element = (FormatterElement)enumeration.nextElement();
+      log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
+      element.setBatchMode(test.getRunall());
       answer.add(element.createFormatter());
     }
     if (printSummary) {
@@ -375,16 +378,4 @@ public class JUnitEETask extends Task {
     log("Formatters: " + answer, Project.MSG_DEBUG);
     return answer;
   }
-
-
-  protected File getOutput(FormatterElement formatter, JUnitEETest test) {
-    if (formatter.isUseFile()) {
-      String filename = test.getOutfile() + formatter.getExtension();
-      File destFile = new File(test.getTodir(), filename);
-      String absFilename = destFile.getAbsolutePath();
-      return getProject().resolveFile(absFilename);
-    }
-    return null;
-  }
-
 }

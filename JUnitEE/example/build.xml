@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.16 2003-03-16 12:50:19 o_rossmueller Exp $
+	$Id: build.xml,v 1.17 2003-07-19 22:02:20 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -187,7 +187,7 @@
     </delete>
 
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
-      <test runall="true" todir="${build.dir}">
+     <test runall="true" todir="${build.dir}">
         <formatter type="xml"/>
         <formatter type="plain"/>
       </test>
@@ -195,17 +195,22 @@
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
 
-      <test runall="true" outfile="TEST_ALL-" todir="${build}">
+      <test runall="true" outfile="TEST_ALL-" todir="${build.dir}">
         <formatter type="xml"/>
         <formatter type="plain"/>
       </test>
+
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" outfile="TEST" todir="/tmp">
+        <formatter type="plain"/>
+      </test>
+
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" filtertrace="false">
         <formatter type="xml"/>
         <formatter type="plain"/>
       </test>
     </junitee>
 
-    <available file="${build.dir}/TEST-ALL-org.junitee.ejb.einstein.test.EinsteinTest.xml" property="formatter-output.available"/>
+    <available file="${build.dir}/TEST_ALL-org.junitee.ejb.einstein.test.EinsteinTest.xml" property="formatter-output.available"/>
     <fail message="formatter output not in build dir" unless="formatter-output.available"/>
 
     <echo message="Property test.failure: ${test.failure}"/>
@@ -342,5 +347,16 @@
     </exec>
   </target>
 
+
+  <target name="junit" depends="compile">
+    <junit>
+      <classpath>
+        <pathelement path="${build.classes}"/>
+      </classpath>
+
+      <formatter type="plain"/>
+      <test todir="/tmp" outfile="XYZ-test" name="org.junitee.ejb.einstein.test.JUnitTest"/>
+    </junit>
+  </target>
 </project>
 

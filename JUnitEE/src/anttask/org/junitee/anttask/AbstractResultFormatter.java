@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractResultFormatter.java,v 1.2 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: AbstractResultFormatter.java,v 1.3 2003-07-19 22:02:20 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -14,7 +14,7 @@ import org.w3c.dom.NamedNodeMap;
 
 
 /**
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public abstract class AbstractResultFormatter implements JUnitEEResultFormatter {
@@ -24,6 +24,17 @@ public abstract class AbstractResultFormatter implements JUnitEEResultFormatter 
   private File outfile;
   private boolean filterTrace;
   private String extension;
+  private boolean batch = false;
+
+
+  public boolean isBatch() {
+    return batch;
+  }
+
+
+  public void setBatch(boolean batch) {
+    this.batch = batch;
+  }
 
 
   public boolean isFilterTrace() {
@@ -55,7 +66,13 @@ public abstract class AbstractResultFormatter implements JUnitEEResultFormatter 
     if (out != null) {
       return out;
     }
-    String fileName = outfile.getAbsolutePath() + testName + extension;
+    String fileName;
+
+    if (isBatch()) {
+      fileName = outfile.getAbsolutePath() + testName + extension;
+    } else {
+      fileName = outfile.getAbsolutePath() + extension;
+    }
     return new FileOutputStream(fileName);
   }
 

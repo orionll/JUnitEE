@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEResultFormatter.java,v 1.2 2002-11-17 13:11:53 o_rossmueller Exp $
+ * $Id: JUnitEEResultFormatter.java,v 1.3 2003-07-19 22:02:20 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 /**
  * This interface is the equivalent to <code>JUnitResultFormatter</code> provided by the JUnit task.
  *
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public interface JUnitEEResultFormatter {
@@ -42,4 +42,7 @@ public interface JUnitEEResultFormatter {
 
 
   void flush() throws IOException;
+
+
+  void setBatch(boolean batchmode);
 }
