@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.11 2002-12-05 19:48:00 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.12 2003-02-24 21:28:22 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class JUnitEETask extends Task {
 
@@ -171,6 +171,8 @@ public class JUnitEETask extends Task {
     StringBuffer arguments = new StringBuffer();
     boolean done;
     String sessionCookie;
+    URL requestUrl;
+    URLConnection con;
 
     arguments.append(url).append("?output=xml&thread=true");
 
@@ -188,8 +190,8 @@ public class JUnitEETask extends Task {
       arguments.append("&filterTrace=false");
     }
     try {
-      URL url = new URL(arguments.toString());
-      URLConnection con = url.openConnection();
+      requestUrl = new URL(arguments.toString());
+      con = requestUrl.openConnection();
       sessionCookie = con.getHeaderField("Set-Cookie");
       log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
       done = parseResult(con.getInputStream(), test);
@@ -199,25 +201,27 @@ public class JUnitEETask extends Task {
       log("Failed to execute test: " + e, Project.MSG_ERR);
       throw new BuildException(e);
     }
-    while (!done) {
-      try {
-        log("Sleeping ... ", Project.MSG_DEBUG);
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // continue work
-      }
-      try {
-        log("Get xml again", Project.MSG_DEBUG);
-        URL url = new URL(url + "?output=xml");
-        URLConnection con = url.openConnection();
+
+    try {
+//      requestUrl = new URL(url + "?output=xml");
+
+      while (!done) {
+        try {
+          log("Sleeping ... ", Project.MSG_DEBUG);
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          // continue work
+        }
+        log("Get xml again using URL " + requestUrl, Project.MSG_DEBUG);
+        con = requestUrl.openConnection();
         con.setRequestProperty("Cookie", sessionCookie);
         done = parseResult(con.getInputStream(), test);
-      } catch (BuildException e) {
-        throw e;
-      } catch (Exception e) {
-        log("Failed to execute test: " + e, Project.MSG_ERR);
-        throw new BuildException(e);
       }
+    } catch (BuildException e) {
+      throw e;
+    } catch (Exception e) {
+      log("Failed to execute test: " + e, Project.MSG_ERR);
+      throw new BuildException(e);
     }
   }
 
