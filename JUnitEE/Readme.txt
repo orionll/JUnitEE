@@ -15,6 +15,11 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.6.6
+
+- Switch to JUnit 3.8.1
+
+
 Release 1.6.6pre2
 
 - Fixed NPE in case an AssertionFailedException is thrown in test setup 

@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.10 2003-05-29 10:59:33 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.11 2003-07-05 13:45:20 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -22,7 +22,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
@@ -163,5 +163,16 @@ public class TestRunner extends BaseTestRunner {
   public void startTest(Test test) {
   }
 
+
+  public void testStarted(String s) {
+  }
+
+
+  public void testEnded(String s) {
+  }
+
+
+  public void testFailed(int i, Test test, Throwable throwable) {
+  }
 
 }
