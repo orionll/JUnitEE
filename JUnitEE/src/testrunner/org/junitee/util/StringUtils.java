@@ -1,5 +1,5 @@
 /*
- * $Id: StringUtils.java,v 1.3 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: StringUtils.java,v 1.4 2004-03-21 14:23:20 o_rossmueller Exp $
  */
 package org.junitee.util;
 
@@ -8,7 +8,7 @@ import java.io.*;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @since 1.5
  */
 public class StringUtils {
@@ -26,7 +26,8 @@ public class StringUtils {
   };
 
   private static final String[] DEFAULT_STOP_FILTERS = new String[]{
-    "junit.framework.TestCase.runTest"
+    "junit.framework.TestCase.runTest",
+    "junit.framework.TestSuite.runTest"
   };
 
   /**
