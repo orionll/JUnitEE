@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.25 2003-02-24 23:08:06 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.26 2003-02-27 20:57:33 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -354,6 +354,11 @@ public class JUnitEEServlet extends HttpServlet {
     ArrayList list = new ArrayList();
 
     while ((line = in.readLine()) != null) {
+      line = line.trim();
+
+      if (line.length() == 0) {
+        continue;
+      }
       if (line.charAt(0) != '#') {
         list.add(line);
       }
