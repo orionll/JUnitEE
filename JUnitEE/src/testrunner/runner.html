@@ -2,8 +2,8 @@
 <html>
 <head>
   <title>JUnitEE TestRunner</title>
-                                                                        
-                 
+
+
   <style type="text/css">
 	<!--
 		body		{ font-family: lucida, verdana, sans-serif; font-size: 10pt;
@@ -15,12 +15,14 @@
 		.pageTitle	{ font-size: 1em; font-weight: bold;
 						letter-spacing: 0.125em; text-align: center;
 						color: #FFFFFF;background-color: #980000 }
-		.sectionTitle	{ font-weight: bold; 
+		.sectionTitle	{ font-weight: normal;
 							background-color: #F4E5E5;
 							border-top-width: 1px; border-bottom-width: 0;
 							border-left-width: 0; border-right-width: 0;
 							border-style: solid; border-color: #980000 }
 		.cell       	{ color: black; background-color: #CCCCFF }
+		.methodcell       	{ color: black; background-color: #e0e0FF }
+		.methodcell a {text-decoration: none; }
 		.passedcell       	{ color: black; background-color: #CCCCFF }
 		.failedcell       	{ color: black; background-color: #CCCCFF }
 		.message       	{ color: red; }
@@ -28,7 +30,7 @@
   </style>
 </head>
 <body>
-                           
+
   <table cellspacing="0" cellpadding="0" width="100%">
     <tbody>
       <tr><td class="pageTitle"><h1>JUnitEE TestRunner</h1></td></tr>
@@ -40,25 +42,29 @@
 <!-- message -->
   </span>
   <br>
-                           
+
   <form>
     <p>
     <table border="0" cellspacing="2" cellpadding="3" width="100%">
       <tbody>
-        <tr><td class="sectionTitle">Enter the name of a test suite to run</td></tr>
-        <tr><td class="failedcell"><input name="suite" size="80">&nbsp;&nbsp;<input type="submit" value="Run"></td></tr>
-        <tr><td>&nbsp;</td></tr>
+        <tr><td class="sectionTitle">Run all tests</td></tr>
+        <tr><td class="failedcell"><input type="submit" value="Run all"></td></tr>
+        <tr><td>&nbsp;<input type="hidden" name="all" value="true"></td></tr>
       </tbody>
     </table>
     </p>
   </form>
+
+
 
 <!-- beginList
   <form>
     <p>
     <table border="0" cellspacing="2" cellpadding="3" width="100%">
       <tbody>
-        <tr><td class="sectionTitle">Select test suite(s) to run</td></tr>
+        <tr><td class="sectionTitle">Select test suite(s) to run
+##show/hide
+        </td></tr>
 ###
         <tr><td class="cell"><input type="checkbox" name="all" value="true">&nbsp;&nbsp;Run all tests</td></tr>
         <tr><td class="cell"><input type="submit" value="Run"></td></tr>
@@ -68,5 +74,18 @@
     </p>
   </form>
 endList -->
+
+  <form>
+    <p>
+    <table border="0" cellspacing="2" cellpadding="3" width="100%">
+      <tbody>
+        <tr><td class="sectionTitle">Enter the name of a test suite to run </td></tr>
+        <tr><td class="failedcell"><input name="suite" size="80">&nbsp;&nbsp;<input type="submit" value="Run"></td></tr>
+        <tr><td>&nbsp;</td></tr>
+      </tbody>
+    </table>
+    </p>
+  </form>
+
 </body>
 </html>

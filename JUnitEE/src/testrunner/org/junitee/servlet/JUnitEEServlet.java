@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.27 2003-02-28 19:12:05 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.28 2003-07-27 22:27:15 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -17,11 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.junitee.output.HTMLOutput;
-import org.junitee.output.XMLOutput;
-import org.junitee.output.AbstractOutput;
 import org.junitee.output.OutputProducer;
-import org.junitee.runner.TestRunnerListener;
+import org.junitee.output.XMLOutput;
 import org.junitee.runner.TestRunner;
 import org.junitee.runner.TestRunnerResults;
 
@@ -37,37 +39,36 @@ import org.junitee.runner.TestRunnerResults;
  */
 public class JUnitEEServlet extends HttpServlet {
 
-  // todo: run tests in another thread and update result page using HTTP refresh
-
   /**
    * The form parameter which defines the name of the suite
    * class to run.  This parameter can appear more than once
    * to run multiple test suites.
    */
-  protected static final String PARAM_SUITE = "suite";
+  private static final String PARAM_SUITE = "suite";
 
   /**
    * The form parameter which defines the test out of the defined suite to be run.
    */
-  protected static final String PARAM_TEST = "test";
+  private static final String PARAM_TEST = "test";
 
   /**
    * The form parameter which defines if
    * resources should be checked to run all included test cases
    */
-  protected static final String PARAM_RUN_ALL = "all";
-  protected static final String PARAM_SEARCH = "search";
-  protected static final String PARAM_OUTPUT = "output";
-  protected static final String PARAM_XSL = "xsl";
-  protected static final String PARAM_FILTER_TRACE = "filterTrace";
-  protected static final String PARAM_STOP = "stop";
-  protected static final String PARAM_THREAD = "thread";
+  private static final String PARAM_RUN_ALL = "all";
+  private static final String PARAM_SEARCH = "search";
+  private static final String PARAM_OUTPUT = "output";
+  private static final String PARAM_XSL = "xsl";
+  private static final String PARAM_FILTER_TRACE = "filterTrace";
+  private static final String PARAM_STOP = "stop";
+  private static final String PARAM_THREAD = "thread";
+  private static final String PARAM_SHOWMETHODS = "showMethods";
 
-  protected static final String INIT_PARAM_RESOURCES = "searchResources";
-  protected static final String INIT_PARAM_XSL = "xslStylesheet";
+  private static final String INIT_PARAM_RESOURCES = "searchResources";
+  private static final String INIT_PARAM_XSL = "xslStylesheet";
 
-  protected static final String OUTPUT_HTML = "html";
-  protected static final String OUTPUT_XML = "xml";
+  public static final String OUTPUT_HTML = "html";
+  public static final String OUTPUT_XML = "xml";
 
   private static final String RESOURCE_PREFIX = "resource";
 
@@ -118,6 +119,7 @@ public class JUnitEEServlet extends HttpServlet {
     String xsl = request.getParameter(PARAM_XSL);
     String stop = request.getParameter(PARAM_STOP);
     String output = request.getParameter(PARAM_OUTPUT);
+    boolean showMethods = "true".equals(request.getParameter(PARAM_SHOWMETHODS));
     String[] testClassNames = null;
     String message;
     boolean filterTrace = true;
@@ -165,18 +167,19 @@ public class JUnitEEServlet extends HttpServlet {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
 
+
     if (testClassNames == null) {
       if (runAll == null) {
         message = "";
       } else {
         message = "You requested all test cases to be run by setting the \"all\" parameter, but no test case was found.";
       }
-      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace);
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace, showMethods);
       return;
     }
     if ((test != null) && (testClassNames.length != 1)) {
       message = "You requested to run a single test case but provided more than one test suite.";
-      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace);
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace, showMethods);
       return;
     }
 
@@ -259,12 +262,58 @@ public class JUnitEEServlet extends HttpServlet {
     StringBuffer buffer = new StringBuffer();
 
     if (param == null) {
-      return searchForTests((String)null);
+      return filterTests(searchForTests((String)null));
     }
     for (int i = 0; i < param.length; i++) {
       buffer.append(param[i]).append(",");
     }
-    return searchForTests(buffer.toString());
+    return filterTests(searchForTests(buffer.toString()));
+  }
+
+
+  /**
+   * Filter class which are not a subclass of TestCase and suites with no tests
+   *
+   * @param tests
+   * @return
+   */
+  private String[] filterTests(String[] tests) {
+    ClassLoader loader = getDynamicClassLoader();
+    TestRunnerResults testResults = new TestRunnerResults();
+    TestRunner tester = new TestRunner(loader, testResults, false);
+    List names = new ArrayList(Arrays.asList(tests));
+    Iterator iterator = names.iterator();
+
+    while (iterator.hasNext()) {
+      String name = (String)iterator.next();
+      try {
+        Class clazz = loader.loadClass(name);
+
+        if (!Test.class.isAssignableFrom(clazz)) {
+          iterator.remove();
+        } else {
+          Test test = tester.getTest(name);
+
+          if (test instanceof TestSuite) {
+            TestSuite suite = (TestSuite)test;
+
+            if (suite.testCount() == 0) {
+              iterator.remove();
+            } else if (suite.testCount() == 1) {
+              Test singleTest = suite.testAt(0);
+
+              if (singleTest.getClass().getName().equals("junit.framework.TestSuite$1")) {
+                // no test method found
+                iterator.remove();
+              }
+            }
+          }
+        }
+      } catch (ClassNotFoundException e) {
+        iterator.remove();
+      }
+    }
+    return (String[])names.toArray(new String[names.size()]);
   }
 
 
@@ -420,7 +469,7 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
 
-  protected void errorResponse(String[] testCases, String servletPath, String message, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+  protected void errorResponse(String[] testCases, String servletPath, String message, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace, boolean showMethods) throws IOException {
     if (OUTPUT_XML.equals(output)) {
       TestRunnerResults results = new TestRunnerResults();
       results.runFailed(message);
@@ -428,12 +477,12 @@ public class JUnitEEServlet extends HttpServlet {
       renderResults(results, request, response, xsl, filterTrace);
     } else {
       response.setContentType("text/html");
-      printIndexHtml(testCases, servletPath, message, response.getWriter());
+      printIndexHtml(testCases, servletPath, message, response.getWriter(), showMethods);
     }
   }
 
 
-  protected void printIndexHtml(String[] testCases, String servletPath, String message, PrintWriter pw) throws IOException {
+  protected void printIndexHtml(String[] testCases, String servletPath, String message, PrintWriter pw, boolean showMethods) throws IOException {
     InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + "/runner.html");
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
     String line;
@@ -445,6 +494,10 @@ public class JUnitEEServlet extends HttpServlet {
       for (int i = 0; i < testCases.length; i++) {
         bufferList.append("        <tr><td class=\"cell\"><input type=\"checkbox\" name=\"suite\" value=\"");
         bufferList.append(testCases[i]).append("\">&nbsp;&nbsp;").append(testCases[i]).append("</td></tr>\n");
+
+        if (showMethods) {
+          printIndexHtmlTestMethods(bufferList, testCases[i], servletPath);
+        }
       }
     }
 
@@ -452,6 +505,18 @@ public class JUnitEEServlet extends HttpServlet {
       if (testCases != null) {
         if (line.startsWith("###")) {
           pw.print(bufferList.toString());
+        } else if (line.startsWith("##show/hide")) {
+          pw.print("(<a href=\"");
+          pw.print(servletPath);
+          pw.print("?showMethods=");
+          pw.print(!showMethods);
+          pw.print("\">");
+          if (showMethods) {
+            pw.print("hide");
+          } else {
+            pw.print("show");
+          }
+          pw.print(" tests</a>)");
         } else if (line.startsWith("<!-- message -->")) {
           pw.println(message);
         } else if (line.indexOf("<form>") != -1) {
@@ -466,5 +531,61 @@ public class JUnitEEServlet extends HttpServlet {
       }
     }
     reader.close();
+  }
+
+
+  /**
+   * Generates links to run individual test methods
+   *
+   * @param bufferList
+   * @param testCase
+   * @param servletPath
+   */
+  protected void printIndexHtmlTestMethods(StringBuffer bufferList, String testCase, String servletPath) {
+    String[] methods = getTestClassMethods(testCase);
+
+    if (methods.length > 0) {
+
+      for (int j = 0; j < methods.length; j++) {
+        bufferList.append("        <tr><td class=\"methodcell\">");
+        bufferList.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" + servletPath + "?" + PARAM_SUITE + "=" + testCase + "&" + PARAM_TEST + "="
+                          + methods[j] + "\">");
+        bufferList.append(methods[j]);
+        bufferList.append("</a></td></tr>");
+      }
+    }
+  }
+
+
+  /**
+   * Looks up all the test methods for a particular test class.
+   * Not particulary efficient, it just leverages existing test lookup
+   * functionality from org.junitee.runner.TestRunner
+   *
+   * @param testClass
+   *
+   * @return
+   */
+  protected String[] getTestClassMethods(String testClass) {
+    TestRunnerResults results = new TestRunnerResults();
+    TestRunner tester = new TestRunner(this.getDynamicClassLoader(), results, false);
+    Test test = tester.getTest(testClass);
+    ArrayList testMethodList = new ArrayList();
+
+    if (test instanceof TestSuite) {
+      TestSuite suite = (TestSuite)test;
+
+      for (int i = 0; i < suite.testCount(); i++) {
+        Test testMethod = suite.testAt(i);
+
+        if (testMethod instanceof TestCase) {
+          testMethodList.add(((TestCase)testMethod).getName());
+        }
+      }
+    }
+
+    String[] testMethodArray = new String[testMethodList.size()];
+
+    return (String[])testMethodList.toArray(testMethodArray);
   }
 }
