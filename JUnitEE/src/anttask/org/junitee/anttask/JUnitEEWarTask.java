@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.5 2002-11-02 16:18:01 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.6 2003-01-18 11:23:19 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -19,7 +19,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class JUnitEEWarTask extends War {
 
@@ -39,6 +39,7 @@ public class JUnitEEWarTask extends War {
   private List testCases = new ArrayList();
   private List classes = new ArrayList();
   private List ejbRefs = new ArrayList();
+  private List resRefs = new ArrayList();
   private File deploymentDescriptor;
 
 
@@ -103,10 +104,21 @@ public class JUnitEEWarTask extends War {
   public EjbRef createEjbRef() {
     EjbRef ejbRef = new EjbRef();
 
-    this.ejbRefs.add(ejbRef);
+    ejbRefs.add(ejbRef);
     return ejbRef;
   }
 
+
+  /**
+   * Create a nested resourceRef element.
+   * @return
+   */
+  public ResRef createResourceRef() {
+    ResRef ref = new ResRef();
+
+    resRefs.add(ref);
+    return ref;
+  }
 
   /**
    * Check that all the required parameters have been properly set.
@@ -238,7 +250,17 @@ public class JUnitEEWarTask extends War {
       pw.println("    <url-pattern>" + WEBXML_URLPATTERN + "</url-pattern>");
       pw.println("  </servlet-mapping>");
       pw.println("");
-      for (Iterator i = this.ejbRefs.iterator(); i.hasNext();) {
+      for(Iterator i = resRefs.iterator(); i.hasNext();) {
+        ResRef ref = (ResRef)i.next();
+        pw.println("");
+        pw.println("  <resource-ref>");
+        pw.println("    <res-ref-name>" + ref.getResRefName() + "</res-ref-name>");
+        pw.println("    <res-type>" + ref.getResType() + "</res-type>");
+        pw.println("    <res-auth>" + ref.getResAuth() + "</res-auth>");
+        pw.println("  </resource-ref>");
+      }
+
+      for (Iterator i = ejbRefs.iterator(); i.hasNext();) {
         EjbRef ejbRef = (EjbRef)i.next();
         pw.println("");
         pw.println("  <ejb-ref>");
@@ -250,7 +272,6 @@ public class JUnitEEWarTask extends War {
           pw.println("    <ejb-link>" + ejbRef.getEjbLink() + "</ejb-link>");
         }
         pw.println("  </ejb-ref>");
-
       }
       pw.println("</web-app>");
       pw.close();
@@ -350,6 +371,13 @@ public class JUnitEEWarTask extends War {
 
   public class EjbRef {
 
+    private String ejbRefName;
+    private String ejbRefType;
+    private String home;
+    private String remote;
+    private String ejbLink;
+
+
     String getEjbRefName() {
       return (this.ejbRefName);
     }
@@ -414,15 +442,43 @@ public class JUnitEEWarTask extends War {
         throw new BuildException("You must specify the remote attribute", location);
       }
     }
-
-
-    private String ejbRefName;
-    private String ejbRefType;
-    private String home;
-    private String remote;
-    private String ejbLink;
-
   }
 
 
+  public class ResRef {
+
+    private String resRefName;
+    private String resType;
+    private String resAuth;
+
+
+    public String getResRefName() {
+      return resRefName;
+    }
+
+
+    public void setResRefName(String resRefName) {
+      this.resRefName = resRefName;
+    }
+
+
+    public String getResType() {
+      return resType;
+    }
+
+
+    public void setResType(String resType) {
+      this.resType = resType;
+    }
+
+
+    public String getResAuth() {
+      return resAuth;
+    }
+
+
+    public void setResAuth(String resAuth) {
+      this.resAuth = resAuth;
+    }
+  }
 }
