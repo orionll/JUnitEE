@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.10 2002-09-20 20:39:40 o_rossmueller Exp $
+	$Id: build.xml,v 1.11 2002-09-23 23:41:15 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -13,8 +13,9 @@
 <project name="junitee" default="all" basedir=".">
 
   <property name="name" value="junitee"/>
-  <property name="version" value="1.5"/>
+  <property name="version" value="1.5rc1"/>
   <property name="distname" value="${name}-${version}"/>
+  <property name="srcdistname" value="${name}-src-${version}"/>
 
   <property name="lib.dir" value="${basedir}/3rdparty"/>
 
@@ -33,6 +34,7 @@
   <property name="build.anttask" value="${build.dir}/anttask"/>
   <property name="dist.dir" value="dist"/>
   <property name="dist.root" value="${dist.dir}/${distname}"/>
+  <property name="srcdist.root" value="${dist.dir}/${srcdistname}"/>
   <property name="dist.lib" value="${dist.root}/lib"/>
   <property name="dist.doc" value="${dist.root}/doc"/>
   <property name="dist.src" value="${dist.root}/src"/>
@@ -40,10 +42,13 @@
   <property name="example.dir" value="example"/>
   <property name="resource.dir" value="resource"/>
 
+  <property name="build.doc" value="${build.dir}/doc"/>
+  <property name="build.javadoc" value="${build.doc}/javadoc"/>
 
   <target name="clean">
     <delete dir="${build.dir}" quiet="true"/>
     <delete dir="${build.lib}" quiet="true"/>
+    <delete dir="${build.javadoc}" quiet="true"/>
     <delete dir="${dist.dir}" quiet="true"/>
   </target>
 
@@ -53,8 +58,11 @@
     <mkdir dir="${build.lib}"/>
     <mkdir dir="${build.testrunner}"/>
     <mkdir dir="${build.anttask}"/>
+    <mkdir dir="${build.doc}"/>
+    <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.root}"/>
+    <mkdir dir="${srcdist.root}"/>
     <mkdir dir="${dist.lib}"/>
     <mkdir dir="${dist.doc}"/>
     <mkdir dir="${dist.src}"/>
@@ -87,17 +95,50 @@
 
   </target>
 
-  <target name="dist" depends="clean, jar" description="Build the distribution">
-    <copy todir="${dist.lib}">
-      <fileset dir="${build.lib}" includes="*.jar"/>
+  <target name="doc" depends="prepare">
+    <copy todir="${build.doc}">
+      <fileset dir="${doc.dir}" includes="**/*.html, **/*.png, **/*.css"/>
+    </copy>
+    <javadoc destdir="${build.javadoc}">
+      <packageset dir="${src.testrunner}"/>
+      <packageset dir="${src.anttask}"/>
+    </javadoc>
+
+  </target>
+
+  <target name="dist" depends="src-dist, binary-dist"/>
+
+
+  <target name="src-dist">
+    <copy todir="${srcdist.root}">
+      <fileset dir="${basedir}">
+        <include name="example/**/*.java"/>
+        <include name="example/**/*.xml"/>
+        <include name="example/**/*.html"/>
+        <include name="src/**/*.java"/>
+        <include name="doc/**"/>
+        <include name="3rdparty/**"/>
+        <include name="build.xml"/>
+        <include name="Readme.txt"/>
+      </fileset>
     </copy>
 
-    <copy todir="${dist.doc}">
-      <fileset dir="${doc.dir}">
-        <include name="*.html"/>
-        <include name="*.css"/>
-        <include name="*.png"/>
-      </fileset>
+    <zip zipfile="${dist.dir}/${srcdistname}.zip">
+      <zipfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </zip>
+
+    <tar destfile="${dist.dir}/${srcdistname}.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${srcdistname}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </tar>
+  </target>
+
+  <target name="binary-dist" depends="clean, jar, doc" description="Build the distribution">
+    <copy todir="${dist.lib}">
+      <fileset dir="${build.lib}" includes="*.jar"/>
     </copy>
 
     <copy todir="${dist.root}">
@@ -106,14 +147,26 @@
         <include name="example/**/*.xml"/>
         <include name="example/**/*.html"/>
         <include name="src/**/*.java"/>
-        <include name="3rdparty/**"/>
+        <include name="3rdparty/junit.jar, 3rdparty/servlet.jar, 3rdparty/jboss-j2ee.jar"/>
         <include name="build.xml"/>
         <include name="Readme.txt"/>
       </fileset>
     </copy>
 
-    <zip zipfile="${dist.dir}/${distname}.zip"
-      basedir="${dist.dir}" includes="${distname}/**"/>
+    <zip zipfile="${dist.dir}/${distname}.zip">
+      <zipfileset dir="${dist.dir}" includes="${distname}/**"/>
+      <zipfileset dir="${build.doc}" prefix="${distname}/doc"/>
+    </zip>
+
+    <tar destfile="${dist.dir}/${distname}.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.dir}" includes="${distname}/**"/>
+      <tarfileset dir="${build.doc}" prefix="${distname}/doc"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${distname}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${dist.dir}" includes="${distname}/**"/>
+      <tarfileset dir="${build.doc}" prefix="${distname}/doc"/>
+    </tar>
   </target>
 
   <target name="all" depends="jar" description="Build the JUnitEE library and ant task"/>
