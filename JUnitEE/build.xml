@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.1.1.1 2001-07-23 21:30:53 lhoriman Exp $
+	$Id: build.xml,v 1.2 2002-07-31 21:04:30 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -12,13 +12,15 @@
 	Jeff Schnitzer (jeff@infohazard.org)
 -->
 
-<project name="junitee" default="jar" basedir=".">
+<project name="junitee" default="all" basedir=".">
 
 	<property name="name" value="junitee" />
 
-	<property name="junit.library" value="/java/junit3.5/junit.jar" />
-	<property name="servlet.library" value="/java/orion/orion.jar" />
-	<property name="ejb.library" value="/java/orion/ejb.jar" />
+  <property name="lib.dir" value="${basedir}/lib"/>
+  
+	<property name="junit.library" value="${lib.dir}/junit.jar" />
+	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
+	<property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar" />
 
 	<property name="deployment.dir" value="/java/orion/lib" />
 	<property name="publish.dir" value="/java/orion/default-web-app/junitee" />
@@ -40,7 +42,7 @@
  	<target name="classes" depends="prepare-staging">
 		<javac srcdir="${src.dir}"
 				destdir="${staging.dir}"
-				classpath="${junit.library}:${servlet.library}:${ejb.library}" />
+				classpath="${junit.library}:${servlet.library}:${j2ee.library}" />
 	</target>
 
 	<target name="jar" depends="classes">
@@ -80,5 +82,7 @@
 		<copydir src="${website.dir}"
 					dest="${publish.dir}" />
 	</target>
+  
+  <target name="all" depends="jar" description="Build the JUnitEE library"/>
 </project>
 
