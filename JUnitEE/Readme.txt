@@ -16,6 +16,12 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.6rc2
+
+- junitee task logs the server response in case of a parse exception (in rare error cases html is produced by
+  the servlet even if output is set to 'xml'
+- JUnitEE servlet provides xml in error cases
+
 Release 1.6rc1
 
 - JUnitEE servlet provides threaded mode for long running tests. This avoids timeouts
