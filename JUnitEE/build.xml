@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.35 2004-05-28 11:16:27 o_rossmueller Exp $
+	$Id: build.xml,v 1.36 2004-05-28 12:13:21 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -245,6 +245,21 @@
       <tarfileset dir="${build.doc}"/>
     </tar>
   </target>
+
+
+   <target name="dist-upload" depends="dist">
+      <ftp server="upload.sourceforge.net"
+         remotedir="/incoming"
+         userid="anonymous"
+         password="o_rossmueller@users.sourceforge.net"
+         depends="yes"
+         binary="yes"
+         >
+         <fileset dir="${dist.dir}">
+            <include name="**/*.zip"/>
+         </fileset>
+      </ftp>
+   </target>
 
   <target name="all" depends="jar" description="Build the JUnitEE library and ant task"/>
 </project>
