@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.4 2002-10-11 19:15:05 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.5 2002-10-15 20:21:57 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class JUnitEETask extends Task {
 
@@ -153,16 +153,15 @@ public class JUnitEETask extends Task {
   protected void execute(JUnitEETest test) throws BuildException {
     StringBuffer arguments = new StringBuffer();
 
-    arguments.append(url).append("?output=xml&");
+    arguments.append(url).append("?output=xml");
 
     if (test.getResource() != null) {
-      arguments.append("resource=").append(test.getResource());
+      arguments.append("&resource=").append(test.getResource());
     }
-    ;
     if (test.getRunall()) {
-      arguments.append("all=true");
+      arguments.append("&all=true");
     } else if (test.getName() != null) {
-      arguments.append("suite=").append(URLEncoder.encode(test.getName()));
+      arguments.append("&suite=").append(URLEncoder.encode(test.getName()));
     } else {
       throw new BuildException("You must specify the test name or runall attribute", location);
     }
