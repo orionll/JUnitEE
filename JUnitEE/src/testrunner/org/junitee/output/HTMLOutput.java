@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.15 2002-11-27 23:53:21 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.16 2002-12-05 18:50:36 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -23,7 +23,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -64,7 +64,7 @@ public class HTMLOutput extends AbstractOutput {
     if (isFinished()) {
       printRunErrors();
       if (!isSingleTest()) {
-        printSummary();
+        printSummary(true);
       }
       printMethodList();
       if (isFailure()) {
@@ -73,7 +73,7 @@ public class HTMLOutput extends AbstractOutput {
     } else {
       printUnderProgress();
       if (!isSingleTest()) {
-        printSummary();
+        printSummary(false);
       }
     }
     printFooter();
@@ -154,7 +154,7 @@ public class HTMLOutput extends AbstractOutput {
     if (currentTest != null) {
       pw.println("<tr><td class=\"failedcell\">Current test: " + currentTest.getTest() + "</td></tr>");
     }
-    if (isStopped() && ! isFinished()) {
+    if (isStopped() && !isFinished()) {
       pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
     } else {
       pw.println("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td></tr>");
@@ -191,7 +191,7 @@ public class HTMLOutput extends AbstractOutput {
   }
 
 
-  protected void printSummary() {
+  protected void printSummary(boolean createInfoAndLinks) {
     if (getSuiteInfo().isEmpty()) {
       pw.println("<h2>No tests executed</h2>");
       return;
@@ -207,17 +207,31 @@ public class HTMLOutput extends AbstractOutput {
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
-      if (suite.successful()) {
-        pw.println("<tr><td class=\"passedcell\">" + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Run test suite")) + "</td>");
-      } else if (suite.hasError()) {
-        pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Run test suite")) + "</td>");
+      if (createInfoAndLinks) {
+        if (suite.successful()) {
+          pw.println("<tr><td class=\"passedcell\">" + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Run test suite")) + "</td>");
+        } else if (suite.hasError()) {
+          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Run test suite")) + "</td>");
+        } else {
+          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Run test suite")) + "</td>");
+        }
       } else {
-        pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Run test suite")) + "</td>");
+        if (suite.successful()) {
+          pw.println("<tr><td class=\"passedcell\">" + image(RESOURCE_GREEN_BULLET, "Run test suite") + "</td>");
+        } else if (suite.hasError()) {
+          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Run test suite") + "</td>");
+        } else {
+          pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_YELLOW_BULLET, "Run test suite") + "</td>");
+        }
       }
       pw.print("<td class=\"cell\">");
-      pw.print("<a href=\"#" + suite.getTestClassName() + "\">");
-      pw.print(image(RESOURCE_INFO, "Show details"));
-      pw.print("</a>");
+      if (createInfoAndLinks) {
+        pw.print("<a href=\"#" + suite.getTestClassName() + "\">");
+        pw.print(image(RESOURCE_INFO, "Show details"));
+        pw.print("</a>");
+      } else {
+        pw.print("&nbsp;");
+      }
       pw.println("</td><td width=\"100%\" class=\"cell\">" + suite.getTestClassName() + "</td><td class=\"cell\" align=\"right\">");
       pw.println(elapsedTimeAsString(suite.getElapsedTime()) + "&nbsp;sec</td></tr>");
     }
