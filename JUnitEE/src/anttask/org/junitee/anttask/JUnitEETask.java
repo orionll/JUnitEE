@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.8 2002-11-03 17:54:05 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.9 2002-11-03 22:48:26 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -29,7 +29,7 @@ import org.w3c.dom.*;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class JUnitEETask extends Task {
 
@@ -158,7 +158,9 @@ public class JUnitEETask extends Task {
     while (enum.hasMoreElements()) {
       JUnitEETest test = (JUnitEETest)enum.nextElement();
 
-      execute(test);
+      if (test.shouldExecute(getProject())) {
+        execute(test);
+      }
     }
 
   }

@@ -3,7 +3,7 @@
   <release name="1.6" status="open">
     <enhancement date="2002-11-03" author="o_rossmueller">
       It is now possible to force the test runner to fork a new thread by setting <code>thread=true</code> to avoid timeouts for
-      long-running tests.
+      long-running tests. Added JUnitEEThreadedServlet which has thread=true by default.
     </enhancement>
     <refactoring date="2002-11-03" author="o_rossmueller">
       Splitted output producer in model and render part.

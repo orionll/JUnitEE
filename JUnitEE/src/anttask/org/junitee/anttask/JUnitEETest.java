@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETest.java,v 1.3 2002-11-03 17:54:05 o_rossmueller Exp $
+ * $Id: JUnitEETest.java,v 1.4 2002-11-03 22:48:26 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -11,13 +11,15 @@ package org.junitee.anttask;
 import java.io.*;
 import java.util.*;
 
+import org.apache.tools.ant.Project;
+
 
 /**
  * This is a data type used by the JUnitEE task and represents a call to the JUnitEE servlet to run
  * one specific test suite or all available tests.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class JUnitEETest {
 
@@ -32,10 +34,42 @@ public class JUnitEETest {
   private File toDir;
   private Vector formatters = new Vector();
   private boolean filterTrace = true;
+  private String ifProperty;
+  private String unlessProperty;
 
+
+  public boolean shouldExecute(Project project) {
+    if (ifProperty != null) {
+      return project.getProperty(ifProperty) != null;
+    }
+    if (unlessProperty != null) {
+      return project.getProperty(unlessProperty) == null;
+    }
+    return true;
+  }
 
   public void addFormatter(FormatterElement formatter) {
     formatters.addElement(formatter);
+  }
+
+
+  public String getIf() {
+    return ifProperty;
+  }
+
+
+  public void setIf(String ifProperty) {
+    this.ifProperty = ifProperty;
+  }
+
+
+  public String getUnless() {
+    return unlessProperty;
+  }
+
+
+  public void setUnless(String unlessProperty) {
+    this.unlessProperty = unlessProperty;
   }
 
 

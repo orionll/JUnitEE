@@ -1,5 +1,5 @@
 /*
- * $Id: FormatterElement.java,v 1.1 2002-11-03 10:49:17 o_rossmueller Exp $
+ * $Id: FormatterElement.java,v 1.2 2002-11-03 22:48:26 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -15,7 +15,7 @@ import org.apache.tools.ant.BuildException;
  * This is the JUnitEE equivalent to the JUnit FormatterElement. Unfortunatelly some methods have package visibility in the original
  * FormatterElement so we cannot reuse it here.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class FormatterElement {
@@ -33,6 +33,9 @@ public class FormatterElement {
       setExtension(".xml");
     } else if ("plain".equals(type)) {
       setClassname("org.junitee.anttask.PlainResultFormatter");
+      setExtension(".txt");
+    } else if ("brief".equals(type)) {
+      setClassname("org.junitee.anttask.BriefResultFormatter");
       setExtension(".txt");
     } else {
       throw new BuildException("Unknown formatter type '" + type + "'");

@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.7 2002-11-02 16:17:58 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.8 2002-11-03 22:48:26 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.7 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.8 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -85,6 +85,7 @@
     html output you use <code>org.junitee.servlet.JUnitEEServlet</code>:
     </p>
 
+    <p>
     <div class="code"><code>
 			<pre>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE web-app
@@ -106,10 +107,38 @@
   &lt;/servlet-mapping&gt;
 &lt;/web-app&gt;</pre></code>
     </div>
+    </p>
+    <br>
+    <p>Another servlet provided by JUnitEE is <code>org.junitee.servlet.JUnitEEThreadedServlet</code> which by default forks a new thread for
+    test execution. For the other servlets you get the same behaviour by using the <a href="#parameters"><code>thread</code></a> parameter in the request. To use this servlet the deployment descriptor looks like this:
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
 
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEThreadedServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;</pre></code>
+    </div>
+    </p>
+    <br>
     <p>In case you prefer xml output you use <code>org.junitee.servlet.JUnitEEXMLServlet</code>:
     </p>
-
+    <p>
     <div class="code"><code>
 			<pre>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE web-app
@@ -131,15 +160,17 @@
   &lt;/servlet-mapping&gt;
 &lt;/web-app&gt;</pre></code>
     </div>
-
-    <p>Both servlets support the <a href="#parameters"><code>output</code></a> request parameter to overwrite the default behaviour, so it is possible
-    to use the <code>org.junitee.servlet.JUnitEEServlet</code> to produce xml output and vice versa.</p>
+    </p>
+    <br>
+    <p>All three servlets support the <a href="#parameters"><code>output</code></a> request parameter to overwrite the default behaviour, so it is possible
+    to use the <code>org.junitee.servlet.JUnitEEServlet</code> to produce xml output and to get html output out of the <code>org.junitee.servlet.JUnitEEXMLServlet</code>.</p>
 
     <p>To use the <code>Smart Test Mode</code> of JUnitEE you have to tell the servlet which jar file in the <code>WEB-INF/lib</code> folder of your
     war file contains your test cases. Therefore you have to add an init parameter named <code>searchResources</code> to the servlet declaration. Considering
     that the jar file <code>WEB-INF/lib/test.jar</code> contains the test classes, this looks like
     </p>
 
+    <p>
     <div class="code"><code>
 			<pre>&lt;servlet&gt;
     &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
@@ -151,10 +182,12 @@
     &lt;/init-param&gt;
   &lt;/servlet&gt;</pre></code>
     </div>
-
+    </p>
+    <br>
     <p>Note that the parameter value is the name of the jar file relative to <code>WEB-INF/lib</code>. You may also tell JUnitEE to search more than one
     file for your tests. In this case the parameter value is a comma-separated list of file names like in this example:
 
+    <p>
     <div class="code"><code>
 			<pre>&lt;servlet&gt;
     &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
@@ -166,19 +199,21 @@
     &lt;/init-param&gt;
   &lt;/servlet&gt;</pre></code>
     </div>
-
-
+    </p>
+    <br>
     <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCases.txt</code> to your .war file. If this
     file exists, JUnitEE will not search any jar files but will use the list of test case names declared in <code>testCases.txt</code> instead. <code>testCases.txt</code>
     has to be a simple text file containing one test class name per line like in this example:
     </p>
 
+    <p>
     <div class="code"><code>
 			<pre># This is a comment
 org.junitee.example.SimpleUnitTests
 org.junitee.example.ComplexUnitTests</pre></code>
     </div>
-
+    </p>
+    <br>
     <p>And finally there is the option to use the <a href="#parameters"><code>search</code></a> request parameter to specify the resources.</p>
 
 
@@ -186,6 +221,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
     <code>xslStylesheet</code>:
     </p>
 
+    <p>
     <div class="code"><code>
 			<pre>&lt;servlet&gt;
     &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
@@ -197,7 +233,8 @@ org.junitee.example.ComplexUnitTests</pre></code>
     &lt;/init-param&gt;
   &lt;/servlet&gt;</pre></code>
     </div>
-
+    </p>
+    <br>
     <p>JUnitEE will use this information to add a stylesheet instruction to the generated xml. Another way to obtain the same result is to use the
     <a href="#parameters"><code>xsl</code></a> request parameter.</p>
 
@@ -299,6 +336,10 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="whiterow">xsl</td><td class="whiterow">Define the URL of an xsl stylesheet. This URL will be used to generate a stylesheet
         instruction at the beginning of the xml output (in case xml output is active).</td>
         <td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">thread</td><td class="coloredrow">Tell the servlet to fork a new thread to run the tests. A thread will be
+        forked if this parameter is <code>true</code> and two or more <code>suite</code> parameters or <code>all</code> is set.<br><br>You should use
+        this feature for <code>html</code> output only, because in this case the output will be refreshed in the browser until all tests are
+        finished or test execution is stopped by the user. For <code>xml</code> output there is not way for an automatic refresh.</td><td class="coloredrow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
     </table>
     </div>
@@ -335,7 +376,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
 &lt;/taskdef&gt;</pre></code>
       </div>
     </p>
-
+    <br>
     <p>The <code>JUnitEETask</code> supports the following attributes:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
@@ -345,13 +386,36 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="coloredrow">haltonfailure</td><td class="coloredrow">Stop the build if a failure occurs</td><td class="coloredrow">No</td></tr>
         <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">printsummary</td><td class="coloredrow">Print a summary of all executed tests</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">filtertrace</td><td class="whiterow">Filter the stack trace in case of an error/failure. This removes JUnit methods from the stack trace.</td><td class="whiterow">No; default is true</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>
     </p>
 
-	<p>The task requires a set of nested <code>&lt;test&gt;</code> elements to define which tests to run. Each <code>&lt;test&gt;</code> element supports
-    these attributes:
+    <p>The results of the tests can be printed in different formats. To specify the format of the output <code>&lt;junitee&gt;</code> may contain
+    nested <code>&lt;formatter&gt;</code> elements. The output of a formatter will always be sent to a file, unless you set the <code>usefile</code>
+    attribute to <code>false</code>. The name of the file is determined by the name of the test and can be set by the <code>outfile</code> attribute of <code>&lt;test&gt;</code>.
+    </p>
+    <p>There are two predefined formatters - one prints the test results in XML format, the other emits plain text. The formatter named <code>plain</code>
+    will only print detailed information for testcases that failed, while <code>plain</code> gives a little statistics for all test cases.
+    Custom formatters that need to implement <code>org.junitee.anttask.JUnitEEResultFormatter</code> can be specified using the <code>classname</code> attribute.
+    </p>
+    <p>The <code>formatter</code> element supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">JUnitEETask attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">type</td><td class="whiterow">Use a predefined formatter (either <code>xml</code>, <code>plain</code>, or <code>brief</code>).</td><td class="whiterow">YES, if <code>classname</code> is not set.</td></tr>
+        <tr><td class="coloredrow">classname</td><td class="coloredrow">Name of a custom formatter class.</td><td class="coloredrow">YES, if <code>type</code> is not set.</td></tr>
+        <tr><td class="whiterow">extension</td><td class="whiterow">Extension to append to the output filename.</td><td class="whiterow">YES, if <code>classname</code> has been specified.</td></tr>
+        <tr><td class="coloredrow">usefile</td><td class="coloredrow">Boolean that determines whether output should be sent to a file.</td><td class="coloredrow">No; default is <code>true</code></td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+	<p>The task requires a set of nested <code>&lt;test&gt;</code> elements to define which tests to run. Each <code>&lt;test&gt;</code> may contain nested <code>&lt;formatter&gt;</code>elements which are added
+	to the list of formatters specified by <code>&lt;junitee&gt;</code>. The following attributes are supported by <code>&lt;test&gt;</code>:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
         <tr><td colspan="3" class="tabletitle">Test attributes</td></tr>
@@ -364,6 +428,13 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="whiterow">errorproperty</td><td class="whiterow">Specify a property that will be set in case an error caused this test to fail</td><td class="whiterow">No</td></tr>
         <tr><td class="coloredrow">haltonfailure</td><td class="coloredrow">Stop the build if this test fails</td><td class="coloredrow">No</td></tr>
         <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs while running this test</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">filtertrace</td><td class="coloredrow">Filter the stack trace in case of an error/failure. This overwrites the setting of the
+        task.</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute and the extension of the formatter.</td>
+        <td class="whiterow">No; default is TEST-<em>name</em>, where <em>name</em> is the name of the test specified in the name attribute or <code>all</code> if <code>runall</code> is set.</td></tr>
+        <tr><td class="coloredrow">todir</td><td class="coloredrow">Directory to write the reports to.</td><td class="coloredrow">No; default is the current directory.</td></tr>
+        <tr><td class="whiterow">if</td><td class="whiterow">Only run test if the named property is set.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">unless</td><td class="coloredrow">Only run test if the named property is <b>not</b> set.</td><td class="coloredrow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>
@@ -389,65 +460,34 @@ org.junitee.example.ComplexUnitTests</pre></code>
   &lt;/junitee&gt;
 &lt;/target&gt;</pre></code>
     </div>
+    </p>
+    <br>
 
-
-    <p>The <code>JUnitEEWarTask</code> supports the following attributes:
+    <p>The <code>JUnitEEWarTask</code> is an extension of the <code>War</code> task available in the standard Ant distribution. In addition to the
+    attributes of the <code>War</code> task the <code>JUnitEEWarTask</code> supports the following attributes:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
         <tr><td colspan="3" class="tabletitle">JUnitEEWarTask attributes</td></tr>
         <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
-        <tr><td class="whiterow">destFile</td><td class="whiterow">the WAR file to create</td><td class="whiterow">YES</td></tr>
-        <tr><td class="coloredrow">testJarName</td><td class="coloredrow">This parameter defines the name of the <code>.jar</code>
+        <tr><td class="coloredrow">testjarname</td><td class="coloredrow">This parameter defines the name of the <code>.jar</code>
               file which will contain all the test classes defined in the nested <code>&lt;classes&gt;</code> element.
               This file will then be placed in the <code>WEB-INF/lib</code> directory of the <code>war</code> file.
               If this parameter is not set, the test classes will be stored in the <code>WEB-INF/classes</code> directory of the <code>war</code>
-              file.</td><td class="coloredrow">No
-        </td></tr>
+              file.</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">servletclass</td><td class="whiterow">Specify the servlet class which will be used to generate the <code>web.xml</code>.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">webxml</td><td class="coloredrow">The deployment descriptor to use (WEB-INF/web.xml). This attribute workes like in the <code>War</code> task, except that
+        if not set, <code>web.xml</code> will be generated.</td><td class="coloredrow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>
     </p>
 
-    <p>Similar to the <code>War</code> task included in the Ant distribution, the <code>JUnitEEWarTask</code> requires/supports some nested elements:
-    <div>
-      <table align="center" width="100%" cellspacing="2" cellpadding="2">
-        <tr><td colspan="3" class="tabletitle">JUnitEEWarTask nested elements</td></tr>
-        <tr><td class="tablehead">Nested element</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
-        <tr><td class="whiterow">lib</td>
-            <td class="whiterow">The nested <code>lib</code> element specifies a FileSet.
-            All files included in this fileset will end up in the
-            <code>WEB-INF/lib</code> directory of the war file.</td>
-            <td class="whiterow">Yes.<br>
-               Should contain at least a reference to
-              <code>junitee.jar</code> and <code>junit.jar</code>
-        </td></tr>
-        <tr><td class="coloredrow">classes</td>
-            <td class="coloredrow">The nested <code>classes</code> element specifies a
-              FileSet. All files included in this fileset will end up
-              in the <code>WEB-INF/classes</code> directory of the
-              <code>.war</code> file or in a <code>.jar</code> file if you set the <code>testJarName</code> attribute of the <code>JUnitEEWarTask</code>.</td>
-            <td class="coloredrow">Yes/No.<br>
-              You define here your own test classes, so this parameter
-              is required except if your test classes are already
-              bundled in a <code>.jar</code> file included in the
-              <code>lib</code> nested element.
-        </td></tr>
-        <tr><td class="whiterow">testcases</td>
-            <td class="whiterow">The nested <code>testcases</code> element specifies a
-              FileSet. All files included in this fileset are the
-              <code>Junit</code> test cases which will be ran. This list is
-              used to generate the <code>build.xml</code> which will be
-              bundled in our <code>.war</code> file.</td>
-            <td class="whiterow">No.</td>
-        </tr>
-          <tr><td colspan="3" class="footer">&nbsp;</td></tr>
-        </table>
-      </div>
-      </p>
+    <p>In addition to the <code>War</code> task, the <code>JUnitEEWarTask</code> supports nested <code>&lt;testcase&gt;</code> elements which specify a
+    FileSet. All files included in this fileset are the Junit test cases which will be executed if <code>all=true</code> is used when calling the JUnitEE servlet.
+    </p>
 
-
-    <p>In addition the <code>JUnitEEWarTask</code> supports nested <code>ejbRef</code> elements to declare EJB references which should be included
-    in the generated deployment descriptor of the <code>war</code> file. An <code>ejbRef</code> element supports the following attributes:
+    <p>Finally it is possible to declare EJB references which should be included
+    in the generated deployment descriptor of the <code>war</code> file using nested <code>&lt;ejbRef&gt;</code> elements. An <code>&lt;ejbRef&gt;</code> element supports the following attributes:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
         <tr><td colspan="3" class="tabletitle">ejbRef attributes</td></tr>
@@ -481,6 +521,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
         </ul>
       </p>
 
+      <p>
       <div class="code"><code>
         <pre>&lt;juniteewar destFile=&quot;myTest.war&quot;&gt;
   &lt;lib dir=&quot;lib&quot; includes=&quot;junitee.jar&quot;/&gt;
@@ -496,7 +537,8 @@ org.junitee.example.ComplexUnitTests</pre></code>
   &lt;/testcases&gt;
 &lt;/juniteewar&gt;</pre></code>
       </div>
-
+      </p>
+<br>
    <a name="cactus"></a>
 		<table cellspacing="0" cellpadding="0" width="100%">
 		  <tr><td>&nbsp;</td></tr>
