@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.5 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.6 2002-10-01 21:06:43 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -11,6 +11,7 @@ package org.junitee.runner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import junit.runner.BaseTestRunner;
 import junit.runner.TestSuiteLoader;
@@ -21,7 +22,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
@@ -54,7 +55,9 @@ public class TestRunner extends BaseTestRunner {
 
     for (int i = 0; i < testClassNames.length; i++) {
       Test test = getTest(testClassNames[i]);
-      test.run(result);
+      if (test != null) {
+        test.run(result);
+      }
     }
 
     listener.finish();
@@ -68,7 +71,9 @@ public class TestRunner extends BaseTestRunner {
     listener.start(true);
 
     Test test = getTest(testClassName, testName);
-    test.run(result);
+    if (test != null) {
+      test.run(result);
+    }
 
     listener.finish();
   }
@@ -78,54 +83,29 @@ public class TestRunner extends BaseTestRunner {
   }
 
 
-  protected void runFailed(String message) {
-    listener.runFailed(message);
+  protected void runFailed(String className) {
+    listener.runFailed(className);
   }
 
 
-  /**
-   * Create a test suite for the given suite class. If the class does not implement the static suite() method,
-   * a test suite for the suite class is created.
-   *
-   * @param suiteClassName
-   * @return
-   */
-  public Test getTest(String suiteClassName) {
-    Test test = super.getTest(suiteClassName);
-
-    if (test == null) {
-      try {
-        test = new TestSuite(loadSuiteClass(suiteClassName));
-      } catch (ClassNotFoundException e) {
-        String clazz = e.getMessage();
-
-        if (clazz == null) {
-          clazz = suiteClassName;
-        }
-        runFailed("Class not found \"" + clazz + "\"");
-        return null;
-      }
-    }
-    return test;
-  }
 
 
   protected Test getTest(String suiteClassName, String testName) {
     try {
       Class clazz = loadSuiteClass(suiteClassName);
       Constructor constructor = clazz.getConstructor(new Class[]{String.class});
+      Method tmp = clazz.getMethod(testName, new Class[0]);
       return (Test)constructor.newInstance(new Object[]{testName});
     } catch (ClassNotFoundException e) {
       runFailed("Class not found \"" + suiteClassName + "\"");
-      return null;
     } catch (InstantiationException e) {
-      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+      runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (IllegalAccessException e) {
-      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+      runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (InvocationTargetException e) {
-      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+      runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (NoSuchMethodException e) {
-      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+      runFailed("No method \"" + testName + "\" in class \"" + suiteClassName  + "\"");
     }
     return null;
   }

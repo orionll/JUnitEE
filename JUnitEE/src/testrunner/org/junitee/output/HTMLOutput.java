@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.11 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.12 2002-10-01 21:06:43 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -25,7 +25,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link JUnitEEOutputProducer} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -62,6 +62,7 @@ public class HTMLOutput extends AbstractOutput {
     response.setContentType("text/html");
 
     printHeader();
+    printRunErrors();
     if (!isSingleTest()) {
       printSummary();
     }
@@ -74,8 +75,19 @@ public class HTMLOutput extends AbstractOutput {
 
 
   protected void printHeader() {
+    String bgColor;
+    String result;
+
+    if (isFailure() || (getErrorMessages().size() > 0)) {
+      bgColor = "#980000";
+      result = "Failed";
+    } else {
+      bgColor = "#03A35D";
+      result = "Success";
+    }
+
     pw.println("<html>");
-    pw.println("<head><title> JUnit Test Results </title></head>");
+    pw.println("<head><title>JUnit Tests - " + result + "</title></head>");
 
     pw.println("<style type=\"text/css\">");
     pw.println("	<!--");
@@ -91,11 +103,7 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("						letter-spacing: 0.125em; text-align: center;");
     pw.print("						color: #FFFFFF;");
 
-    if (isFailure()) {
-      pw.println("background-color: #980000 }");
-    } else {
-      pw.println("background-color: #03A35D }");
-    }
+    pw.println("background-color: " + bgColor + " }");
 
     pw.println("		.sectionTitle	{ font-weight: bold; ");
     pw.println("							background-color: #F4E5E5;");
@@ -125,7 +133,35 @@ public class HTMLOutput extends AbstractOutput {
   }
 
 
+  protected void printRunErrors() {
+    if (getErrorMessages().isEmpty()) {
+      return;
+    }
+    pw.println("<h2>Errors while running tests</h2>");
+    pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
+
+    Iterator errors = getErrorMessages().iterator();
+
+    pw.println("<tr><td colspan=\"3\" class=\"sectionTitle\">&nbsp;</td></tr>");
+
+    while (errors.hasNext()) {
+      String message = (String)errors.next();
+
+      pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Error") + "</td>");
+      pw.print("<td class=\"cell\">&nbsp;</td>");
+      pw.println("<td width=\"100%\" class=\"cell\">" + message + "</td></tr>");
+    }
+    pw.println("<tr><td colspan=\"3\">&nbsp;</td></tr>");
+    pw.println("</table></p>");
+  }
+
+
   protected void printSummary() {
+    if (getSuiteInfo().values().isEmpty()) {
+      pw.println("<h2>No tests executed</h2>");
+      return;
+    }
+
     pw.println("<h2> Summary of test results </h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
@@ -161,6 +197,13 @@ public class HTMLOutput extends AbstractOutput {
 
 
   protected void printMethodList() {
+    if (getSuiteInfo().values().isEmpty()) {
+      if (isSingleTest()) {
+        pw.println("<h2>No tests executed</h2>");
+      }
+      return;
+    }
+
     pw.println("<h2> List of executed tests</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 

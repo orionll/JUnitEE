@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractOutput.java,v 1.3 2002-09-20 20:39:41 o_rossmueller Exp $
+ * $Id: AbstractOutput.java,v 1.4 2002-10-01 21:06:43 o_rossmueller Exp $
  */
 package org.junitee.output;
 
@@ -22,7 +22,7 @@ import org.junitee.runner.TestSuiteInfo;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @since 1.5
  */
 public abstract class AbstractOutput implements JUnitEEOutputProducer {
@@ -33,6 +33,7 @@ public abstract class AbstractOutput implements JUnitEEOutputProducer {
   private TestInfo currentInfo;
   private boolean failure = false;
   private boolean singleTest = false;
+  private List errorMessages = new ArrayList();
 
 
   public void start(boolean singleTest) {
@@ -77,8 +78,8 @@ public abstract class AbstractOutput implements JUnitEEOutputProducer {
   }
 
 
-  // TODO: implement this
   public void runFailed(String message) {
+    errorMessages.add(message);
   }
 
 
@@ -139,6 +140,11 @@ public abstract class AbstractOutput implements JUnitEEOutputProducer {
 
   protected void setSingleTest(boolean singleTest) {
     this.singleTest = singleTest;
+  }
+
+
+  protected List getErrorMessages() {
+    return errorMessages;
   }
 
 
