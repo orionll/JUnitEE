@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.9 2002-11-17 14:00:28 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.10 2002-11-17 14:02:10 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.9 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.10 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -68,7 +68,7 @@
 
     <p>This guide will tell you how to <a href="#package">package JUnitEE</a> and your test cases to a deployable web archive. It will also describe the
     user interface of the <a href="#runner">JUnitEE TestRunner</a> and how to integrate JUnitEE with your Ant build process by using the
-    <a href="#anttask">JUnitEE Ant tasks</a>. Finally there are some <a href="#security">security issues</a> related to the deployment of JUnitEE.
+    <a href="#anttask">JUnitEE Ant tasks</a>. Finally there are some <a href="#security">SecurityManager issues</a> related to the deployment of JUnitEE.
     </p>
 
     <a name="package"></a>
@@ -557,7 +557,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
 
 	<table cellspacing="0" cellpadding="0" width="100%">
 	  <tr><td>&nbsp;</td></tr>
-	  <tr><td class="sectionTitle">Security issues</td></tr>
+	  <tr><td class="sectionTitle">SecurityManager issues</td></tr>
 	</table>
 
     <p>JUnitEE takes some actions which are under control of the Java security manager:
@@ -585,7 +585,7 @@ org.junitee.example.ComplexUnitTests</pre></code>
       <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
 			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
       <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
-				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">  
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">
 			</a></td></tr>
 		</table>
 
