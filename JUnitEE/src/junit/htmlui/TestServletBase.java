@@ -1,11 +1,14 @@
 /**
- * $Id: TestServletBase.java,v 1.2 2001-10-12 21:17:28 kaila Exp $
+ * $Id: TestServletBase.java,v 1.3 2002-07-31 22:03:42 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestServletBase.java,v $
  */
 
 package junit.htmlui;
 
 import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -25,72 +28,155 @@ import javax.servlet.http.*;
  *
  * @author Jeff Schnitzer (jeff@infohazard.org)
  */
-public abstract class TestServletBase extends HttpServlet
-{
-	/**
-	 * The form parameter which defines the name of the suite
-	 * class to run.  This parameter can appear more than once
-	 * to run multiple test suites.
-	 */
-	protected static final String PARAM_SUITE = "suite";
+public abstract class TestServletBase extends HttpServlet {
+  /**
+   * The form parameter which defines the name of the suite
+   * class to run.  This parameter can appear more than once
+   * to run multiple test suites.
+   */
+  protected static final String PARAM_SUITE = "suite";
+  
+  /**
+   * The form parameter which defines if
+   * method list is shown
+   */
+  protected static final String METHOD_LIST = "list";
+  
+  /**
+   * The form parameter which defines if
+   * resources should be checked to run all included test cases
+   */
+  protected static final String RUN_ALL = "all";
+  protected static final String SEARCH = "search";
+  
+  /**
+   * This should be implemented by a class in the web application's
+   * WEB-INF/classes directory.  That way this servlet will use
+   * the special class loader which dynamically reloads changed
+   * classes (assuming the app server is not pathetic).  The
+   * implementation should be "this.getClass().getClassLoader()"
+   */
+  abstract protected ClassLoader getDynamicClassLoader();
+  
+  
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
     
-    /**
-    * The form parameter which defines if
-    * method list is shown 
-    */
-    protected static final String METHOD_LIST = "list";
-	/**
-	 * This should be implemented by a class in the web application's
-	 * WEB-INF/classes directory.  That way this servlet will use
-	 * the special class loader which dynamically reloads changed
-	 * classes (assuming the app server is not pathetic).  The
-	 * implementation should be "this.getClass().getClassLoader()"
-	 */
-	abstract protected ClassLoader getDynamicClassLoader();
-	
-	/**
-	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		// Set up the response
-		response.setContentType("text/html");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		String methodList = request.getParameter(METHOD_LIST);
-		String[] testClassNames = request.getParameterValues(PARAM_SUITE);
-		if (testClassNames == null)
-		{
-			pw.println("<html>");
-			pw.println("<head><title> Error </title></head>");
-			pw.println("<body>");
-			pw.println("<p> No test class(es) specified. </p>");
-			pw.println("<p>");
-			pw.println("  This servlet uses the form parameter \"suite\" to identify");
-			pw.println("  which Test to run.  The parameter can appear multiple times");
-			pw.println("  to run multiple tests.");
-			pw.println("</p>");
-			pw.println("</body>");
-			pw.println("</html>");
-		}
-		else
-		{
-			TestRunner tester = new TestRunner(pw, this.getDynamicClassLoader());
-			if (methodList != null) {
-			    // show method list on output
-			    tester.start(testClassNames,true);
-			}
-			else {			    
-			    // don't show method list on output
-			    tester.start(testClassNames);
-			}
-		}
-	}
-
-	/**
-	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		// Chain to get so that either will work
-		this.doGet(request, response);
-	}
+    searchResources = config.getInitParameter("searchResources");
+  }
+  
+  
+  /**
+   */
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Set up the response
+    response.setContentType("text/html");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter pw = response.getWriter();
+    String methodList = request.getParameter(METHOD_LIST);
+    String runAll = request.getParameter(RUN_ALL);
+    String[] testClassNames = null;
+    
+    if (runAll != null) {
+      testClassNames = searchForTests(request.getParameter(SEARCH));
+    } else {
+      testClassNames = request.getParameterValues(PARAM_SUITE);
+    }
+    
+    if (testClassNames == null) {
+      pw.println("<html>");
+      pw.println("<head><title> Error </title></head>");
+      pw.println("<body>");
+      if (runAll != null) {
+        pw.println("<p> No test class(es) specified. </p>");
+        pw.println("<p>");
+        pw.println("  You requested all test cases to be run by setting the \"all\" parameter,");
+        pw.println("  but not test case was found searching the resources");
+        pw.print("  \"");
+        pw.print(searchResources);
+        pw.println("\"");
+        pw.println("</p>");
+      } else {
+        pw.println("<p> No test class(es) specified. </p>");
+        pw.println("<p>");
+        pw.println("  This servlet uses the form parameter \"suite\" to identify");
+        pw.println("  which Test to run.  The parameter can appear multiple times");
+        pw.println("  to run multiple tests.");
+        pw.println("</p>");
+      }
+      pw.println("</body>");
+      pw.println("</html>");
+    }
+    else {
+      TestRunner tester = null;
+      
+      if (request.getParameter("sendResult") != null) {
+        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
+      } else {
+        tester = new TestRunner(pw, this.getDynamicClassLoader());
+      }
+      if (methodList != null) {
+        // show method list on output
+        tester.start(testClassNames,true);
+      }
+      else {
+        // don't show method list on output
+        tester.start(testClassNames);
+      }
+    }
+  }
+  
+  /**
+   */
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Chain to get so that either will work
+    this.doGet(request, response);
+  }
+  
+  
+  /**
+   * Search all resources set via the searchResources init parameter for classes ending with "Tests"
+   */
+  protected String[] searchForTests(String param) {
+    if (searchResources == null && param == null) {
+      return null;
+    }
+    
+    StringTokenizer tokenizer;
+    
+    if (param != null) {
+      tokenizer = new StringTokenizer(param, ",");
+    } else {
+      tokenizer = new StringTokenizer(searchResources, ",");
+    }
+    
+    List tests = new ArrayList();
+    
+    while (tokenizer.hasMoreTokens()) {
+      String token = tokenizer.nextToken().trim();
+      
+      try {
+        InputStream in = getServletContext().getResourceAsStream("WEB-INF/lib/" + token);
+        
+        if (in != null) {
+          JarInputStream jar = new JarInputStream(in);
+          
+          while (jar.available() != 0) {
+            JarEntry entry = jar.getNextJarEntry();
+            String name = entry.getName();
+            
+            if (name.endsWith("Tests.class") || name.endsWith("Test.class")) {
+              tests.add(name.substring(0, name.length() - 6).replace('/', '.'));
+            }
+          }
+        }
+      } catch (Exception e) {
+      }
+    }
+    String[] answer = new String[tests.size()];
+    tests.toArray(answer);
+    return answer;
+  }
+  
+  private String searchResources;
 }
