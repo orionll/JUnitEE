@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -39,20 +39,27 @@ public class JUnitEEServlet extends HttpServlet {
    * to run multiple test suites.
    */
   protected static final String PARAM_SUITE = "suite";
-  
+
+  /**
+   * The form parameter which defines the test out of the defined suite to be run.
+   */
+  protected static final String PARAM_TEST = "test";
+
   /**
    * The form parameter which defines if
    * method list is shown
    */
   protected static final String METHOD_LIST = "list";
-  
+
   /**
    * The form parameter which defines if
    * resources should be checked to run all included test cases
    */
   protected static final String RUN_ALL = "all";
   protected static final String SEARCH = "search";
-  
+
+  private static final String RESOURCE_PREFIX = "resource";
+
   /**
    * Answer the classloader used to load the test classes. The default implementation
    * answers the classloader of this class, which usally will be the classloader of
@@ -64,33 +71,40 @@ public class JUnitEEServlet extends HttpServlet {
   protected ClassLoader getDynamicClassLoader() {
     return getClass().getClassLoader();
   }
-  
-  
+
+
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    
+
     searchResources = config.getInitParameter("searchResources");
   }
-  
-  
+
+
   /**
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String resource = request.getPathInfo();
+
+    if (resource != null) {
+      streamResource(resource, response);
+    }
+
     // Set up the response
     response.setContentType("text/html");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter pw = response.getWriter();
-    String methodList = request.getParameter(METHOD_LIST);
+    String test = request.getParameter(PARAM_TEST);
     String runAll = request.getParameter(RUN_ALL);
     String[] testClassNames = null;
-    
+
     if (runAll != null) {
       testClassNames = searchForTests(request.getParameterValues(SEARCH));
     } else {
       testClassNames = request.getParameterValues(PARAM_SUITE);
     }
-    
+
     if (testClassNames == null) {
+      // TODO: move to method
       pw.println("<html>");
       pw.println("<head><title> Error </title></head>");
       pw.println("<body>");
@@ -115,14 +129,24 @@ public class JUnitEEServlet extends HttpServlet {
       pw.println("</html>");
     }
     else {
+      if ((test != null) && (testClassNames.length != 1)) {
+        // TODO: print error message
+        throw new ServletException("Error");
+      }
+
+
       TestRunner tester = null;
-      
+
       if (request.getParameter("sendResult") != null) {
 //        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
       } else {
-        HTMLOutput output = new HTMLOutput(pw);
+        HTMLOutput output = new HTMLOutput(pw, request.getContextPath() + request.getServletPath());
         tester = new TestRunner(this.getDynamicClassLoader(), output);
-        tester.run(testClassNames);
+        if (test == null) {
+          tester.run(testClassNames);
+        } else {
+          tester.run(testClassNames[0], test);
+        }
         output.writeOutput();
       }
 /*      if (methodList != null) {
@@ -135,24 +159,40 @@ public class JUnitEEServlet extends HttpServlet {
       }*/
     }
   }
-  
+
+
+  private void streamResource(String resource, HttpServletResponse response) throws IOException {
+    InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + resource);
+    OutputStream out = response.getOutputStream();
+    byte[] buffer = new byte[1024];
+    int r = 0;
+
+    response.setContentType("image/gif");
+    while ((r = in.read(buffer)) != -1) {
+      out.write(buffer, 0, r);
+    }
+    in.close();
+    out.close();
+  }
+
+
   /**
    */
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     // Chain to get so that either will work
     this.doGet(request, response);
   }
-  
-  
+
+
   protected String[] searchForTests(String[] param) {
     StringBuffer buffer = new StringBuffer();
-    
+
     for (int i = 0; i < param.length; i++) {
       buffer.append(param[i]).append(",");
     }
     return searchForTests(buffer.toString());
   }
-  
+
   /**
    * Search all resources set via the searchResources init parameter for classes ending with "Tests"
    */
@@ -160,30 +200,30 @@ public class JUnitEEServlet extends HttpServlet {
     if (searchResources == null && param == null) {
       return null;
     }
-    
+
     StringTokenizer tokenizer;
-    
+
     if (param != null) {
       tokenizer = new StringTokenizer(param, ",");
     } else {
       tokenizer = new StringTokenizer(searchResources, ",");
     }
-    
+
     List tests = new ArrayList();
-    
+
     while (tokenizer.hasMoreTokens()) {
       String token = tokenizer.nextToken().trim();
-      
+
       try {
         InputStream in = getServletContext().getResourceAsStream("WEB-INF/lib/" + token);
-        
+
         if (in != null) {
           JarInputStream jar = new JarInputStream(in);
-          
+
           while (jar.available() != 0) {
             JarEntry entry = jar.getNextJarEntry();
             String name = entry.getName();
-            
+
             if (name.endsWith("Tests.class") || name.endsWith("Test.class")) {
               tests.add(name.substring(0, name.length() - 6).replace('/', '.'));
             }
@@ -196,6 +236,6 @@ public class JUnitEEServlet extends HttpServlet {
     tests.toArray(answer);
     return answer;
   }
-  
+
   private String searchResources;
 }

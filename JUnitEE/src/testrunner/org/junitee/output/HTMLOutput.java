@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,13 +24,18 @@ import org.junitee.runner.TestSuiteInfo;
  * This class implements the {@link JUnitEETestListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HTMLOutput implements JUnitEETestListener {
-  protected static final String ERROR = "Error";
-  protected static final String FAILURE = "Failure";
-  protected static final String PASSED = "Passed";
-  protected static final String UNKNOWN = "Unknown";
+  protected static final String ERROR     = "Error";
+  protected static final String FAILURE   = "Failure";
+  protected static final String PASSED    = "Passed";
+  protected static final String UNKNOWN   = "Unknown";
+
+  protected static final String RESOURCE_RED_BULLET     = "bullets_red_ball.gif";
+  protected static final String RESOURCE_YELLOW_BULLET  = "bullets_yellow_ball.gif";
+  protected static final String RESOURCE_GREEN_BULLET   = "bullets_green_ball.gif";
+  protected static final String RESOURCE_INFO           = "info.png";
 
   private PrintWriter pw;
   private long timestamp;
@@ -38,12 +43,14 @@ public class HTMLOutput implements JUnitEETestListener {
   private Map suiteInfo = new HashMap();
   private TestInfo currentInfo;
   private boolean failure = false;
+  private String servletPath;
 
 
   /**
    */
-  public HTMLOutput(PrintWriter pw) {
+  public HTMLOutput(PrintWriter pw, String servletPath) {
     this.pw = pw;
+    this.servletPath = servletPath;
   }
 
 
@@ -81,8 +88,10 @@ public class HTMLOutput implements JUnitEETestListener {
     pw.println("							border-left-width: 0; border-right-width: 0;");
     pw.println("							border-style: solid; border-color: #980000 }");
     pw.println("		.cell       	{ color: black; background-color: #CCCCFF }");
-    pw.println("		.passedcell  	{ color: black; background-color: lightgreen }");
-    pw.println("		.failedcell  	{ color: black; background-color: #EF4A4A }");
+    pw.println("		.passedcell       	{ color: black; background-color: #CCCCFF }");
+    pw.println("		.failedcell       	{ color: black; background-color: #CCCCFF }");
+  //  pw.println("		.passedcell  	{ color: black; background-color: lightgreen }");
+  //  pw.println("		.failedcell  	{ color: black; background-color: #EF4A4A }");
     pw.println("	-->");
     pw.println("</style>");
 
@@ -194,7 +203,6 @@ public class HTMLOutput implements JUnitEETestListener {
 
 
   protected void printMethodList() {
-
     pw.println("<h2> List of executed tests</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
@@ -202,7 +210,7 @@ public class HTMLOutput implements JUnitEETestListener {
     while (suites.hasNext()) {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
-      pw.println("<tr><td colspan=\"3\" class=\"sectionTitle\">" + suite.getTestClassName() + "</td></tr>");
+      pw.println("<tr><td colspan=\"4\" class=\"sectionTitle\">" + suite.getTestClassName() + "</td></tr>");
 
       Iterator tests = suite.getTests().iterator();
 
@@ -210,20 +218,45 @@ public class HTMLOutput implements JUnitEETestListener {
         TestInfo test = (TestInfo)tests.next();
 
         if (test.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + PASSED + "</td>");
+          pw.println("<tr><td class=\"passedcell\">" + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Run test")) + "</td>");
         } else if (test.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">");
-          pw.println("<a href=\"#" + test + "\">" + ERROR + "</a></td>");
+          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_RED_BULLET, "Run test")) + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">");
-          pw.println("<a href=\"#" + test + "\">" + FAILURE + "</a></td>");
+          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_YELLOW_BULLET, "Run test")) + "</td>");
         }
+        pw.print("<td class=\"cell\">");
+        if (test.successful()) {
+          pw.print("&nbsp;");
+        } else {
+          pw.print("<a href=\"#" + test + "\">");
+          pw.print(image(RESOURCE_INFO, "Show details"));
+          pw.print("</a>");
+        }
+        pw.println("</td>");
         pw.println("<td width=\"100%\" class=\"cell\">" + test + "</td><td class=\"cell\" align=\"right\">");
         pw.println(elapsedTimeAsString(test.getElapsedTime()) + "&nbsp;sec</td></tr>");
       }
-      pw.println("<tr><td colspan=\"3\">&nbsp;</td></tr>");
+      pw.println("<tr><td colspan=\"4\">&nbsp;</td></tr>");
     }
     pw.println("</table>");
+  }
+
+
+  private String image(String resource, String alt) {
+    StringBuffer buffer = new StringBuffer();
+
+    buffer.append("<img src=\"").append(servletPath).append("/").append(resource).append("\" border=\"0\" height=\"14\" widht=\"14\" alt=\"");
+    buffer.append(alt).append("\">");
+    return buffer.toString();
+  }
+
+
+  private String singleTestLink(TestInfo test, String text) {
+    StringBuffer buffer = new StringBuffer();
+
+    buffer.append("<a href=\"").append(servletPath).append("?suite=").append(test.getTestClassName());
+    buffer.append("&test=").append(test.getTestName()).append("\">").append(text).append("</a>");
+    return buffer.toString();
   }
 
 
@@ -264,6 +297,10 @@ public class HTMLOutput implements JUnitEETestListener {
 
 
   protected void printErrorsAndFailures() {
+    if (!failure) {
+       return;
+     }
+
     pw.println("<h2> List of errors and failures</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 

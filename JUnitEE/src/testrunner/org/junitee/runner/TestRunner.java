@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.2 2002-09-01 13:05:32 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -8,6 +8,9 @@
 
 package org.junitee.runner;
 
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.runner.BaseTestRunner;
 import junit.runner.TestSuiteLoader;
@@ -18,7 +21,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TestRunner extends BaseTestRunner {
 
@@ -54,6 +57,14 @@ public class TestRunner extends BaseTestRunner {
   }
 
 
+  public void run(String testClassName, String testName) {
+    TestResult result = new TestResult();
+    result.addListener(listener);
+
+    Test test = getTest(testClassName, testName);
+    test.run(result);
+  }
+
   public TestSuiteLoader getLoader() {
     return loader;
   }
@@ -65,7 +76,7 @@ public class TestRunner extends BaseTestRunner {
 
 
   /**
-   * Create a test for the given suite class. If the class does not implement the static suite() method,
+   * Create a test suite for the given suite class. If the class does not implement the static suite() method,
    * a test suite for the suite class is created.
    *
    * @param suiteClassName
@@ -90,6 +101,26 @@ public class TestRunner extends BaseTestRunner {
     return test;
   }
 
+
+  protected Test getTest(String suiteClassName, String testName) {
+    try {
+      Class clazz = loadSuiteClass(suiteClassName);
+      Constructor constructor = clazz.getConstructor(new Class[]{String.class});
+      return (Test)constructor.newInstance(new Object[]{testName});
+    } catch (ClassNotFoundException e) {
+      runFailed("Class not found \"" + suiteClassName + "\"");
+      return null;
+    } catch (InstantiationException e) {
+      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+    } catch (IllegalAccessException e) {
+      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+    } catch (InvocationTargetException e) {
+      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+    } catch (NoSuchMethodException e) {
+      runFailed("Could not create test \"" + suiteClassName + "." + testName + "\"");
+    }
+    return null;
+  }
 
   // TestListener methods; we do nothing here as the events are handled by the listener
   public void addError(Test test, Throwable throwable) {
