@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.13 2003-03-11 13:25:25 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.14 2003-03-12 08:56:43 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class JUnitEETask extends Task {
 
@@ -198,9 +198,11 @@ public class JUnitEETask extends Task {
       sessionCookie = con.getHeaderField("Set-Cookie");
       log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
 
-       int index = sessionCookie.indexOf(';');
-       if (index != -1) {
-          sessionCookie = sessionCookie.substring(0, index);
+       if (sessionCookie != null) {
+          int index = sessionCookie.indexOf(';');
+          if (index != -1) {
+             sessionCookie = sessionCookie.substring(0, index);
+          }
        }
        in = con.getInputStream();
        done = parseResult(in, test);
@@ -227,7 +229,9 @@ public class JUnitEETask extends Task {
         }
         log("Get xml again using URL " + requestUrl, Project.MSG_DEBUG);
         con = requestUrl.openConnection();
-         con.setRequestProperty("Cookie", sessionCookie);
+         if (sessionCookie != null) {
+            con.setRequestProperty("Cookie", sessionCookie);
+         }
          in =con.getInputStream();
          try {
             done = parseResult(in, test);
