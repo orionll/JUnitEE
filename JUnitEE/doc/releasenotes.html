@@ -2,13 +2,13 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: news.html,v 1.3 2002-09-23 23:41:18 o_rossmueller Exp $
-	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/news.html,v $
+	$Id: releasenotes.html,v 1.1 2002-09-23 23:41:18 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/releasenotes.html,v $
 -->
 
 <html>
 	<head>
-		<title> JUnitEE News</title>
+		<title> JUnitEE Release Notest</title>
 
 		<link rel="stylesheet" href="stylesheet.css" type="text/css">
 	</head>
@@ -19,14 +19,14 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle">JUnitEE</td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.3 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.1 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
         <table width="100%" height="100%" border="0" cellspacing="4" cellpadding="1" class="menuTable">
           <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
-          <tr><td class="menuSelected"><a class="menuSelected" href="news.html">News</a></td></tr>
-          <tr><td class="menu"><a class="menu" href="releasenotes.html"><nobr>Release Notes</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="releasenotes.html"><nobr>Release Notes</nobr></a></td></tr>
           <tr><td class="menu"></td></tr>
           <tr><td class="menu"><a class="menu" href="usersguide.html"><nobr>User's Guide</nobr></a></td></tr>
           <tr><td class="menu"><a class="menu" href="antguide.html"><nobr>Ant HowTo<nobr></a></td></tr>
@@ -49,78 +49,45 @@
       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
 
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="documentTitle">News</td> </tr>
+			<tr> <td class="documentTitle">Release Notes for JUnitEE 1.5</td> </tr>
 		</table>
 
-		<p style="color: blue">
-			<b> 24 Sep 2002 - Release 1.5 </b>
-			<ul>
-				<li>improved user interface</li>
-                <li>new JUnitEEWar Ant task</li>
-			</ul>
-		</p>
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	    <tr><td class="sectionTitle">Changes since release 1.4</td></tr>
+		</table>
 
-		<p style="color: blue">
-			<b> 15 Aug 2002 - Release 1.4 </b>
-			<ul>
-				<li>New option to run all tests found in a specified jar file</li>
-        <li>Ant task for build integration</li>
-        <li>TestServletBase is no longer abstract and should work for almost any case as is</li>
-        <li>Fixes for bug <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=583856&group_id=31476&atid=402250"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">583856<a>,
-<a href="http://sourceforge.net/tracker/index.php?func=detail&aid=583859&group_id=31476&atid=402250"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">583859<a></li>
-			</ul>
-		</p>
-
-		<p style="color: blue">
-			<b> 20 Oct 2001 </b>
-			<ul>
-				<li>
-					Added option to list the executed tests.
-				</li>
-				<li>
-					HTML characters such as &lt; and &gt; are now escaped properly in the
-					test output.  Newlines are converted to &lt;br&gt;.
-				</li>
-			</ul>
+		<p>The changes in JUnitEE since release 1.4 are:
+		  <ul>
+		    <li>integrated user interface to start tests</li>
+		    <li>improved test report with possibility to start test suites or single tests (e.g. for debugging)</li>
+		    <li>test report can also be generated in XML format</li>
+			<li>new JUnitEEWar Ant task to build the test war</li>
+          </ul>
 		</p>
 
 
-		<p style="color: blue">
-			<b> 23 Jul 2001 </b>
-			<ul>
-				<li>
-					JUnitEE has become a Sourceforge project.  For more info,
-					visit the <a href="http://sourceforge.net/projects/junitee"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">main project page</a>.
-				</li>
-			</ul>
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	    <tr><td class="sectionTitle">Migration</td></tr>
+      </table>
+
+		<p>Release 1.5 is backwards-compatible to previous releases of JUnitEE, so there is no immediate requirement for migration tasks.
+		But there are some issues anyway.</p>
+
+		<p>Because of refactorings and internal reorganizations <code>junit.html.TestServletBase</code> is marked as deprecated and should
+		not be used anymore. Please replace any usage of this class by <code>org.junite.servlet.JUnitEEServlet</code>. <code>junit.html.TestServletBase</code>
+		is still there and will work as expected but might be removed in the next release.
 		</p>
 
-		<p style="color: blue">
-			<b> 14 Mar 2001 </b>
+        <p><code>org.junite.servlet.JUnitEEServlet</code> has a concrete implementation of the method <code>getDynamicClassLoader</code> which was
+        abstract in former times. This default implementation answers the classloader by which the servlet class itself was loaded and therefore
+        should work in any case you have your test cases packaged into a war file with JUnitEE. There are only some rare cases left that require you
+        to create a subclass of <code>org.junite.servlet.JUnitEEServlet</code> and overwrite that method to return another classloader. So you might
+        consider replacing your existing test servlet by using <code>org.junite.servlet.JUnitEEServlet</code>.
+        </p>
 
-			<ul>
-				<li>
-					JUnitEE has been updated to work with JUnit 3.5.
-				</li>
-
-				<li>
-				The example has been updated to use a modern (and much, much
-				simpler) Ant buildfile.
-				</li>
-
-				<li>
-				Extra spaces (which were confusing the Sun J2EE RI) have been
-				removed from the example's xml deployment descriptors.
-				</li>
-			</ul>
-		</p>
-
-		<p style="color: blue">
-			<b> 12 Jan 2001 </b>
-			<ul> <li> JUnitEE has been updated to work with JUnit 3.4. </li> </ul>
-		</p>
-
-		<table cellspacing="0" cellpadding="0" width="100%">
+  	<table cellspacing="0" cellpadding="0" width="100%">
       <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
       <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
       <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
