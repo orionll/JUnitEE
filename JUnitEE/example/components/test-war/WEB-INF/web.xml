@@ -2,7 +2,7 @@
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <!--
-	$Id: web.xml,v 1.4 2002-08-15 19:44:39 o_rossmueller Exp $
+	$Id: web.xml,v 1.5 2002-08-31 13:59:11 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/components/test-war/WEB-INF/web.xml,v $
 -->
 
@@ -12,7 +12,7 @@
 	<servlet>
 		<servlet-name>JUnitEETestServlet</servlet-name>
 		<description>JUnitEE test harness</description>
-		<servlet-class>junit.htmlui.TestServletBase</servlet-class>
+		<servlet-class>org.junitee.servlet.JUnitEEServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

@@ -1,9 +1,9 @@
 /**
- * $Id: TestServletBase.java,v 1.5 2002-08-31 13:59:11 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/junit/htmlui/TestServletBase.java,v $
+ * $Id: JUnitEEServlet.java,v 1.1 2002-08-31 13:59:11 o_rossmueller Exp $
+ * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
-package junit.htmlui;
+package org.junitee.servlet;
 
 import java.io.*;
 import java.util.*;
@@ -11,6 +11,9 @@ import java.util.jar.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.junitee.runner.TestRunner;
+import org.junitee.output.HTMLOutput;
 
 /**
  * This is an abstract base class.  In order to use it, you must create
@@ -29,7 +32,7 @@ import javax.servlet.http.*;
  * @author Jeff Schnitzer (jeff@infohazard.org)
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
-public class TestServletBase extends HttpServlet {
+public class JUnitEEServlet extends HttpServlet {
   /**
    * The form parameter which defines the name of the suite
    * class to run.  This parameter can appear more than once
@@ -115,18 +118,21 @@ public class TestServletBase extends HttpServlet {
       TestRunner tester = null;
       
       if (request.getParameter("sendResult") != null) {
-        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
+//        tester = new ResultTransferTestRunner(pw, this.getDynamicClassLoader());
       } else {
-        tester = new TestRunner(pw, this.getDynamicClassLoader());
+        HTMLOutput output = new HTMLOutput(pw);
+        tester = new TestRunner(this.getDynamicClassLoader(), output);
+        tester.run(testClassNames);
+        output.writeOutput();
       }
-      if (methodList != null) {
+/*      if (methodList != null) {
         // show method list on output
         tester.start(testClassNames,true);
       }
       else {
         // don't show method list on output
         tester.start(testClassNames);
-      }
+      }*/
     }
   }
   

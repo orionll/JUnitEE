@@ -1,5 +1,5 @@
 /*
- * $Id: EinsteinTest.java,v 1.1.1.1 2001-07-23 21:31:03 lhoriman Exp $
+ * $Id: EinsteinTest.java,v 1.2 2002-08-31 13:59:11 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/javasrc/org/infohazard/test/EinsteinTest.java,v $
  */
 
@@ -51,7 +51,7 @@ public class EinsteinTest extends TestCase
 	public void testSimpleAddition() throws RemoteException, BadNumberException
 	{
 		String result = this.ein.addTwoNumbers("7", "10");
-		assert(result.equals("17"));
+		assertTrue("Result is " + result + " but should be 17", result.equals("17"));
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class EinsteinTest extends TestCase
 		{
 			ok = true;
 		}
-		assert(ok);
+		assertTrue("Accepted bad number 'asdf'", ok);
 
 		ok = false;
 		try
@@ -78,7 +78,7 @@ public class EinsteinTest extends TestCase
 		{
 			ok = true;
 		}
-		assert(ok);
+		assertTrue("Accepted bad number '20a'", ok);
 
 		ok = false;
 		try
@@ -89,6 +89,6 @@ public class EinsteinTest extends TestCase
 		{
 			ok = true;
 		}
-		assert(ok);
+		assertTrue("Accepted bad numbers '20a' and 'd5'", ok);
 	}
 }
