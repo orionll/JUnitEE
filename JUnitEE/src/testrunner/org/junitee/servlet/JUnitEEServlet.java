@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.31 2004-03-21 14:54:22 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.32 2004-05-27 14:32:26 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -191,7 +191,6 @@ public class JUnitEEServlet extends HttpServlet {
 
     if (forkThread) {
       session = request.getSession(true);
-      session.setAttribute("test", "xy");
     }
 
     results = runTests(test, testClassNames, request, forkThread);

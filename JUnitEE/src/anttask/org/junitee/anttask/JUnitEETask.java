@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.16 2003-07-19 22:07:20 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.17 2004-05-27 14:36:56 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,11 +30,12 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class JUnitEETask extends Task {
 
   private String url;
+   private boolean threaded = true;
   private Vector tests = new Vector();
   private boolean printSummary = false;
   private Vector formatters = new Vector();
@@ -48,6 +49,11 @@ public class JUnitEETask extends Task {
   public void setUrl(String url) {
     this.url = url;
   }
+
+
+   public void setThreaded(boolean threaded) {
+      this.threaded = threaded;
+   }
 
 
   public void setFiltertrace(boolean filtertrace) {
@@ -174,7 +180,12 @@ public class JUnitEETask extends Task {
     URL requestUrl;
     URLConnection con;
 
-    arguments.append(url).append("?output=xml&thread=true");
+    arguments.append(url).append("?output=xml");
+
+     if (threaded) {
+        log("Threaded mode", Project.MSG_DEBUG);
+        arguments.append("&thread=true");
+     }
 
     if (test.getResource() != null) {
       arguments.append("&resource=").append(test.getResource());
