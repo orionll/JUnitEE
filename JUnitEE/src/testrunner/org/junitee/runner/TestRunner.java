@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.9 2003-02-24 23:08:05 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.10 2003-05-29 10:59:33 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -22,7 +22,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
@@ -126,8 +126,12 @@ public class TestRunner extends BaseTestRunner {
     try {
       Class clazz = loadSuiteClass(suiteClassName);
       Constructor constructor = clazz.getConstructor(new Class[]{String.class});
-      Method tmp = clazz.getMethod(testName, new Class[0]);
-      return (Test)constructor.newInstance(new Object[]{testName});
+      Test test = (Test)constructor.newInstance(new Object[]{testName});
+
+      if (test instanceof RequiresDecoration) {
+        test = ((RequiresDecoration)test).decorate();
+      }
+      return test;
     } catch (ClassNotFoundException e) {
       runFailed("Class not found \"" + suiteClassName + "\"");
     } catch (InstantiationException e) {

@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.20 2003-02-28 19:11:48 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.21 2003-05-29 10:59:33 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -51,7 +51,7 @@ public class HTMLOutput extends AbstractOutput {
    */
   public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace) throws IOException {
     super(results, filterTrace);
-    response.setContentType("text/html");
+    response.setContentType("text/html;charset=UTF-8");
 
     this.pw = response.getWriter();
     this.response = response;

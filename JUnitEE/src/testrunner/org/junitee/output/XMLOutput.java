@@ -1,5 +1,5 @@
 /**
- * $Id: XMLOutput.java,v 1.13 2003-03-14 00:03:07 o_rossmueller Exp $
+ * $Id: XMLOutput.java,v 1.14 2003-05-29 10:59:33 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @since   1.5
  */
 public class XMLOutput extends AbstractOutput {
@@ -40,7 +40,7 @@ public class XMLOutput extends AbstractOutput {
    */
   public XMLOutput(TestRunnerResults results, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     super(results, filterTrace);
-    response.setContentType("text/xml");
+    response.setContentType("text/xml;charset=UTF-8");
 
     this.pw = response.getWriter();
     this.response = response;
