@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.19 2002-12-02 23:48:22 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.20 2002-12-05 19:48:29 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -117,6 +117,7 @@ public class JUnitEEServlet extends HttpServlet {
     String runAll = request.getParameter(PARAM_RUN_ALL);
     String xsl = request.getParameter(PARAM_XSL);
     String stop = request.getParameter(PARAM_STOP);
+    String output = request.getParameter(PARAM_OUTPUT);
     String[] testClassNames = null;
     String message;
     boolean filterTrace = true;
@@ -129,6 +130,10 @@ public class JUnitEEServlet extends HttpServlet {
     // xsl parameter overwrites init param, so use the init param only if the request parameter is null
     if (xsl == null) {
       xsl = xslStylesheet;
+    }
+
+    if (output == null) {
+      output = getDefaultOutput();
     }
 
     HttpSession session = request.getSession(false);
@@ -162,14 +167,14 @@ public class JUnitEEServlet extends HttpServlet {
       if (runAll == null) {
         message = "";
       } else {
-        message = "You requested all test cases to be run by setting the \"all\" parameter, but not test case was found.";
+        message = "You requested all test cases to be run by setting the \"all\" parameter, but no test case was found.";
       }
-      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter());
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter(), output, request, response, xsl, filterTrace);
       return;
     }
     if ((test != null) && (testClassNames.length != 1)) {
       message = "You requested to run a single test case but provided more than one test suite.";
-      printIndexHtml(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter());
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter(), output, request, response, xsl, filterTrace);
       return;
     }
 
@@ -383,6 +388,17 @@ public class JUnitEEServlet extends HttpServlet {
       return new XMLOutput(results, response, xsl, filterTrace);
     }
     return null;
+  }
+
+  protected void errorResponse(String[] testCases, String servletPath, String message, PrintWriter pw, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+    if (OUTPUT_XML.equals(output)) {
+      TestRunnerResults results = new TestRunnerResults();
+      results.runFailed(message);
+      results.finish();
+      renderResults(results, request, response, xsl, filterTrace);
+    } else {
+      printIndexHtml(testCases, servletPath, message, pw);
+    }
   }
 
 
