@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.8 2002-11-03 17:54:06 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.9 2003-02-24 23:08:05 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -22,7 +22,7 @@ import junit.framework.*;
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
@@ -88,7 +88,7 @@ public class TestRunner extends BaseTestRunner {
       }
     };
     run = true;
-    if (testClassNames.length > 1 && forkThread) {
+    if (forkThread) {
       Thread thread = new Thread(runnable, this.toString());
       thread.start();
     } else {

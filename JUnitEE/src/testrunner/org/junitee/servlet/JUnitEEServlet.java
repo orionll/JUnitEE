@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.24 2003-01-30 21:04:13 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.25 2003-02-24 23:08:06 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -122,6 +122,8 @@ public class JUnitEEServlet extends HttpServlet {
     String message;
     boolean filterTrace = true;
     boolean threaded = "true".equals(request.getParameter(PARAM_THREAD)) | getDefaultThreadMode();
+    boolean forkThread = threaded;
+
 
     if ("false".equals(request.getParameter(PARAM_FILTER_TRACE))) {
       filterTrace = false;
@@ -183,25 +185,24 @@ public class JUnitEEServlet extends HttpServlet {
     // to have a cactus.properties file in WEB-INF/classes
     System.setProperty(CACTUS_CONTEXT_URL_PROPERTY, "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath());
 
-    if (threaded) {
+    forkThread = forkThread & (testClassNames.length > 1);
+
+    if (forkThread) {
       session = request.getSession(true);
       session.setAttribute("test", "xy");
     }
 
-    results = runTests(test, testClassNames, request, threaded);
+    results = runTests(test, testClassNames, request, forkThread);
 
     renderResults(results, request, response, xsl, filterTrace);
 
-    if ((!threaded) && (session != null)) {
+    if ((!forkThread) && (session != null)) {
       session.removeAttribute(TESTRESULT_KEY);
     }
   }
 
 
   protected void renderResults(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
-    // Set up the response
-    response.setHeader("Cache-Control", "no-cache");
-
     OutputProducer output = getOutputProducer(results, request.getParameter(PARAM_OUTPUT), request, response, xsl, filterTrace);
 
     if (output != null) {
@@ -292,6 +293,10 @@ public class JUnitEEServlet extends HttpServlet {
       try {
         InputStream in = getServletContext().getResourceAsStream("WEB-INF/lib/" + token);
 
+        if (in == null) {
+          // there are issues with some containers, so try again with a trailing slash
+          in = getServletContext().getResourceAsStream("/WEB-INF/lib/" + token);
+        }
         if (in != null) {
           JarInputStream jar = new JarInputStream(in);
           try {
@@ -327,6 +332,10 @@ public class JUnitEEServlet extends HttpServlet {
 
   protected String[] searchForTestCaseList() throws IOException {
     InputStream in = getServletContext().getResourceAsStream("WEB-INF/testCase.txt");
+    if (in == null) {
+      // there are issues with some containers with/without trailing slash, so try it again
+      in = getServletContext().getResourceAsStream("/WEB-INF/testCase.txt");
+    }
 
     if (in == null) {
       return null;
@@ -413,6 +422,7 @@ public class JUnitEEServlet extends HttpServlet {
       results.finish();
       renderResults(results, request, response, xsl, filterTrace);
     } else {
+      response.setContentType("text/html");
       printIndexHtml(testCases, servletPath, message, pw);
     }
   }

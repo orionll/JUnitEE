@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEEWarTask.java,v 1.6 2003-01-18 11:23:19 o_rossmueller Exp $
+ * $Id: JUnitEEWarTask.java,v 1.7 2003-02-24 23:07:50 o_rossmueller Exp $
  */
 package org.junitee.anttask;
 
@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.FileScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Jar;
 import org.apache.tools.ant.taskdefs.War;
 import org.apache.tools.ant.types.FileSet;
@@ -19,7 +20,7 @@ import org.apache.tools.ant.types.ZipFileSet;
  * This ant task builds the .war file which will contains the server-side unit tests.
  *
  * @author  <a href="mailto:pierrecarion@yahoo.com">Pierre CARION</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class JUnitEEWarTask extends War {
 
@@ -74,11 +75,7 @@ public class JUnitEEWarTask extends War {
 
 
   public void addClasses(ZipFileSet fs) {
-    if (testjarname == null) {
-      super.addClasses(fs);
-    } else {
-      classes.add(fs);
-    }
+    classes.add(fs);
   }
 
 
@@ -170,6 +167,13 @@ public class JUnitEEWarTask extends War {
         fs.setIncludes(jarFile.getName());
         fs.setFullpath("WEB-INF/lib/" + this.testjarname);
         addFileset(fs);
+      } else {
+       Iterator iterator = classes.iterator();
+
+        while (iterator.hasNext()) {
+          ZipFileSet zipFileSet = (ZipFileSet)iterator.next();
+          super.addClasses(zipFileSet);
+        }
       }
 
       indexHtmlFile = createIndexHtml();
@@ -212,6 +216,7 @@ public class JUnitEEWarTask extends War {
    * Create jar file containing the classes
    */
   private File buildClassesJar() throws BuildException {
+    log("Building test.jar ...", Project.MSG_DEBUG);
     try {
       File jarFile = File.createTempFile("classes", "jar");
       Jar jar = (Jar)getProject().createTask("jar");

@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.18 2003-01-30 21:04:01 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.19 2003-02-24 23:08:04 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -100,7 +100,6 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<html>");
     pw.println("<head>");
     pw.println("<title>JUnit Tests - " + result + "</title>");
-    pw.println("<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">");
     if (!isFinished()) {
       String redirect = servletPath;
       if (queryString != null) {
