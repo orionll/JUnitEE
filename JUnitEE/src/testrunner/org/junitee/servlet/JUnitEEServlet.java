@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.22 2003-01-30 08:42:29 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.23 2003-01-30 08:48:43 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -192,7 +192,7 @@ public class JUnitEEServlet extends HttpServlet {
 
     renderResults(results, request, response, xsl, filterTrace);
 
-    if (!threaded && session != null) {
+    if ((!threaded) && (session != null)) {
       session.removeAttribute(TESTRESULT_KEY);
     }
   }
