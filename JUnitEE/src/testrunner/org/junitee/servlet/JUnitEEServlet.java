@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.26 2003-02-27 20:57:33 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.27 2003-02-28 19:12:05 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -171,12 +171,12 @@ public class JUnitEEServlet extends HttpServlet {
       } else {
         message = "You requested all test cases to be run by setting the \"all\" parameter, but no test case was found.";
       }
-      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter(), output, request, response, xsl, filterTrace);
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace);
       return;
     }
     if ((test != null) && (testClassNames.length != 1)) {
       message = "You requested to run a single test case but provided more than one test suite.";
-      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, response.getWriter(), output, request, response, xsl, filterTrace);
+      errorResponse(searchForTests(request.getParameterValues(PARAM_SEARCH)), request.getContextPath() + request.getServletPath(), message, output, request, response, xsl, filterTrace);
       return;
     }
 
@@ -420,7 +420,7 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
 
-  protected void errorResponse(String[] testCases, String servletPath, String message, PrintWriter pw, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
+  protected void errorResponse(String[] testCases, String servletPath, String message, String output, HttpServletRequest request, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     if (OUTPUT_XML.equals(output)) {
       TestRunnerResults results = new TestRunnerResults();
       results.runFailed(message);
@@ -428,7 +428,7 @@ public class JUnitEEServlet extends HttpServlet {
       renderResults(results, request, response, xsl, filterTrace);
     } else {
       response.setContentType("text/html");
-      printIndexHtml(testCases, servletPath, message, pw);
+      printIndexHtml(testCases, servletPath, message, response.getWriter());
     }
   }
 
