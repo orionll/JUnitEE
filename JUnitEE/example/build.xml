@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.20 2004-05-27 14:34:38 o_rossmueller Exp $
+	$Id: build.xml,v 1.21 2004-05-28 11:16:26 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -126,7 +126,7 @@
       </classpath>
     </taskdef>
 
-    <juniteewar destFile="${test-war.product}" testjarname="test.jar">
+    <juniteewar destFile="${test-war.product}" testjarname="test.jar" htmlRefreshDelay="5">
       <lib dir="${junitee.dir}" includes="junitee.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
       <classes dir="${build.classes}">
