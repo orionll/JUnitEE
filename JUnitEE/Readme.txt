@@ -1,17 +1,8 @@
-JUnitEE
-=======
+JUnitEE 1.5rc2
+==============
 
 This tool provides a TestRunner and a servlet which will run JUnit test suites
 in an app server.
-
-
-Directory layout
-================
-
-- lib         pre-compiled libraries
-- doc         documentation
-- example     example appliation + test case
-- src         Java sources for the JUnitEE Test Servlet and Ant Task
 
 
 Contact
@@ -25,7 +16,14 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
-Release 1.5
+Release 1.5rc2
+
+- request parameter/init parameter to specify stylesheet for xml output
+- JUnitEEXMLServlet which produces xml output by default
+- the system property 'cactus.contextURL' is set by JUnitEEServlet to support Jakarta Cactus test cases
+- bug fix: an error message is displayed if a test class can not be loaded by the test runner
+
+Release 1.5rc1
 
 - improved user interface
 - possibility to run single tests
