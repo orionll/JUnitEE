@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.7 2002-09-22 21:46:45 o_rossmueller Exp $
+	$Id: build.xml,v 1.8 2002-09-24 15:34:56 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -33,7 +33,6 @@
   <property name="ejb-jar.file" value="${name}-ejb.jar"/>
   <property name="ejb-jar.product" value="${build.dir}/${ejb-jar.file}"/>
 
-  <property name="src.web-war" value="components/web-war"/>
   <property name="web-war.file" value="${name}-web.war"/>
   <property name="web-war.product" value="${build.dir}/${web-war.file}"/>
 
@@ -99,8 +98,8 @@
   </target>
 
   <target name="web-war" depends="compile">
-    <war warfile="${web-war.product}" webxml="${src.web-war}/WEB-INF/web.xml">
-      <fileset dir="${src.web-war}" excludes="WEB-INF/**"/>
+    <war warfile="${web-war.product}" webxml="${src.webapp}/WEB-INF/web.xml">
+      <fileset dir="${src.webapp}" excludes="WEB-INF/**"/>
 
       <classes dir="${build.classes}">
         <include name="**/ejb/**/*.class"/>
