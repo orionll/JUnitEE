@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.3 2002-09-23 23:41:18 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.4 2002-10-02 21:34:42 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.3 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.4 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -81,7 +81,8 @@
     <p>Adding JUnitEE to your server application is quite easy. You just have to create a web application which contains the
     JUnitEE Test Servlet and your test classes. Place <code>junitee.jar</code> and <code>junit.jar</code> and the jar containing your tests
     in the <code>WEB-INF/lib</code> directory of the web archive. The minimal deployment descriptor contains the declaration of the JUnitEE servlet and
-    the corresponding servlet mapping:
+    the corresponding servlet mapping. JUnitEE provides two servlets which differ in the format of the test report they generate by default. To get
+    html output you use <code>org.junitee.servlet.JUnitEEServlet</code>:
     </p>
 
     <div class="code"><code>
@@ -106,9 +107,38 @@
 &lt;/web-app&gt;</pre></code>
     </div>
 
+    <p>In case you prefer xml output you use <code>org.junitee.servlet.JUnitEEXMLServlet</code>:
+    </p>
+
+    <div class="code"><code>
+			<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEXMLServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;</pre></code>
+    </div>
+
+    <p>Both servlets support the <a href="#parameters"><code>output</code></a> request parameter to overwrite the default behaviour, so it is possible
+    to use the <code>org.junitee.servlet.JUnitEEServlet</code> to produce xml output and vice versa.</p>
+
     <p>To use the <code>Smart Test Mode</code> of JUnitEE you have to tell the servlet which jar file in the <code>WEB-INF/lib</code> folder of your
     war file contains your test cases. Therefore you have to add an init parameter named <code>searchResources</code> to the servlet declaration. Considering
     that the jar file <code>WEB-INF/lib/test.jar</code> contains the test classes, this looks like
+    </p>
 
     <div class="code"><code>
 			<pre>&lt;servlet&gt;
@@ -141,12 +171,35 @@
     <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCases.txt</code> to your .war file. If this
     file exists, JUnitEE will not search any jar files but will use the list of test case names declared in <code>testCases.txt</code> instead. <code>testCases.txt</code>
     has to be a simple text file containing one test class name per line like in this example:
+    </p>
 
     <div class="code"><code>
 			<pre># This is a comment
 org.junitee.example.SimpleUnitTests
 org.junitee.example.ComplexUnitTests</pre></code>
     </div>
+
+    <p>And finally there is the option to use the <a href="#parameters"><code>search</code></a> request parameter to specify the resources.</p>
+
+
+    <p>In case you want your test servlet to generate xml output it is possible to define the URL of a stylesheet by using the init parameter named
+    <code>xslStylesheet</code>:
+    </p>
+
+    <div class="code"><code>
+			<pre>&lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEXMLServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;xslStylesheet&lt;/param-name&gt;
+      &lt;param-value&gt;myStylesheet&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/servlet&gt;</pre></code>
+    </div>
+
+    <p>JUnitEE will use this information to add a stylesheet instruction to the generated xml. Another way to obtain the same result is to use the
+    <a href="#parameters"><code>xsl</code></a> request parameter.</p>
 
     <p>The final step is to package the <code>test.war</code> together with your application in an EAR and to deploy it to your application server.
     Now you may start your tests from any browser you like.
@@ -219,8 +272,8 @@ org.junitee.example.ComplexUnitTests</pre></code>
     the browser will scroll to the description of the failure/error.
     </p>
 
-    <p>In case you would like to start your tests not by using your browser but another tool like wget, here is a description of all request parameters
-    the JUnitEE servlet will accept:
+    <a name="parameters"></a>
+    <p>Here is a description of all request parameters the JUnitEE servlet will accept:
     <div>
       <table align="center" width="100%" cellspacing="2" cellpadding="2">
         <tr><td colspan="3" class="tabletitle">JUnitEE servlet request parameters</td></tr>
@@ -237,6 +290,15 @@ org.junitee.example.ComplexUnitTests</pre></code>
         </td><td class="coloredrow">No</td></tr>
         <tr><td class="whiterow">search</td><td class="whiterow">Define the resource the servlet should use to search for test classes.</td>
         <td class="whiterow">If there is no <code>searchResource</code> init parameter and no <code>WEB-INF/testCases.txt</code></td></tr>
+        <tr><td class="coloredrow">output</td><td class="coloredrow">Tell the servlet to generate the test report in the given format. JUnitEE supports
+        <ul>
+        <li><code>html</code> for the html test report described above</li>
+        <li><code>xml</code> for a test report in xml format</li>
+        </ul>
+        </td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">xsl</td><td class="whiterow">Define the URL of an xsl stylesheet. This URL will be used to generate a stylesheet
+        instruction at the beginning of the xml output (in case xml output is active).</td>
+        <td class="whiterow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
     </table>
     </div>
@@ -431,6 +493,16 @@ org.junitee.example.ComplexUnitTests</pre></code>
 &lt;/juniteewar&gt;</pre></code>
       </div>
 
+   <a name="cactus"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+		  <tr><td>&nbsp;</td></tr>
+			<tr> <td class="sectionTitle">Jakarta Cactus support</td> </tr>
+		</table>
+
+    <p>Both <code>org.junitee.servlet.JUnitEEServlet</code> and <code>org.junitee.servlet.JUnitEEXMLServlet</code> set the system property
+    <code>cactus.contextURL</code> to the context of the web application the JUnitEE servlet is part of. Therefore you don't have to specify
+    this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application).
+    </p>
 
 		<table cellspacing="0" cellpadding="0" width="100%">
       <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>

@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: releasenotes.html,v 1.1 2002-09-23 23:41:18 o_rossmueller Exp $
+	$Id: releasenotes.html,v 1.2 2002-10-02 21:34:42 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/releasenotes.html,v $
 -->
 
@@ -19,7 +19,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle">JUnitEE</td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.1 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.2 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -49,15 +49,29 @@
       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
 
 		<table cellspacing="0" cellpadding="0" width="100%">
-			<tr> <td class="documentTitle">Release Notes for JUnitEE 1.5</td> </tr>
+			<tr> <td class="documentTitle">Release Notes for JUnitEE 1.5rc2</td> </tr>
 		</table>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	    <tr><td class="sectionTitle">Changes since release 1.5rc1</td></tr>
+		</table>
+
+		<p>The changes since JUnitEE 1.5rc1 are:
+		  <ul>
+		    <li>request parameter/init parameter to specify stylesheet for xml output</li>
+		    <li>JUnitEEXMLServlet which produces xml output by default</li>
+		    <li>the system property 'cactus.contextURL' is set by JUnitEEServlet to support Jakarta Cactus test cases</li>
+		    <li>bug fix: an error message is displayed if a test classes can not be loaded by the test runner</li>
+          </ul>
+		</p>
 
       <table cellspacing="0" cellpadding="0" width="100%">
 	    <tr><td>&nbsp;</td></tr>
 	    <tr><td class="sectionTitle">Changes since release 1.4</td></tr>
 		</table>
 
-		<p>The changes in JUnitEE since release 1.4 are:
+		<p>The changes since JUnitEE 1.4 are:
 		  <ul>
 		    <li>integrated user interface to start tests</li>
 		    <li>improved test report with possibility to start test suites or single tests (e.g. for debugging)</li>
