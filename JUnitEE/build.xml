@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.17 2002-11-02 13:49:08 o_rossmueller Exp $
+	$Id: build.xml,v 1.18 2002-11-28 19:27:12 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -13,7 +13,7 @@
 <project name="junitee" default="all" basedir=".">
 
   <property name="name" value="junitee"/>
-  <property name="version" value="1.5.1"/>
+  <property name="version" value="1.6rc1"/>
   <property name="distname" value="${name}-${version}"/>
   <property name="srcdistname" value="${name}-src-${version}"/>
   <property name="exampledistname" value="${name}-example-${version}"/>

@@ -1,5 +1,5 @@
-JUnitEE 1.5
-===========
+JUnitEE 1.6rc1
+==============
 
 This tool provides a TestRunner and a servlet which will run JUnit test suites
 in an app server.
@@ -16,10 +16,21 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.6rc1
+
+- JUnitEE servlet provides threaded mode for long running tests. This avoids timeouts
+  and gives the possibility to stop test execution. Also included is
+  JUnitEEThreadedServlet which has threaded mode on by default.
+- juniteewar task now extends the Ant war task and therefore inherits all it's features
+- junitee task supports all relevant features of the junit task (formatters, if/unless
+  conditions for test execution, stack trace filtering)
+
+
 Release 1.5.1
 
 - fix for bug 623737 (Ant task not working when using 'runall' in combination with the 'resource' attribute)
 - fix for bug 624812 (error/failure property is not set by the Ant task)
+
 
 Release 1.5 final
 

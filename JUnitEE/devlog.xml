@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <devlog>
   <release name="1.6" status="open">
+    <feature group="runner">
+      JUnitEE servlet provides threaded mode for long running tests. This avoids timeouts and gives the possibility to stop
+      test execution. Also included is JUnitEEThreadedServlet which has threaded mode on by default.
+    </feature>
+    <feature group="ant">
+      juniteewar task now extends the Ant war task and therefore inherits all it's features
+    </feature>
+    <feature group="ant">
+      junitee task supports all relevant features of the junit task (formatters, if/unless conditions for test execution, stack trace filtering)
+    </feature>
     <enhancement date="2002-11-03" author="o_rossmueller">
       It is now possible to force the test runner to fork a new thread by setting <code>thread=true</code> to avoid timeouts for
       long-running tests. Added JUnitEEThreadedServlet which has thread=true by default.
