@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.30 2003-07-30 21:04:05 o_rossmueller Exp $
+	$Id: build.xml,v 1.31 2003-11-21 14:54:58 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -91,8 +91,8 @@
       <zipfileset dir="${resource.dir}" includes="*.gif, *.png" prefix="resource"/>
       <zipfileset dir="${src.testrunner}" includes="*.html" prefix="resource"/>
     </jar>
-    <jar jarfile="${build.lib}/${name}-anttask.jar" basedir="${build.anttask}">
-      <zipfileset dir="${build.anttask}" includes="**/*.class"/>
+    <jar jarfile="${build.lib}/${name}-anttask.jar"
+      basedir="${build.anttask}">
       <zipfileset dir="${src.anttask}" includes="index.html"/>
     </jar>
 
