@@ -2,7 +2,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!--
-	$Id: usersguide.html,v 1.5 2002-10-06 16:32:37 o_rossmueller Exp $
+	$Id: usersguide.html,v 1.6 2002-10-17 19:02:00 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
 -->
 
@@ -18,7 +18,7 @@
       <tr><td colspan="3">
         <table cellspacing="0" cellpadding="0" width="100%">
           <tr> <td class="pageTitle"> JUnitEE </td> </tr>
-          <tr> <td align="right"> <small> $Revision: 1.5 $ </small> </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.6 $ </small> </td> </tr>
         </table>
       </td></tr>
       <tr><td valign="top" align="left">
@@ -360,6 +360,10 @@ org.junitee.example.ComplexUnitTests</pre></code>
         <tr><td class="coloredrow">runall</td><td class="coloredrow">Execute all tests</td><td class="coloredrow">If <code>name</code> is not set</td></tr>
         <tr><td class="whiterow">resource</td><td class="whiterow">Comma-separated list of all resources containing test classes</td>
         <td class="whiterow">If <code>runall</code> is set and the test servlet is not configured for <code>Smart Test Mode</code>. This attribute will overwrite the configuration of the servlet.</td></tr>
+        <tr><td class="coloredrow">failureproperty</td><td class="coloredrow">Specify a property that will be set in case a this test failes</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">errorproperty</td><td class="whiterow">Specify a property that will be set in case an error caused this test to fail</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">haltonfailure</td><td class="coloredrow">Stop the build if this test fails</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs while running this test</td><td class="whiterow">No</td></tr>
         <tr><td colspan="3" class="footer">&nbsp;</td></tr>
       </table>
     </div>

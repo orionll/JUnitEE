@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.5 2002-10-15 20:21:57 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.6 2002-10-17 19:02:00 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class JUnitEETask extends Task {
 
@@ -202,12 +202,19 @@ public class JUnitEETask extends Task {
       }
       if (errors != 0) {
         success = false;
+        if (test.getErrorproperty() != null) {
+          getProject().setNewProperty(test.getErrorproperty(), "true");
+        }
         if (test.getHaltonerror() || test.getHaltonfailure()) {
+
           throw new BuildException("Test " + testClass + " failed.");
         }
       }
       if (failures != 0) {
         success = false;
+        if (test.getFailureproperty() != null) {
+          getProject().setNewProperty(test.getFailureproperty(), "true");
+        }
         if (test.getHaltonfailure()) {
           throw new BuildException("Test " + testClass + " failed.");
         }

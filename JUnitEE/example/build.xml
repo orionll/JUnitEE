@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.8 2002-09-24 15:34:56 o_rossmueller Exp $
+	$Id: build.xml,v 1.9 2002-10-17 19:02:00 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -116,7 +116,7 @@
       </classpath>
     </taskdef>
 
-    <juniteewar destFile="${test-war.product}">
+    <juniteewar destFile="${test-war.product}" testJarName="test.jar">
       <lib dir="${junitee.dir}" includes="junitee.jar"/>
       <lib dir="${lib.dir}" includes="junit.jar"/>
       <classes dir="${build.classes}">
@@ -156,9 +156,35 @@
 
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
       <test runall="true"/>
+      <test runall="true" resource="/WEB-INF/lib/test.jar"/>
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
     </junitee>
+
+    <echo message="Property test.failure: ${test.failure}"/>
+    <echo message="Property test.error: ${test.error}"/>
   </target>
 
+  <target name="run-tests-fail" description="Run the tests and halt on failure">
+    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test runall="true" haltonfailure="true"/>
+    </junitee>
+
+    <echo message="Did not halt on failure"/>
+  </target>
+
+
+  <target name="run-tests-error" description="Run the tests and halt on error">
+    <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test runall="true" haltonerror="true"/>
+    </junitee>
+
+    <echo message="Did not halt on error"/>
+ </target>
 
   <target name="deploy" depends="app-ear">
     <!-- deploy the ear -->
