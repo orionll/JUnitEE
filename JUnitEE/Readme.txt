@@ -9,11 +9,18 @@ Contact
 =======
 
 junitee-user mailing list (subscribe at http://lists.sourceforge.net/lists/listinfo/junitee-user)
-Oliver Rossmueller (oliver@oross.net)
+Oliver Rossmueller (oliver@rossmueller.com)
 
 
 Change log
 ==========
+
+Release 1.9
+
+- Bug 854955 fixed (NPE)
+- Bug 890896 fixed (HTTP 500 for NoClassDefFoundError)
+- Bug 920505 fixed (ActiveTestSuite)
+
 
 Release 1.8
 
