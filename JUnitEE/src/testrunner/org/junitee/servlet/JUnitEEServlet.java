@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.6 2002-09-05 13:35:29 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.7 2002-09-05 14:18:04 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -84,6 +84,7 @@ public class JUnitEEServlet extends HttpServlet {
     super.init(config);
 
     searchResources = config.getInitParameter("searchResources");
+System.out.println("searchResources=" + searchResources);
   }
 
 
@@ -179,10 +180,11 @@ public class JUnitEEServlet extends HttpServlet {
   protected String[] searchForTests(String[] param) {
     StringBuffer buffer = new StringBuffer();
 
-    if (param != null) {
-      for (int i = 0; i < param.length; i++) {
-        buffer.append(param[i]).append(",");
-      }
+    if (param == null) {
+	return searchForTests((String)null);
+    }
+    for (int i = 0; i < param.length; i++) {
+      buffer.append(param[i]).append(",");
     }
     return searchForTests(buffer.toString());
   }
@@ -195,6 +197,7 @@ public class JUnitEEServlet extends HttpServlet {
     if (searchResources == null && param == null) {
       return null;
     }
+
 
     StringTokenizer tokenizer;
 
@@ -225,6 +228,7 @@ public class JUnitEEServlet extends HttpServlet {
           }
         }
       } catch (Exception e) {
+	e.printStackTrace();
       }
     }
     String[] answer = new String[tests.size()];
