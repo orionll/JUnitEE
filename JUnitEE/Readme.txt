@@ -41,7 +41,7 @@ Release 1.4
 
 - New option to run all tests found in a specified jar file
 - Ant task for build integration
-- TestServletBase is no longer abstract and should work for almost any case as is
+- TestServletBase is no longer abstract and should work as is
 - Bug Fixes (Bug 583856, 583859)
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.3 2002-08-15 19:44:27 o_rossmueller Exp $
+	$Id: build.xml,v 1.4 2002-08-15 19:59:36 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -16,7 +16,7 @@
   <property name="version" value="1.4"/>
   <property name="distname" value="${name}-${version}"/>
   
-  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="lib.dir" value="${basedir}/3rdparty"/>
   
 	<property name="junit.library" value="${lib.dir}/junit.jar" />
 	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
@@ -24,12 +24,13 @@
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build"/>
+	<property name="build.lib" value="lib"/>
+	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="dist.root" value="${dist.dir}/${distname}"/>
 	<property name="dist.lib" value="${dist.root}/lib"/>
 	<property name="dist.doc" value="${dist.root}/doc"/>
 	<property name="dist.src" value="${dist.root}/src"/>
-	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="doc.dir" value="doc" />
 	<property name="example.dir" value="example" />
 	<property name="anttask.dir" value="anttask" />
@@ -37,13 +38,15 @@
   
 	<target name="clean">
 		<delete dir="${build.dir}" quiet="true" />
+		<delete dir="${build.lib}" quiet="true" />
 		<delete dir="${dist.dir}" quiet="true" />
 	</target>
 
   
 	<target name="prepare">
 		<mkdir dir="${build.dir}" />
-		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.lib}" />
+    <mkdir dir="${build.classes}" />
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${dist.root}" />
 		<mkdir dir="${dist.lib}" />
@@ -60,18 +63,18 @@
 
   
 	<target name="jar" depends="compile">
-		<jar jarfile="${build.dir}/${name}.jar"
+		<jar jarfile="${build.lib}/${name}.jar"
 				basedir="${build.classes}" />
 	</target>
 
   <target name="anttask">
     <ant dir="${anttask.dir}" inheritall="false"/>
-    <copy file="${anttask.dir}/build/lib/junitee-anttask.jar" todir="${build.dir}"/>
+    <copy file="${anttask.dir}/build/lib/junitee-anttask.jar" todir="${build.lib}"/>
   </target>
   
-	<target name="dist" depends="clean, jar, anttask">
+	<target name="dist" depends="clean, jar, anttask" description="Build the distribution">
 		<copy todir="${dist.lib}">
-      <fileset dir="${build.dir}" includes="*.jar"/>
+      <fileset dir="${build.lib}" includes="*.jar"/>
     </copy>
 
     <copy todir="${dist.doc}">
@@ -88,27 +91,16 @@
         <include name="example/**/*.xml"/>
         <include name="example/**/*.html"/>
         <include name="src/**/*.java"/>
+        <include name="3rdparty/**"/>
         <include name="build.xml"/>
         <include name="Readme.txt"/>
       </fileset>
     </copy>
     
     <zip zipfile="${dist.dir}/${distname}.zip"
-				basedir="${dist.root}" />
+				basedir="${dist.dir}" includes="${distname}/**"/>
 	</target>
 
-	<target name="publish" depends="dist">
-		<deltree dir="${publish.dir}" />
-
-		<mkdir dir="${publish.dir}" />
-
-		<copyfile src="${output.dir}/${name}.zip"
-					dest="${publish.dir}/${name}.zip" />
-
-		<copydir src="${website.dir}"
-					dest="${publish.dir}" />
-	</target>
-  
   <target name="all" depends="jar, anttask" description="Build the JUnitEE library"/>
 </project>
 

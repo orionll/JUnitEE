@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.4 2002-08-15 19:44:39 o_rossmueller Exp $
+	$Id: build.xml,v 1.5 2002-08-15 19:59:36 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -11,8 +11,8 @@
 
 	<property name="build.dir" value="build" />
 
-  <property name="lib.dir" value="${basedir}/../lib"/>
-  <property name="junitee.dir" value="${basedir}/../build"/>
+  <property name="lib.dir" value="${basedir}/../3rdparty"/>
+  <property name="junitee.dir" value="${basedir}/../lib"/>
   
 	<property name="junit.library" value="${lib.dir}/junit.jar" />
 	<property name="servlet.library" value="${lib.dir}/servlet.jar" />
