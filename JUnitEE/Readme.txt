@@ -1,8 +1,8 @@
-JUnitEE 1.6
-===========
+JUnitEE
+=======
 
-This tool provides a TestRunner and a servlet which will run JUnit test suites
-in an app server.
+JUnitEE provides a TestRunner and a servlet which will run JUnit test suites
+inside an application server.
 
 
 Contact
@@ -14,6 +14,12 @@ Oliver Rossmueller (oliver@oross.net)
 
 Change log
 ==========
+
+Release 1.8
+
+- Added support for EJB local references to the Ant task (RFE 812799)
+- Fixed bug 798104 (PlainFormatter not working)
+
 
 Release 1.7
 
