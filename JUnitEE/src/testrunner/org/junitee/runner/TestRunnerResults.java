@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunnerResults.java,v 1.4 2003-04-10 19:56:48 o_rossmueller Exp $
+ * $Id: TestRunnerResults.java,v 1.5 2003-06-01 11:59:28 o_rossmueller Exp $
  */
 package org.junitee.runner;
 
@@ -12,7 +12,7 @@ import junit.framework.Test;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @since 1.5
  */
 public class TestRunnerResults implements TestRunnerListener {
@@ -55,15 +55,11 @@ public class TestRunnerResults implements TestRunnerListener {
 
 
   public synchronized void addError(Test test, Throwable t) {
-    boolean preRunError = false;
+    boolean preRunError = ! existsCurrentInfo(test);
 
-    if (getCurrentInfo() == null) {
-      setTimestamp(System.currentTimeMillis());
-      setCurrentInfo(new TestInfo(test));
-      preRunError = true;
-    }
     getCurrentInfo().setError(t);
     setFailure(true);
+
     if (preRunError) {
       endTest(test);
     }
@@ -71,14 +67,26 @@ public class TestRunnerResults implements TestRunnerListener {
 
 
   public synchronized void addFailure(Test test, Throwable t) {
+    boolean preRunError = ! existsCurrentInfo(test);
+
     getCurrentInfo().setFailure(t);
     setFailure(true);
+
+    if (preRunError) {
+      endTest(test);
+    }
   }
 
 
   public synchronized void addFailure(Test test, AssertionFailedError t) {
+    boolean preRunError = ! existsCurrentInfo(test);
+
     getCurrentInfo().setFailure(t);
     setFailure(true);
+
+    if (preRunError) {
+      endTest(test);
+    }
   }
 
 
@@ -166,6 +174,15 @@ public class TestRunnerResults implements TestRunnerListener {
     return errorMessages;
   }
 
+
+  private boolean existsCurrentInfo(Test test) {
+    if (getCurrentInfo() == null) {
+      setTimestamp(System.currentTimeMillis());
+      setCurrentInfo(new TestInfo(test));
+      return false;
+    }
+    return true;
+  }
 
   protected synchronized void addToSuite(TestInfo info) {
     String className = info.getTest().getClass().getName();

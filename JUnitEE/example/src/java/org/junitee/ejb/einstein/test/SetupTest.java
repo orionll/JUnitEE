@@ -1,5 +1,5 @@
 /*
- * $Id: SetupTest.java,v 1.1 2003-05-29 10:59:30 o_rossmueller Exp $
+ * $Id: SetupTest.java,v 1.2 2003-06-01 11:59:27 o_rossmueller Exp $
  *
  */
 package org.junitee.ejb.einstein.test;
@@ -12,7 +12,7 @@ import junit.extensions.TestSetup;
 
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class SetupTest extends TestCase {
@@ -73,6 +73,7 @@ public class SetupTest extends TestCase {
     protected void setUp() throws Exception {
       super.setUp();
       value++;
+      assertTrue(false);
     }
 
 

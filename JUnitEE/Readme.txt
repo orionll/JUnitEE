@@ -17,6 +17,11 @@ Change log
 
 Release 1.6.6pre2
 
+- Fixed NPE in case an AssertionFailedException is thrown in test setup 
+
+
+Release 1.6.6pre2
+
 - Changed html output charset to UTF-8 to support non-latin characters
 - Added interface RequiresDecoration to support test decoration (e.g. use of junit.extensions.TestSetup)
   when running single tests
