@@ -1,0 +1,6 @@
+Buildfile: build.xml
+
+run-tests-fail:
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.052 sec)
+  [junitee] TEST FAILED
+

@@ -15,6 +15,17 @@ Oliver Rossmueller (oliver@oross.net)
 Change log
 ==========
 
+Release 1.6.4
+
+Bug fixes (see bug database at http://sourceforge.net/tracker/?group_id=31476&atid=402250 for details)
+
+- 692514
+- 692583
+- 692586
+- 694251
+- 695035
+
+
 Release 1.6.3
 
 - Fix for bug 677262

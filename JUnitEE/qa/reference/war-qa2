@@ -1,0 +1,10 @@
+META-INF/
+META-INF/MANIFEST.MF
+WEB-INF/
+WEB-INF/lib/
+WEB-INF/lib/junit.jar
+WEB-INF/lib/junitee.jar
+WEB-INF/lib/testclasses.jar
+WEB-INF/testCase.txt
+WEB-INF/web.xml
+index.html

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.14 2003-01-29 23:31:35 o_rossmueller Exp $
+	$Id: build.xml,v 1.15 2003-03-02 18:37:22 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -42,6 +42,8 @@
   <property name="test-war-xml.product" value="${build.dir}/${test-war-xml.file}"/>
   <property name="test-jar.file" value="${name}-test.jar"/>
   <property name="test-jar.product" value="${build.dir}/${test-jar.file}"/>
+  <property name="test-qa.file" value="${name}-qa.war"/>
+  <property name="test-qa.product" value="${build.dir}/${test-qa.file}"/>
 
   <property name="javac.debug" value="on"/>
 
@@ -116,7 +118,7 @@
     </war>
   </target>
 
-  <target name="test-war" depends="compile" >
+  <target name="test-war" depends="compile">
     <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
       <classpath>
         <pathelement location="../lib/junitee-anttask.jar"/>
@@ -213,7 +215,7 @@
     </junitee>
 
     <echo message="Did not halt on error"/>
- </target>
+  </target>
 
   <target name="run-tests-unless" description="Run the tests using unless condition">
     <echo message="property is not set, so run the tests ..."/>
@@ -227,7 +229,7 @@
     <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
       <test name="org.junitee.ejb.einstein.test.EinsteinTest" unless="test.unless"/>
     </junitee>
- </target>
+  </target>
 
   <target name="run-tests-if" description="Run the tests using if condition">
     <echo message="property is not set, so do not run the tests ..."/>
@@ -245,7 +247,7 @@
         <formatter type="xml"/>
       </test>
     </junitee>
- </target>
+  </target>
 
 
   <target name="run-tests-invalid" description="Try to run invalid tests">
@@ -269,5 +271,64 @@
 
 
   <target name="all" depends="app-ear" description="Build the example application"/>
+
+
+
+
+  <!-- qa targets -->
+
+  <!-- test simple war construction -->
+  <target name="qa-war-1" depends="compile">
+    <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
+
+    <juniteewar destFile="${test-qa.product}">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+    </juniteewar>
+
+    <exec executable="../qa/scripts/war-qa.sh">
+      <arg line="qa1" />
+    </exec>
+  </target>
+
+  <!-- test simple war construction with testjarname-->
+
+ <target name="qa-war-2" depends="compile">
+    <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
+
+    <juniteewar destFile="${test-qa.product}" testjarname="testclasses.jar">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+    </juniteewar>
+
+    <exec executable="../qa/scripts/war-qa.sh">
+      <arg line="qa2" />
+    </exec>
+  </target>
+
 </project>
 

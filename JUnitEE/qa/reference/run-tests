@@ -1,0 +1,55 @@
+Buildfile: build.xml
+
+run-tests:
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.043 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.000 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.001 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.032 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.000 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.001 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.047 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.046 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.048 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.000 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.001 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.055 sec)
+  [junitee] TEST FAILED
+
+     [echo] Property test.failure: true
+     [echo] Property test.error: true
+
+BUILD FAILED
+Target `2' does not exist in this project. 
+
+Total time: 52 seconds
