@@ -22,6 +22,11 @@
  					</a>
 				</li>
 				<li>
+					<a href="TestServlet?suite=SimpleTest&list=yes">
+ 						SimpleTest with list of tests requested
+ 					</a>
+				</li>
+				<li>
 					<a href="TestServlet?suite=SimpleTest&suite=VectorTest">
 						SimpleTest and VectorTest
 					</a>
@@ -54,7 +59,8 @@
 					<option value="VectorTest">
 						VectorTest
 					</option>
-				</select>
+				</select><br>
+				<input type="checkbox" name="list" value="yes">List the tests<br>
 				<input type="submit" value="Run" />
 			</form>
 		</p>
