@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractResultFormatter.java,v 1.5 2004-04-20 16:41:21 o_rossmueller Exp $
+ * $Id: AbstractResultFormatter.java,v 1.6 2004-05-27 14:33:41 o_rossmueller Exp $
  *
  * 2002 Oliver Rossmueller
  *
@@ -14,7 +14,7 @@ import org.w3c.dom.NamedNodeMap;
 
 
 /**
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public abstract class AbstractResultFormatter implements JUnitEEResultFormatter {
@@ -56,7 +56,8 @@ public abstract class AbstractResultFormatter implements JUnitEEResultFormatter 
       return out;
     }
     String fileName = outfile.getAbsolutePath() + testName + extension;
-    return new FileOutputStream(fileName);
+    out = new FileOutputStream(fileName);
+    return out;
   }
 
 
