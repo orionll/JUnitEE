@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.4 2002-09-03 21:07:16 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.5 2002-09-03 22:58:24 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -97,7 +97,6 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     // Set up the response
-    response.setContentType("text/html");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter pw = response.getWriter();
     String test = request.getParameter(PARAM_TEST);
