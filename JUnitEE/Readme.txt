@@ -15,6 +15,12 @@ Oliver Rossmueller (oliver@rossmueller.com)
 Change log
 ==========
 
+Release 1.11
+
+- Bug 1055571 fixed (Handle TestSetup)
+- Bug 1045188 fixed (XML Summary Invalid)
+
+
 Release 1.10
 
 - HTML output page refresh rate config (contributed by Aaron Smith)

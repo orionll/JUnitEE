@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.33 2004-05-27 22:46:52 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.34 2004-10-27 22:39:09 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import junit.extensions.TestSetup;
 import org.junitee.output.HTMLOutput;
 import org.junitee.output.OutputProducer;
 import org.junitee.output.XMLOutput;
@@ -34,7 +35,7 @@ import org.junitee.runner.TestRunnerResults;
  * choice.
  *
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @since   1.5
+ * @since 1.5
  */
 public class JUnitEEServlet extends HttpServlet {
 
@@ -65,7 +66,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   private static final String INIT_PARAM_RESOURCES = "searchResources";
   private static final String INIT_PARAM_XSL = "xslStylesheet";
-   private static final String INIT_HTML_REFRESH_DELAY = "htmlRefreshDelay";
+  private static final String INIT_HTML_REFRESH_DELAY = "htmlRefreshDelay";
 
   public static final String OUTPUT_HTML = "html";
   public static final String OUTPUT_XML = "xml";
@@ -88,7 +89,7 @@ public class JUnitEEServlet extends HttpServlet {
    * Answer the classloader used to load the test classes. The default implementation
    * answers the classloader of this class, which usally will be the classloader of
    * the web application the servlet is a part of.
-   *
+   * <p/>
    * If this default behaviour does not work for you, overwrite this method and answer
    * the classloader that fits your needs.
    */
@@ -103,7 +104,7 @@ public class JUnitEEServlet extends HttpServlet {
     searchResources = config.getInitParameter(INIT_PARAM_RESOURCES);
     xslStylesheet = config.getInitParameter(INIT_PARAM_XSL);
     try {
-        htmlRefreshDelay = Integer.parseInt( config.getInitParameter( INIT_HTML_REFRESH_DELAY));
+      htmlRefreshDelay = Integer.parseInt(config.getInitParameter(INIT_HTML_REFRESH_DELAY));
     } catch (NumberFormatException ignore) {
     }
   }
@@ -148,14 +149,14 @@ public class JUnitEEServlet extends HttpServlet {
     HttpSession session = request.getSession(false);
 
     if (session != null && stop != null) {
-      TestRunner runner = (TestRunner)session.getAttribute(TESTRUNNER_KEY);
+      TestRunner runner = (TestRunner) session.getAttribute(TESTRUNNER_KEY);
       runner.stop();
     }
 
     TestRunnerResults results = null;
 
     if (threaded && session != null) {
-      results = (TestRunnerResults)session.getAttribute(TESTRESULT_KEY);
+      results = (TestRunnerResults) session.getAttribute(TESTRESULT_KEY);
     }
     if (results != null) {
       renderResults(results, request, response, xsl, filterTrace);
@@ -266,7 +267,7 @@ public class JUnitEEServlet extends HttpServlet {
     StringBuffer buffer = new StringBuffer();
 
     if (param == null) {
-      return filterTests(searchForTests((String)null));
+      return filterTests(searchForTests((String) null));
     }
     for (int i = 0; i < param.length; i++) {
       buffer.append(param[i]).append(",");
@@ -289,7 +290,7 @@ public class JUnitEEServlet extends HttpServlet {
     Iterator iterator = names.iterator();
 
     while (iterator.hasNext()) {
-      String name = (String)iterator.next();
+      String name = (String) iterator.next();
       try {
         Class clazz = loader.loadClass(name);
 
@@ -299,7 +300,7 @@ public class JUnitEEServlet extends HttpServlet {
           Test test = tester.getTest(name);
 
           if (test instanceof TestSuite) {
-            TestSuite suite = (TestSuite)test;
+            TestSuite suite = (TestSuite) test;
 
             if (suite.testCount() == 0) {
               iterator.remove();
@@ -316,10 +317,10 @@ public class JUnitEEServlet extends HttpServlet {
       } catch (ClassNotFoundException e) {
         iterator.remove();
       } catch (NoClassDefFoundError e) {
-         // ignore, just avoid HTTP 500 -> will cause an error again in test runner
+        // ignore, just avoid HTTP 500 -> will cause an error again in test runner
       }
     }
-    return (String[])names.toArray(new String[names.size()]);
+    return (String[]) names.toArray(new String[names.size()]);
   }
 
 
@@ -439,6 +440,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   /**
    * Answer the default for the thread mode.
+   *
    * @return true if a thread should be forked
    */
   protected boolean getDefaultThreadMode() {
@@ -466,7 +468,7 @@ public class JUnitEEServlet extends HttpServlet {
     }
 
     if (output.equals(OUTPUT_HTML)) {
-       return new HTMLOutput(results, request, response, filterTrace, htmlRefreshDelay);
+      return new HTMLOutput(results, request, response, filterTrace, htmlRefreshDelay);
     }
     if (output.equals(OUTPUT_XML)) {
       return new XMLOutput(results, response, xsl, filterTrace);
@@ -555,7 +557,7 @@ public class JUnitEEServlet extends HttpServlet {
       for (int j = 0; j < methods.length; j++) {
         bufferList.append("        <tr><td class=\"methodcell\">");
         bufferList.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" + servletPath + "?" + PARAM_SUITE + "=" + testCase + "&" + PARAM_TEST + "="
-                          + methods[j] + "\">");
+          + methods[j] + "\">");
         bufferList.append(methods[j]);
         bufferList.append("</a></td></tr>");
       }
@@ -569,7 +571,6 @@ public class JUnitEEServlet extends HttpServlet {
    * functionality from org.junitee.runner.TestRunner
    *
    * @param testClass
-   *
    * @return
    */
   protected String[] getTestClassMethods(String testClass) {
@@ -578,20 +579,26 @@ public class JUnitEEServlet extends HttpServlet {
     Test test = tester.getTest(testClass);
     ArrayList testMethodList = new ArrayList();
 
+    // unwrap TestSetup
+    if (test instanceof TestSetup) {
+      TestSetup testSetup = (TestSetup) test;
+      test = testSetup.getTest();
+    }
+
     if (test instanceof TestSuite) {
-      TestSuite suite = (TestSuite)test;
+      TestSuite suite = (TestSuite) test;
 
       for (int i = 0; i < suite.testCount(); i++) {
         Test testMethod = suite.testAt(i);
 
         if (testMethod instanceof TestCase) {
-          testMethodList.add(((TestCase)testMethod).getName());
+          testMethodList.add(((TestCase) testMethod).getName());
         }
       }
     }
 
     String[] testMethodArray = new String[testMethodList.size()];
 
-    return (String[])testMethodList.toArray(testMethodArray);
+    return (String[]) testMethodList.toArray(testMethodArray);
   }
 }
