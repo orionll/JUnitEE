@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.12 2003-02-24 21:28:22 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.13 2003-03-11 13:25:25 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class JUnitEETask extends Task {
 
@@ -189,17 +189,30 @@ public class JUnitEETask extends Task {
     if (!test.getFiltertrace()) {
       arguments.append("&filterTrace=false");
     }
+
+    InputStream in = null;
+
     try {
       requestUrl = new URL(arguments.toString());
       con = requestUrl.openConnection();
       sessionCookie = con.getHeaderField("Set-Cookie");
       log("Session cookie : " + sessionCookie, Project.MSG_DEBUG);
-      done = parseResult(con.getInputStream(), test);
+
+       int index = sessionCookie.indexOf(';');
+       if (index != -1) {
+          sessionCookie = sessionCookie.substring(0, index);
+       }
+       in = con.getInputStream();
+       done = parseResult(in, test);
     } catch (BuildException e) {
       throw e;
     } catch (Exception e) {
       log("Failed to execute test: " + e, Project.MSG_ERR);
       throw new BuildException(e);
+    } finally {
+       if (in != null) {
+          try { in.close(); } catch (IOException e) {};
+       }
     }
 
     try {
@@ -214,8 +227,13 @@ public class JUnitEETask extends Task {
         }
         log("Get xml again using URL " + requestUrl, Project.MSG_DEBUG);
         con = requestUrl.openConnection();
-        con.setRequestProperty("Cookie", sessionCookie);
-        done = parseResult(con.getInputStream(), test);
+         con.setRequestProperty("Cookie", sessionCookie);
+         in =con.getInputStream();
+         try {
+            done = parseResult(in, test);
+         } finally {
+            try { in.close(); } catch (IOException e) {};
+         }
       }
     } catch (BuildException e) {
       throw e;
