@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <devlog>
   <release name="1.6" status="open">
+    <bugfix date="2002-12-02" author="o_rossmueller">
+      Set correct content type for streamed resources.
+    </bugfix>
     <feature group="runner">
       JUnitEE servlet provides threaded mode for long running tests. This avoids timeouts and gives the possibility to stop
       test execution. Also included is JUnitEEThreadedServlet which has threaded mode on by default.

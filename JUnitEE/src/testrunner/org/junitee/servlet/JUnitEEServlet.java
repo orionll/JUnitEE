@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.18 2002-11-03 21:25:54 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.19 2002-12-02 23:48:22 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -218,7 +218,11 @@ public class JUnitEEServlet extends HttpServlet {
     byte[] buffer = new byte[1024];
     int r = 0;
 
-    response.setContentType("image/gif");
+    if (resource.endsWith(".gif")) {
+      response.setContentType("image/gif");
+    } else if (resource.endsWith(".png")) {
+      response.setContentType("image/png");
+    }
     while ((r = in.read(buffer)) != -1) {
       out.write(buffer, 0, r);
     }
