@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.18 2004-07-03 14:01:37 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.19 2005-10-15 22:05:12 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class JUnitEETask extends Task {
 
@@ -39,7 +39,8 @@ public class JUnitEETask extends Task {
   private Vector tests = new Vector();
   private boolean printSummary = false;
   private Vector formatters = new Vector();
-
+  private String user;
+  private String password;
 
   /**
    * Set the URL to call the JUnitEE test servlet.
@@ -50,6 +51,23 @@ public class JUnitEETask extends Task {
     this.url = url;
   }
 
+  /**
+   * Set the id of the HTTP user of the test servlet.
+   * @param user The user id.
+   * @author skaringa
+   */
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  /**
+   * Set the password of the HTTP user of the test servlet.
+   * @param password The password.
+   * @author skaringa
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
   public void setThreaded(boolean threaded) {
     this.threaded = threaded;
@@ -203,6 +221,11 @@ public class JUnitEETask extends Task {
     InputStream in = null;
 
     try {
+      // if user and password are set, then use the authenticator
+      if (user != null && password != null) {
+        java.net.Authenticator.setDefault(new AuthImpl(user, password));
+      }
+      
       requestUrl = new URL(arguments.toString());
       con = requestUrl.openConnection();
       sessionCookie = con.getHeaderField("Set-Cookie");
