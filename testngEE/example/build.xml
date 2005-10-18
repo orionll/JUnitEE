@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="Iso-8859-15"?>
+<!--
+/*
+ * $Id: build.xml,v 1.1 2005-10-18 23:29:39 o_rossmueller Exp $
+ *
+ * Copyright 2005 Oliver Rossmueller
+ *
+ * This file is part of testngEE.
+ *
+ * testngEE is free software; you can redistribute it and/or modify
+ * it under the terms of version 2 of the GNU General Public License
+ * as published by the Free Software Foundation.
+ *
+ * testngEE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with testngEE; if not, mailto:oliver@tuxerra.com or have a look at
+ * http://www.gnu.org/licenses/licenses.html#GPL
+ */
+ -->
+<project name="example" basedir="." default="test">
+
+  <property name="test.report" value="${basedir}/testreport"/>
+
+  <path id="task.classpath">
+    <pathelement location="../build/testngee-ant-1.0.jar"/>
+    <pathelement location="../lib/testng-4.0-jdk15.jar"/>
+    <pathelement location="../lib/commons-httpclient-3.0-beta1.jar"/>
+    <pathelement location="../lib/commons-logging-1.0.3.jar"/>
+    <pathelement location="../lib/commons-codec-1.3.jar"/>
+  </path>
+
+  <taskdef classpathref="task.classpath" name="testngee" classname="org.junitee.testngee.ant.AntTask"/>
+
+  <target name="test">
+    <delete dir="${test.report}" quiet="true" failonerror="false"/>
+    <mkdir dir="${test.report}"/>
+
+    <testngee runnerUrl="http://localhost:8080/testng/testng" outputdir="/tmp/testng">
+      <xmlfileset dir="./suites" includes="*.xml"/>
+    </testngee>
+    <junitreport todir="${test.report}">
+       <fileset dir="/tmp/testng">
+          <include name="*.xml"/>
+         <exclude name="testng-failures.xml"/>
+       </fileset>
+       <report format="frames" todir="${test.report}"/>
+    </junitreport>
+
+  </target>
+</project>
