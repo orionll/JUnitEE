@@ -2,7 +2,7 @@
 
 <!--
 /*
- * $Id: build.xml,v 1.1 2005-10-18 23:29:39 o_rossmueller Exp $
+ * $Id: build.xml,v 1.2 2005-10-19 23:36:15 o_rossmueller Exp $
  *
  * Copyright 2005 Oliver Rossmueller
  *
@@ -30,6 +30,7 @@
   <property name="distname" value="${name}-${version}"/>
   <property name="jar.name" value="${distname}.jar"/>
   <property name="jar.name.ant" value="${name}-ant-${version}.jar"/>
+  <property name="jar.name.probe" value="${name}-probe-${version}.jar"/>
   <property name="srcdistname" value="${name}-src-${version}"/>
   <property name="exampledistname" value="${name}-example-${version}"/>
 
@@ -38,6 +39,7 @@
   <property name="src.dir" value="src"/>
   <property name="src.testrunner" value="${src.dir}/testrunner"/>
   <property name="src.anttask" value="${src.dir}/anttask"/>
+  <property name="src.probe" value="${src.dir}/probe"/>
   <property name="build.dir" value="build"/>
   <property name="build.lib" value="${build.dir}"/>
   <property name="build.testrunner" value="${build.dir}/testrunner"/>
@@ -92,8 +94,14 @@
       classpathref="compile.classpath">
       <src path="${src.testrunner}"/>
     </javac>
+    <javac srcdir="${src.probe}" debug="on"
+      destdir="${build.testrunner}"
+      classpathref="compile.classpath"/>
     <javac srcdir="${src.anttask}" debug="on"
       destdir="${build.anttask}"
+      classpathref="compile.classpath"/>
+    <javac srcdir="${src.probe}" debug="on"
+      destdir="${build.testrunner}"
       classpathref="compile.classpath"/>
   </target>
 

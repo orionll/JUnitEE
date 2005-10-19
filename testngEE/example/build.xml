@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Iso-8859-15"?>
 <!--
 /*
- * $Id: build.xml,v 1.1 2005-10-18 23:29:39 o_rossmueller Exp $
+ * $Id: build.xml,v 1.2 2005-10-19 23:36:15 o_rossmueller Exp $
  *
  * Copyright 2005 Oliver Rossmueller
  *
@@ -23,6 +23,7 @@
  -->
 <project name="example" basedir="." default="test">
 
+  <property name="build.dir" value="${basedir}/build"/>
   <property name="test.report" value="${basedir}/testreport"/>
 
   <path id="task.classpath">
@@ -33,14 +34,40 @@
     <pathelement location="../lib/commons-codec-1.3.jar"/>
   </path>
 
+  <path id="compile.classpath">
+    <pathelement location="../build/testngee-1.0.jar"/>
+    <pathelement location="../lib/testng-4.0-jdk15.jar"/>
+    <pathelement location="../lib/servlet-api.jar"/>
+  </path>
+
+  <path id="testprobe.classpath">
+    <path refid="compile.classpath"/>
+    <pathelement path="${build.dir}"/>
+  </path>
+
   <taskdef classpathref="task.classpath" name="testngee" classname="org.junitee.testngee.ant.AntTask"/>
+  <taskdef classpathref="task.classpath" name="testng" classname="org.testng.TestNGAntTask"/>
+
+
+ <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+  </target>
+
+
+  <target name="compile" depends="prepare">
+    <javac debug="on"
+      destdir="${build.dir}"
+      classpathref="compile.classpath">
+      <src path="${basedir}/src/java"/>
+    </javac>
+  </target>
 
   <target name="test">
     <delete dir="${test.report}" quiet="true" failonerror="false"/>
     <mkdir dir="${test.report}"/>
 
-    <testngee runnerUrl="http://localhost:8080/testng/testng" outputdir="/tmp/testng">
-      <xmlfileset dir="./suites" includes="*.xml"/>
+    <testngee runnerUrl="http://localhost:8080/testng/testng" outputdir="${test.report}">
+      <xmlfileset dir="./suites" includes="testng.xml"/>
     </testngee>
     <junitreport todir="${test.report}">
        <fileset dir="/tmp/testng">
@@ -49,6 +76,15 @@
        </fileset>
        <report format="frames" todir="${test.report}"/>
     </junitreport>
+  </target>
 
+  <target name="test-probe">
+    <delete dir="${test.report}" quiet="true" failonerror="false"/>
+    <mkdir dir="${test.report}"/>
+
+    <testng outputdir="${test.report}" classpathref="testprobe.classpath">
+      <xmlfileset dir="./suites" includes="testProbe.xml"/>
+      <sysproperty key="test.url" value="http://localhost:8080/testng/exampleApp"/>
+    </testng>
   </target>
 </project>
