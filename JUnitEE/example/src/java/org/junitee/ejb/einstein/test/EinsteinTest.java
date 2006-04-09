@@ -1,5 +1,5 @@
 /*
- * $Id: EinsteinTest.java,v 1.2 2002-11-03 17:54:05 o_rossmueller Exp $
+ * $Id: EinsteinTest.java,v 1.3 2006-04-09 14:14:08 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/java/org/junitee/ejb/einstein/test/EinsteinTest.java,v $
  */
 
@@ -15,95 +15,88 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.junitee.ejb.einstein.BadNumberException;
-import org.junitee.ejb.einstein.Einstein;
-import org.junitee.ejb.einstein.EinsteinHome;
+import org.junitee.ejb.einstein.*;
 
 /**
  */
 public class EinsteinTest extends TestCase
 {
-	/**
-	 * The fixture
-	 */
-	protected Einstein ein;
+  /**
+   * The fixture
+   */
+  protected EinsteinBusiness ein;
 
 
-	/**
-	 */
-	public EinsteinTest(String name) { super(name); }
+  /**
+   */
+  public EinsteinTest(String name) { super(name); }
 
-	/**
-	 */
-	protected void setUp() throws Exception
-	{
-		Context jndiContext = new InitialContext();
+  /**
+   */
+  protected void setUp() throws Exception
+  {
+    this.ein = new EinsteinBusinessImpl();
+  }
 
-		Object einRef = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
-		EinsteinHome home = (EinsteinHome)PortableRemoteObject.narrow(einRef, EinsteinHome.class);
+  /**
+   */
+  protected void tearDown() throws Exception
+  {
+    this.ein = null;
+  }
 
-		this.ein = home.create();
-	}
+  /**
+   */
+  public void testSimpleAddition() throws RemoteException, BadNumberException
+  {
+    String result = this.ein.addTwoNumbers("7", "10");
+    assertTrue("Result is " + result + " but should be 17", result.equals("17"));
+  }
 
-	/**
-	 */
-	protected void tearDown() throws Exception
-	{
-		this.ein = null;
-	}
+  /**
+   */
+  public void testMalformedInput() throws RemoteException
+  {
+    boolean ok = false;
+    try
+    {
+      String result = this.ein.addTwoNumbers("20", "asdf");
+    }
+    catch (BadNumberException ex)
+    {
+      ok = true;
+    }
+    assertTrue("Accepted bad number 'asdf'", ok);
 
-	/**
-	 */
-	public void testSimpleAddition() throws RemoteException, BadNumberException
-	{
-		String result = this.ein.addTwoNumbers("7", "10");
-		assertTrue("Result is " + result + " but should be 17", result.equals("17"));
-	}
+    ok = false;
+    try
+    {
+      String result = this.ein.addTwoNumbers("20a", "5");
+    }
+    catch (BadNumberException ex)
+    {
+      ok = true;
+    }
+    assertTrue("Accepted bad number '20a'", ok);
 
-	/**
-	 */
-	public void testMalformedInput() throws RemoteException
-	{
-		boolean ok = false;
-		try
-		{
-			String result = this.ein.addTwoNumbers("20", "asdf");
-		}
-		catch (BadNumberException ex)
-		{
-			ok = true;
-		}
-		assertTrue("Accepted bad number 'asdf'", ok);
-
-		ok = false;
-		try
-		{
-			String result = this.ein.addTwoNumbers("20a", "5");
-		}
-		catch (BadNumberException ex)
-		{
-			ok = true;
-		}
-		assertTrue("Accepted bad number '20a'", ok);
-
-		ok = false;
-		try
-		{
-			String result = this.ein.addTwoNumbers("20a", "d5");
-		}
-		catch (BadNumberException ex)
-		{
-			ok = true;
-		}
-		assertTrue("Accepted bad numbers '20a' and 'd5'", ok);
-	}
+    ok = false;
+    try
+    {
+      String result = this.ein.addTwoNumbers("20a", "d5");
+    }
+    catch (BadNumberException ex)
+    {
+      ok = true;
+    }
+    assertTrue("Accepted bad numbers '20a' and 'd5'", ok);
+  }
 
 
-	/**
-	 */
-	public void testEmc2() throws RemoteException, BadNumberException
-	{
-	  double result = ein.emc2(2.998, 1.998);
-	  assertTrue("Result is " + result + " but should be 11.96802799", result == 11.96802799);
-	}
+  /**
+   */
+  public void testEmc2() throws RemoteException, BadNumberException
+  {
+    double result = ein.emc2(2.998, 1.998);
+    assertTrue("Result is " + result + " but should be 11.96802799", result == 11.96802799);
+  }
 }

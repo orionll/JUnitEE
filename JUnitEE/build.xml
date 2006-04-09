@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.38 2004-12-11 12:57:36 o_rossmueller Exp $
+	$Id: build.xml,v 1.39 2006-04-09 14:14:10 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/build.xml,v $
 
 	Build file for JUnit servlet/ejb extensions.
@@ -75,7 +75,9 @@
   <target name="compile" depends="prepare">
     <javac debug="on"
       destdir="${build.testrunner}"
-      classpath="${junit.library}:${servlet.library}:${j2ee.library}">
+      classpath="${junit.library}:${servlet.library}:${j2ee.library}"
+      source="1.5"
+      target="1.5">
       <src path="${src.testrunner}"/>
       <src path="${src.legacy}"/>
     </javac>

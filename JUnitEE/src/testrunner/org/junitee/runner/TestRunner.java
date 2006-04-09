@@ -1,5 +1,5 @@
 /*
- * $Id: TestRunner.java,v 1.12 2004-04-16 11:15:29 o_rossmueller Exp $
+ * $Id: TestRunner.java,v 1.13 2006-04-09 14:14:09 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -9,25 +9,24 @@
 package org.junitee.runner;
 
 
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestResult;
+import junit.runner.BaseTestRunner;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import junit.runner.BaseTestRunner;
-import junit.runner.TestSuiteLoader;
-import junit.framework.*;
 
 
 /**
  * This is the JUnitEE testrunner.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @since   1.5
  */
 public class TestRunner extends BaseTestRunner {
 
-  private TestSuiteLoader loader;
   private TestRunnerListener listener;
   private volatile boolean run = false;
   private boolean forkThread;
@@ -36,12 +35,10 @@ public class TestRunner extends BaseTestRunner {
   /**
    * Create a new instance and set the classloader to be used to load test classes.
    *
-   * @param loader  classloader to load test classes
    * @param listener  test listener to be notfied
    */
-  public TestRunner(ClassLoader loader, TestRunnerListener listener, boolean forkThread) {
+  public TestRunner(TestRunnerListener listener, boolean forkThread) {
     this.listener = listener;
-    this.loader = new org.junitee.runner.TestSuiteLoader(loader);
     this.forkThread = forkThread;
   }
 
@@ -109,11 +106,6 @@ public class TestRunner extends BaseTestRunner {
     }
 
     listener.finish();
-  }
-
-
-  public TestSuiteLoader getLoader() {
-    return loader;
   }
 
 

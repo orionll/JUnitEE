@@ -1,5 +1,5 @@
 /**
- * $Id: HTMLOutput.java,v 1.23 2004-05-27 22:46:51 o_rossmueller Exp $
+ * $Id: HTMLOutput.java,v 1.24 2006-04-09 14:14:09 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
  */
 
@@ -24,7 +24,7 @@ import org.junitee.util.StringUtils;
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
  *
  * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  * @since   1.5
  */
 public class HTMLOutput extends AbstractOutput {
@@ -169,10 +169,10 @@ public class HTMLOutput extends AbstractOutput {
       pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
     } else {
       pw.print("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td>");
-      Enumeration enum = request.getParameterNames();
+      Enumeration enumeration = request.getParameterNames();
 
-      while (enum.hasMoreElements()) {
-        String name = (String)enum.nextElement();
+      while (enumeration.hasMoreElements()) {
+        String name = (String)enumeration.nextElement();
         String[] values = request.getParameterValues(name);
 
         for (int i = 0; i < values.length; i++) {

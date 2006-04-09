@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-	$Id: build.xml,v 1.21 2004-05-28 11:16:26 o_rossmueller Exp $
+	$Id: build.xml,v 1.22 2006-04-09 14:14:08 o_rossmueller Exp $
 	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
 -->
 
@@ -12,7 +12,7 @@
   <property name="lib.dir" value="${basedir}/../3rdparty"/>
   <property name="junitee.dir" value="${basedir}/../lib"/>
 
-  <property name="junit.library" value="${lib.dir}/junit.jar"/>
+  <property name="junit.library" value="${lib.dir}/junit-4.0.jar"/>
   <property name="servlet.library" value="${lib.dir}/servlet.jar"/>
   <property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar"/>
   <property name="junitee.library" value="${junitee.dir}/junitee.jar"/>
@@ -79,7 +79,8 @@
   <!-- compile the sources -->
 
   <target name="compile" depends="prepare" description="Compile all sources">
-    <javac srcdir="${src.java}" destdir="${build.classes}" debug="${javac.debug}">
+    <javac srcdir="${src.java}" destdir="${build.classes}" debug="${javac.debug}"
+            source="1.5" target="1.5">
       <classpath refid="master-classpath"/>
     </javac>
   </target>
@@ -128,7 +129,7 @@
 
     <juniteewar destFile="${test-war.product}" testjarname="test.jar" htmlRefreshDelay="5">
       <lib dir="${junitee.dir}" includes="junitee.jar"/>
-      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <lib dir="${lib.dir}" includes="junit-*.jar"/>
       <classes dir="${build.classes}">
         <include name="**/test/**/*.class"/>
         <include name="**/ejb/**/*.class"/>
@@ -146,7 +147,7 @@
 
     <juniteewar destFile="${test-war-xml.product}" servletclass="org.junitee.servlet.JUnitEEXMLServlet">
       <lib dir="${junitee.dir}" includes="junitee.jar"/>
-      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <lib dir="${lib.dir}" includes="junit-*.jar"/>
       <classes dir="${build.classes}">
         <include name="**/test/**/*.class"/>
         <include name="**/ejb/**/*.class"/>

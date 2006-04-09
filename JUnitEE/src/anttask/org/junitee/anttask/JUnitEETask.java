@@ -1,5 +1,5 @@
 /*
- * $Id: JUnitEETask.java,v 1.19 2005-10-15 22:05:12 o_rossmueller Exp $
+ * $Id: JUnitEETask.java,v 1.20 2006-04-09 14:14:09 o_rossmueller Exp $
  *
  * (c) 2002 Oliver Rossmueller
  *
@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * This ant task runs server-side unit tests using the JUnitEE test runner.
  *
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class JUnitEETask extends Task {
 
@@ -54,7 +54,7 @@ public class JUnitEETask extends Task {
   /**
    * Set the id of the HTTP user of the test servlet.
    * @param user The user id.
-   * @author skaringa
+   * author skaringa
    */
   public void setUser(String user) {
     this.user = user;
@@ -63,7 +63,7 @@ public class JUnitEETask extends Task {
   /**
    * Set the password of the HTTP user of the test servlet.
    * @param password The password.
-   * @author skaringa
+   * author skaringa
    */
   public void setPassword(String password) {
     this.password = password;
@@ -75,10 +75,10 @@ public class JUnitEETask extends Task {
 
 
   public void setFiltertrace(boolean filtertrace) {
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setFiltertrace(filtertrace);
+    while (enumeration.hasMoreElements()) {
+      ((JUnitEETest) enumeration.nextElement()).setFiltertrace(filtertrace);
     }
   }
 
@@ -90,10 +90,10 @@ public class JUnitEETask extends Task {
    * @param value true, if the task should stop execution on test failures and errors
    */
   public void setHaltonfailure(boolean value) {
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setHaltonfailure(value);
+    while (enumeration.hasMoreElements()) {
+      ((JUnitEETest) enumeration.nextElement()).setHaltonfailure(value);
     }
   }
 
@@ -105,10 +105,10 @@ public class JUnitEETask extends Task {
    * @param value true, if the task should stop execution on errors
    */
   public void setHaltonerror(boolean value) {
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setHaltonerror(value);
+    while (enumeration.hasMoreElements()) {
+      ((JUnitEETest) enumeration.nextElement()).setHaltonerror(value);
     }
   }
 
@@ -127,10 +127,10 @@ public class JUnitEETask extends Task {
    * @param value name of the property to set in case of an error
    */
   public void setErrorproperty(String value) {
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setErrorproperty(value);
+    while (enumeration.hasMoreElements()) {
+      ((JUnitEETest) enumeration.nextElement()).setErrorproperty(value);
     }
   }
 
@@ -141,10 +141,10 @@ public class JUnitEETask extends Task {
    * @param value name of the property to set in case of an error or test failure
    */
   public void setFailureproperty(String value) {
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      ((JUnitEETest) enum.nextElement()).setFailureproperty(value);
+    while (enumeration.hasMoreElements()) {
+      ((JUnitEETest) enumeration.nextElement()).setFailureproperty(value);
     }
   }
 
@@ -177,10 +177,10 @@ public class JUnitEETask extends Task {
       throw new BuildException(url + " is no valid URL");
     }
 
-    Enumeration enum = tests.elements();
+    Enumeration enumeration = tests.elements();
 
-    while (enum.hasMoreElements()) {
-      JUnitEETest test = (JUnitEETest) enum.nextElement();
+    while (enumeration.hasMoreElements()) {
+      JUnitEETest test = (JUnitEETest) enumeration.nextElement();
 
       if (test.shouldExecute(getProject())) {
         execute(test);
@@ -225,7 +225,7 @@ public class JUnitEETask extends Task {
       if (user != null && password != null) {
         java.net.Authenticator.setDefault(new AuthImpl(user, password));
       }
-      
+
       requestUrl = new URL(arguments.toString());
       con = requestUrl.openConnection();
       sessionCookie = con.getHeaderField("Set-Cookie");
@@ -326,10 +326,10 @@ public class JUnitEETask extends Task {
       } else {
         testName = testClass;
       }
-      Enumeration enumeration = resultFormatters.elements();
+      Enumeration enumerationeration = resultFormatters.elements();
 
-      while (enumeration.hasMoreElements()) {
-        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter) enumeration.nextElement();
+      while (enumerationeration.hasMoreElements()) {
+        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter) enumerationeration.nextElement();
         log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
         formatter.format(node);
         formatter.flush();
@@ -381,18 +381,18 @@ public class JUnitEETask extends Task {
 
   private Vector createFormatters(JUnitEETest test) {
     Vector answer = new Vector();
-    Enumeration enumeration = formatters.elements();
+    Enumeration enumerationeration = formatters.elements();
 
-    while (enumeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement) enumeration.nextElement();
+    while (enumerationeration.hasMoreElements()) {
+      FormatterElement element = (FormatterElement) enumerationeration.nextElement();
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
     }
 
-    enumeration = test.getFormatters();
-    while (enumeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement) enumeration.nextElement();
+    enumerationeration = test.getFormatters();
+    while (enumerationeration.hasMoreElements()) {
+      FormatterElement element = (FormatterElement) enumerationeration.nextElement();
       log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());

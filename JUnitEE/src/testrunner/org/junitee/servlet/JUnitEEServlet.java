@@ -1,5 +1,5 @@
 /**
- * $Id: JUnitEEServlet.java,v 1.34 2004-10-27 22:39:09 o_rossmueller Exp $
+ * $Id: JUnitEEServlet.java,v 1.35 2006-04-09 14:14:10 o_rossmueller Exp $
  * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEServlet.java,v $
  */
 
@@ -221,7 +221,7 @@ public class JUnitEEServlet extends HttpServlet {
 
   protected TestRunnerResults runTests(String test, String[] testClassNames, HttpServletRequest request, boolean forkThread) {
     TestRunnerResults results = new TestRunnerResults();
-    TestRunner tester = new TestRunner(this.getDynamicClassLoader(), results, forkThread);
+    TestRunner tester = new TestRunner(results, forkThread);
 
     if (test == null) {
       if (forkThread) {
@@ -285,7 +285,7 @@ public class JUnitEEServlet extends HttpServlet {
   private String[] filterTests(String[] tests) {
     ClassLoader loader = getDynamicClassLoader();
     TestRunnerResults testResults = new TestRunnerResults();
-    TestRunner tester = new TestRunner(loader, testResults, false);
+    TestRunner tester = new TestRunner(testResults, false);
     List names = new ArrayList(Arrays.asList(tests));
     Iterator iterator = names.iterator();
 
@@ -575,7 +575,7 @@ public class JUnitEEServlet extends HttpServlet {
    */
   protected String[] getTestClassMethods(String testClass) {
     TestRunnerResults results = new TestRunnerResults();
-    TestRunner tester = new TestRunner(this.getDynamicClassLoader(), results, false);
+    TestRunner tester = new TestRunner(results, false);
     Test test = tester.getTest(testClass);
     ArrayList testMethodList = new ArrayList();
 
