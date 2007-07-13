@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>JunitE2</groupId>
+	<artifactId>JunitE2</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<description>This is the master build for the JUnitE2 - junit 4 and maven enabled version of JUnitEE</description>
+	<developers>
+		<developer>
+			<id>mfranklin</id>
+			<name>Martin Franklin</name>
+			<email>martinfr62@sourceforge.net</email>
+			<url/>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			</developer>
+	</developers>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clover-plugin</artifactId>
+				<configuration>
+					<licenseLocation>clover.license</licenseLocation>
+					<jdk>1.5</jdk>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>instrument</goal>
+							<goal>aggregate</goal>
+							<goal>clover</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<distributionManagement>
+		<repository>
+			<id>junite2_release</id>
+			<name>junite2 Release</name>
+			<url>
+                  file:C:/Inetpub/wwwroot/maven2_repositories/junite2_release
+                </url>
+		</repository>
+		<snapshotRepository>
+			<id>junite2_snapshot</id>
+			<name>JUnitE2 Snapshot Repository</name>
+			<url>
+                  file:C:/Inetpub/wwwroot/maven2_repositories/junite2_snapshot
+                </url>
+			<uniqueVersion>true</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<modules>
+		<module>JunitE2Servlet</module>
+		<module>maven-junite2-plugin</module>
+	</modules>
+</project>
