@@ -4,7 +4,19 @@
 	<artifactId>juniteepom</artifactId>
 	<version>2.0.0</version>
 	<packaging>pom</packaging>
+	<name>JunitEE V2 Pom</name>
+	<url>http://sourceforge.net/projects/junitee</url>
 	<description>This is the master build for the JUnitE2 - junit 4 and maven enabled version of JUnitEE</description>
+	  <licenses>
+	    <license>
+	      <name>GNU General Public License (GPL), Public Domain</name>
+	      <url>http://www.gnu.org/copyleft/gpl.html</url>
+	      <distribution>repo</distribution>
+	    </license>
+  	</licenses>
+   	<scm>
+      		<url>http://junitee.cvs.sourceforge.net/junitee/junite2</url>
+  	</scm>
 	<developers>
 		<developer>
 			<id>mfranklin</id>
@@ -25,32 +37,42 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clover-plugin</artifactId>
-				<configuration>
-					<licenseLocation>clover.license</licenseLocation>
-					<jdk>1.5</jdk>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>instrument</goal>
-							<goal>aggregate</goal>
-							<goal>clover</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>surefire-report-maven-plugin</artifactId>
+					<version>2.0-beta-1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>jxr-maven-plugin</artifactId>
+					<version>2.0-beta-1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>jdepend-maven-plugin</artifactId>
+					<version>2.0-beta-1</version>
+				</plugin>
+				
+			</plugins>
+	</reporting>
 	<distributionManagement> 
 		<repository> 
 			<id>ssh-repository</id> 
 			<name>Junitee Sourceforge Repo</name>
 			<url>scp://shell.sourceforge.net/home/groups/j/ju/junitee/htdocs/repository</url> 
 		</repository>
+		<site>
+			<id>ssh-repository</id>
+			<url>scp://shell.sourceforge.net/home/groups/j/ju/junitee/htdocs/maven_site/</url>
+		</site>
 	</distributionManagement>
 	<modules>
 		<module>JunitE2Servlet</module>
