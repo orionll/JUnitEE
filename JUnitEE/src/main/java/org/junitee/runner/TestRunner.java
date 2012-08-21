@@ -8,15 +8,13 @@
 
 package org.junitee.runner;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 
 /**
  * This is the JUnitEE testrunner.
@@ -31,7 +29,6 @@ public class TestRunner extends BaseTestRunner {
   private volatile boolean run = false;
   private boolean forkThread;
 
-
   /**
    * Create a new instance and set the classloader to be used to load test classes.
    *
@@ -42,13 +39,11 @@ public class TestRunner extends BaseTestRunner {
     this.forkThread = forkThread;
   }
 
-
   public void stop() {
     run = false;
     // notify the listener immediatley so we can display this information
     listener.setStopped();
   }
-
 
   /**
    * Run all tests in the given test classes.
@@ -58,6 +53,7 @@ public class TestRunner extends BaseTestRunner {
   public void run(final String[] testClassNames) {
     Runnable runnable = new Runnable() {
 
+      @Override
       public void run() {
         TestResult result = new TestResult();
         result.addListener(listener);
@@ -86,13 +82,12 @@ public class TestRunner extends BaseTestRunner {
     };
     run = true;
     if (forkThread) {
-      Thread thread = new Thread(runnable, this.toString());
+      Thread thread = new Thread(runnable, toString());
       thread.start();
     } else {
       runnable.run();
     }
   }
-
 
   public void run(String testClassName, String testName) {
     TestResult result = new TestResult();
@@ -108,17 +103,16 @@ public class TestRunner extends BaseTestRunner {
     listener.finish();
   }
 
-
+  @Override
   protected void runFailed(String className) {
     listener.runFailed(className);
   }
 
-
   protected Test getTest(String suiteClassName, String testName) {
     try {
       Class clazz = loadSuiteClass(suiteClassName);
-      Constructor constructor = clazz.getConstructor(new Class[]{String.class});
-      Test test = (Test)constructor.newInstance(new Object[]{testName});
+      Constructor constructor = clazz.getConstructor(new Class[] { String.class });
+      Test test = (Test)constructor.newInstance(new Object[] { testName });
 
       if (test instanceof RequiresDecoration) {
         test = ((RequiresDecoration)test).decorate();
@@ -138,32 +132,32 @@ public class TestRunner extends BaseTestRunner {
     return null;
   }
 
-
   // TestListener methods; we do nothing here as the events are handled by the listener
+  @Override
   public void addError(Test test, Throwable throwable) {
   }
 
-
+  @Override
   public void addFailure(Test test, AssertionFailedError assertionFailedError) {
   }
 
-
+  @Override
   public void endTest(Test test) {
   }
 
-
+  @Override
   public void startTest(Test test) {
   }
 
-
+  @Override
   public void testStarted(String s) {
   }
 
-
+  @Override
   public void testEnded(String s) {
   }
 
-
+  @Override
   public void testFailed(int i, Test test, Throwable throwable) {
   }
 

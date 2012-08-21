@@ -5,9 +5,7 @@
  */
 package org.junitee.runner;
 
-
 import junit.framework.Test;
-
 
 /**
  * Interface to tell a test runner that a test requires decoration.

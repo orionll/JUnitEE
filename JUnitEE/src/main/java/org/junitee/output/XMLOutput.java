@@ -5,20 +5,19 @@
 
 package org.junitee.output;
 
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestInfo;
-import org.junitee.runner.TestSuiteInfo;
+import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestRunnerResults;
+import org.junitee.runner.TestSuiteInfo;
 import org.junitee.util.StringUtils;
-
 
 /**
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
@@ -29,12 +28,10 @@ import org.junitee.util.StringUtils;
  */
 public class XMLOutput extends AbstractOutput {
 
-
   private NumberFormat numberFormat;
   private PrintWriter pw;
   private HttpServletResponse response;
   private String xsl;
-
 
   /**
    */
@@ -42,7 +39,7 @@ public class XMLOutput extends AbstractOutput {
     super(results, filterTrace);
     response.setContentType("text/xml;charset=UTF-8");
 
-    this.pw = response.getWriter();
+    pw = response.getWriter();
     this.response = response;
     this.xsl = xsl;
     numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
@@ -51,7 +48,7 @@ public class XMLOutput extends AbstractOutput {
     numberFormat.setGroupingUsed(false);
   }
 
-
+  @Override
   public void render() {
     printHeader();
     printErrorMessages();
@@ -59,29 +56,25 @@ public class XMLOutput extends AbstractOutput {
     printFooter();
   }
 
-
   protected void printHeader() {
     pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     if (xsl != null) {
       pw.println("<?xml-stylesheet type=\"text/xsl\"  href=\"" + xsl + "\"?>");
     }
     pw.print("<testsuites");
-    if (! isFinished()) {
+    if (!isFinished()) {
       pw.print(" unfinished=\"true\" ");
     }
     pw.println(">");
   }
 
-
   protected void printFooter() {
     pw.println("</testsuites>");
   }
 
-
   private String elapsedTimeAsString(long value) {
-    return numberFormat.format((double)value / 1000.0);
+    return numberFormat.format(value / 1000.0);
   }
-
 
   protected void printErrorMessages() {
     Iterator iterator = getErrorMessages().iterator();
@@ -101,10 +94,10 @@ public class XMLOutput extends AbstractOutput {
       TestSuiteInfo suite = (TestSuiteInfo)suites.next();
 
       String fullName = suite.getTestClassName();
-      int pos = fullName.lastIndexOf( "." );
+      int pos = fullName.lastIndexOf(".");
 
-      String pkgName = (pos == -1) ? "" : fullName.substring( 0, pos );
-      String className = (pos == -1) ? fullName : fullName.substring( pos + 1 );
+      String pkgName = (pos == -1) ? "" : fullName.substring(0, pos);
+      String className = (pos == -1) ? fullName : fullName.substring(pos + 1);
 
       pw.print("  <testsuite name=\"");
       pw.print(className);

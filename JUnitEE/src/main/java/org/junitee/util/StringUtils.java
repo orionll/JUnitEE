@@ -3,8 +3,10 @@
  */
 package org.junitee.util;
 
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
@@ -13,22 +15,14 @@ import java.io.*;
  */
 public class StringUtils {
 
-  private static final String[] DEFAULT_TRACE_FILTERS = new String[]{
-    "junit.framework.TestCase",
-    "junit.framework.TestResult",
-    "junit.framework.TestSuite",
-    "junit.framework.Assert.", // don't filter AssertionFailure
-    "junit.swingui.TestRunner",
-    "junit.awtui.TestRunner",
-    "junit.textui.TestRunner",
-    "java.lang.reflect.Method.invoke(",
-    "org.apache.tools.ant."
-  };
+  private static final String[] DEFAULT_TRACE_FILTERS = new String[] { "junit.framework.TestCase",
+      "junit.framework.TestResult", "junit.framework.TestSuite",
+      "junit.framework.Assert.", // don't filter AssertionFailure
+      "junit.swingui.TestRunner", "junit.awtui.TestRunner", "junit.textui.TestRunner",
+      "java.lang.reflect.Method.invoke(", "org.apache.tools.ant." };
 
-  private static final String[] DEFAULT_STOP_FILTERS = new String[]{
-    "junit.framework.TestCase.runTest",
-    "junit.framework.TestSuite.runTest"
-  };
+  private static final String[] DEFAULT_STOP_FILTERS = new String[] { "junit.framework.TestCase.runTest",
+      "junit.framework.TestSuite.runTest" };
 
   /**
    * This method converts texts to be displayed on
@@ -38,7 +32,9 @@ public class StringUtils {
   public static String htmlText(String text) {
     StringBuffer sb = new StringBuffer();
     char c;
-    if (text == null) return "";
+    if (text == null) {
+      return "";
+    }
     for (int i = 0; i < text.length(); i++) {
       c = text.charAt(i);
       switch (c) {
@@ -64,7 +60,6 @@ public class StringUtils {
     return sb.toString();
   }
 
-
   /**
    * This method converts texts to be used in an
    * xml document. Following conversion are done
@@ -73,7 +68,9 @@ public class StringUtils {
   public static String xmlText(String text) {
     StringBuffer sb = new StringBuffer();
     char c;
-    if (text == null) return "";
+    if (text == null) {
+      return "";
+    }
     for (int i = 0; i < text.length(); i++) {
       c = text.charAt(i);
       switch (c) {
@@ -96,7 +93,6 @@ public class StringUtils {
     return sb.toString();
   }
 
-
   /**
    * Filter the given stack trace.
    * 
@@ -116,7 +112,7 @@ public class StringUtils {
           pw.println(line);
           break;
         }
-        if (! filterLine(line)) {
+        if (!filterLine(line)) {
           pw.println(line);
         }
       }
@@ -125,7 +121,6 @@ public class StringUtils {
     }
     return sw.toString();
   }
-
 
   private static boolean filterLine(String line) {
     for (int i = 0; i < DEFAULT_TRACE_FILTERS.length; i++) {

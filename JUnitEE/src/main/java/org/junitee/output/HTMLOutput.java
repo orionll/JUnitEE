@@ -5,20 +5,20 @@
 
 package org.junitee.output;
 
-
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestRunnerResults;
 import org.junitee.runner.TestSuiteInfo;
 import org.junitee.util.StringUtils;
-
 
 /**
  * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
@@ -47,17 +47,16 @@ public class HTMLOutput extends AbstractOutput {
   private HttpServletRequest request;
   private int refreshDelay;
 
-
   /**
    */
   public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace, int refreshDelay) throws IOException {
     super(results, filterTrace);
     response.setContentType("text/html;charset=UTF-8");
 
-    this.pw = response.getWriter();
+    pw = response.getWriter();
     this.response = response;
-    this.servletPath = request.getContextPath() + request.getServletPath();
-    this.queryString = request.getQueryString();
+    servletPath = request.getContextPath() + request.getServletPath();
+    queryString = request.getQueryString();
     this.request = request;
     this.refreshDelay = refreshDelay;
     numberFormat = NumberFormat.getInstance();
@@ -65,7 +64,7 @@ public class HTMLOutput extends AbstractOutput {
     numberFormat.setMinimumFractionDigits(3);
   }
 
-
+  @Override
   public void render() {
     printHeader();
     if (isFinished()) {
@@ -85,7 +84,6 @@ public class HTMLOutput extends AbstractOutput {
     }
     printFooter();
   }
-
 
   protected void printHeader() {
     String bgColor;
@@ -107,7 +105,8 @@ public class HTMLOutput extends AbstractOutput {
       if (queryString != null) {
         redirect = redirect + "?" + queryString;
       }
-       pw.println("<META HTTP-EQUIV=\"Refresh\" CONTENT=\"" + refreshDelay + "; URL=" + response.encodeURL(redirect) + "\">");
+      pw.println("<META HTTP-EQUIV=\"Refresh\" CONTENT=\"" + refreshDelay + "; URL=" + response.encodeURL(redirect)
+          + "\">");
     }
     pw.println("</head>");
 
@@ -148,12 +147,10 @@ public class HTMLOutput extends AbstractOutput {
 
   }
 
-
   protected void printFooter() {
     pw.println("</body>");
     pw.println("</html>");
   }
-
 
   protected void printUnderProgress() {
     pw.println("<form action=\"" + response.encodeURL(servletPath) + "\" method=\"get\">");
@@ -193,7 +190,6 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("</form>");
   }
 
-
   protected void printRunErrors() {
     if (getErrorMessages().isEmpty()) {
       return;
@@ -208,7 +204,6 @@ public class HTMLOutput extends AbstractOutput {
     while (errors.hasNext()) {
       String message = (String)errors.next();
 
-
       pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Error") + "</td>");
       pw.print("<td class=\"cell\">&nbsp;</td>");
       pw.println("<td width=\"100%\" class=\"cell\">" + message + "</td></tr>");
@@ -216,7 +211,6 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<tr><td colspan=\"3\">&nbsp;</td></tr>");
     pw.println("</table></p>");
   }
-
 
   protected void printSummary(boolean createInfoAndLinks) {
     if (getSuiteInfo().isEmpty()) {
@@ -236,11 +230,14 @@ public class HTMLOutput extends AbstractOutput {
 
       if (createInfoAndLinks) {
         if (suite.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"passedcell\">"
+              + suiteTestLink(suite, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
         } else if (suite.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">"
+              + suiteTestLink(suite, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">" + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">"
+              + suiteTestLink(suite, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
         }
       } else {
         if (suite.successful()) {
@@ -259,18 +256,17 @@ public class HTMLOutput extends AbstractOutput {
       } else {
         pw.print("&nbsp;");
       }
-      pw.println("</td><td width=\"100%\" class=\"cell\">" + suite.getTestClassName() + "</td><td class=\"cell\" align=\"right\">");
+      pw.println("</td><td width=\"100%\" class=\"cell\">" + suite.getTestClassName()
+          + "</td><td class=\"cell\" align=\"right\">");
       pw.println(elapsedTimeAsString(suite.getElapsedTime()) + "&nbsp;sec</td></tr>");
     }
     pw.println("<tr><td colspan=\"4\">&nbsp;</td></tr>");
     pw.println("</table></p>");
   }
 
-
   private String elapsedTimeAsString(long value) {
     return numberFormat.format((double)value / 1000);
   }
-
 
   protected void printMethodList() {
     if (getSuiteInfo().isEmpty()) {
@@ -297,11 +293,14 @@ public class HTMLOutput extends AbstractOutput {
         TestInfo test = (TestInfo)tests.next();
 
         if (test.successful()) {
-          pw.println("<tr><td class=\"passedcell\">" + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"passedcell\">"
+              + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
         } else if (test.hasError()) {
-          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">"
+              + singleTestLink(test, image(RESOURCE_RED_BULLET, "Error (Run again)")) + "</td>");
         } else {
-          pw.println("<tr><td class=\"failedcell\">" + singleTestLink(test, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
+          pw.println("<tr><td class=\"failedcell\">"
+              + singleTestLink(test, image(RESOURCE_YELLOW_BULLET, "Failure (Run again)")) + "</td>");
         }
         pw.print("<td class=\"cell\">");
         if (test.successful()) {
@@ -320,17 +319,16 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("</table></p>");
   }
 
-
   private String image(String resource, String alt) {
     StringBuffer buffer = new StringBuffer();
     StringBuffer url = new StringBuffer();
 
     url.append(servletPath).append("/").append(resource);
-    buffer.append("<img src=\"").append(response.encodeURL(url.toString())).append("\" border=\"0\" height=\"14\" widht=\"14\" alt=\"");
+    buffer.append("<img src=\"").append(response.encodeURL(url.toString()))
+      .append("\" border=\"0\" height=\"14\" widht=\"14\" alt=\"");
     buffer.append(alt).append("\">");
     return buffer.toString();
   }
-
 
   private String singleTestLink(TestInfo test, String text) {
     StringBuffer buffer = new StringBuffer();
@@ -342,7 +340,6 @@ public class HTMLOutput extends AbstractOutput {
     return buffer.toString();
   }
 
-
   private String suiteTestLink(TestSuiteInfo suite, String text) {
     StringBuffer buffer = new StringBuffer();
     StringBuffer url = new StringBuffer();
@@ -353,7 +350,6 @@ public class HTMLOutput extends AbstractOutput {
     buffer.append("\">").append(text).append("</a>");
     return buffer.toString();
   }
-
 
   protected void printErrorsAndFailures() {
     pw.println("<h2> List of errors and failures</h2>");
@@ -413,6 +409,5 @@ public class HTMLOutput extends AbstractOutput {
     }
     pw.println("</table>");
   }
-
 
 }

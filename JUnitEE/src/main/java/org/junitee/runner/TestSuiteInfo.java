@@ -5,17 +5,9 @@
 
 package org.junitee.runner;
 
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Method;
-import java.util.*;
-
-import junit.framework.*;
-import junit.runner.BaseTestRunner;
-
-import org.junitee.runner.TestRunnerListener;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class holds information about on test.
@@ -31,11 +23,9 @@ public class TestSuiteInfo {
   private ArrayList failures = new ArrayList();
   private long elapsedTime = 0L;
 
-
   public TestSuiteInfo(String className) {
     testClassName = className;
   }
-
 
   public synchronized void add(TestInfo info) {
     tests.add(info);
@@ -47,36 +37,29 @@ public class TestSuiteInfo {
     elapsedTime = elapsedTime + info.getElapsedTime();
   }
 
-
   public synchronized Collection getTests() {
     return (Collection)tests.clone();
   }
-
 
   public synchronized boolean hasFailure() {
     return !failures.isEmpty();
   }
 
-
   public synchronized boolean hasError() {
     return !errors.isEmpty();
   }
-
 
   public synchronized boolean successful() {
     return !(hasError() || hasFailure());
   }
 
-
   public String getTestClassName() {
     return testClassName;
   }
 
-
   public long getElapsedTime() {
     return elapsedTime;
   }
-
 
   public synchronized List getFailures() {
     return (List)failures.clone();
@@ -87,4 +70,3 @@ public class TestSuiteInfo {
   }
 
 }
-

@@ -6,7 +6,6 @@
  */
 package org.junitee.output;
 
-
 /**
  * @version $Revision: 1.1 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>

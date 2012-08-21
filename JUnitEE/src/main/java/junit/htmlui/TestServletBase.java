@@ -5,13 +5,6 @@
 
 package junit.htmlui;
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 import org.junitee.servlet.JUnitEEServlet;
 
 /**
@@ -22,5 +15,6 @@ import org.junitee.servlet.JUnitEEServlet;
  *
  * @deprecated  Use org.junitee.servlet.JUnitEEServlet instead
  */
+@Deprecated
 public class TestServletBase extends JUnitEEServlet {
 }

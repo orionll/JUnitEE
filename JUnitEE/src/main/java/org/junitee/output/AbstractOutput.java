@@ -3,13 +3,13 @@
  */
 package org.junitee.output;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
-
-import org.junitee.runner.TestRunnerResults;
 import org.junitee.runner.TestInfo;
-
+import org.junitee.runner.TestRunnerResults;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
@@ -21,15 +21,13 @@ public abstract class AbstractOutput implements OutputProducer {
   private TestRunnerResults results;
   private boolean filterTrace = true;
 
-
   public AbstractOutput(TestRunnerResults results, boolean filterTrace) {
     this.results = results;
     this.filterTrace = filterTrace;
   }
 
-
+  @Override
   public abstract void render();
-
 
   public synchronized TestInfo getCurrentInfo() {
     synchronized (results) {
@@ -37,13 +35,11 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-
   protected long getTimestamp() {
     synchronized (results) {
       return results.getTimestamp();
     }
   }
-
 
   protected List getSuiteInfo() {
     synchronized (results) {
@@ -51,18 +47,15 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-
   protected boolean isFailure() {
     synchronized (results) {
       return results.isFailure();
     }
   }
 
-
   protected boolean isFilterTrace() {
     return filterTrace;
   }
-
 
   protected boolean isSingleTest() {
     synchronized (results) {
@@ -70,13 +63,11 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-
   protected boolean isFinished() {
     synchronized (results) {
       return results.isFinished();
     }
   }
-
 
   protected boolean isStopped() {
     synchronized (results) {
@@ -84,13 +75,11 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-
   protected List getErrorMessages() {
     synchronized (results) {
       return results.getErrorMessages();
     }
   }
-
 
   protected String exceptionToString(Throwable t) {
     CharArrayWriter buffer = new CharArrayWriter();
@@ -98,7 +87,6 @@ public abstract class AbstractOutput implements OutputProducer {
     t.printStackTrace(new PrintWriter(buffer));
     return buffer.toString();
   }
-
 
   /**
    * Checks to see if t is a RemoteException containing
@@ -125,6 +113,5 @@ public abstract class AbstractOutput implements OutputProducer {
     }
     return "";
   }
-
 
 }

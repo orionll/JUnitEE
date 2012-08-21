@@ -5,17 +5,8 @@
 
 package org.junitee.runner;
 
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Method;
-import java.util.*;
-
-import junit.framework.*;
-import junit.runner.BaseTestRunner;
-
-import org.junitee.runner.TestRunnerListener;
-
+import junit.framework.Test;
+import junit.framework.TestCase;
 
 /**
  * This class holds information about on test.
@@ -32,7 +23,6 @@ public class TestInfo {
   private Throwable error;
   private Throwable failure;
 
-
   public TestInfo(Test test) {
     this.test = test;
     if (test instanceof TestCase) {
@@ -41,61 +31,49 @@ public class TestInfo {
     }
   }
 
-
   public Test getTest() {
     return test;
   }
-
 
   public long getElapsedTime() {
     return elapsedTime;
   }
 
-
   public void setElapsedTime(long elapsedTime) {
     this.elapsedTime = elapsedTime;
   }
-
 
   public String getTestClassName() {
     return testClassName;
   }
 
-
   public String getTestName() {
     return testName;
   }
-
 
   public boolean isTestCase() {
     return (testClassName != null) && (testName != null);
   }
 
-
   public void setError(Throwable t) {
     error = t;
   }
-
 
   public void setFailure(Throwable t) {
     failure = t;
   }
 
-
   public boolean hasFailure() {
     return failure != null;
   }
-
 
   public boolean hasError() {
     return error != null;
   }
 
-
   public boolean successful() {
     return !(hasError() || hasFailure());
   }
-
 
   /**
    * Answer the failures
@@ -106,7 +84,6 @@ public class TestInfo {
     return failure;
   }
 
-
   /**
    * Answer the errors
    *
@@ -116,13 +93,9 @@ public class TestInfo {
     return error;
   }
 
-
+  @Override
   public String toString() {
     return test.toString();
   }
 
 }
-
-
-
-

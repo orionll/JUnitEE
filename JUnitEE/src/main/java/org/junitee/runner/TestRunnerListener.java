@@ -4,9 +4,7 @@
 
 package org.junitee.runner;
 
-
 import junit.framework.TestListener;
-
 
 /**
  * The listener interface for receiving test runner events.
@@ -34,7 +32,6 @@ public interface TestRunnerListener extends TestListener {
    * instance could not be created.
    */
   public void runFailed(String message);
-
 
   void setStopped();
 }

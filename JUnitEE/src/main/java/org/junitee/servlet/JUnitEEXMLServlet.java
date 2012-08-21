@@ -5,7 +5,6 @@
 
 package org.junitee.servlet;
 
-
 /**
  * This servlet implements the JUnitEE test runner. By default the classloader of this servlet is used also for
  * loading the test classes. This will work in almost any case, but if necessary you can change this behaviour by
@@ -17,7 +16,6 @@ package org.junitee.servlet;
  */
 public class JUnitEEXMLServlet extends JUnitEEServlet {
 
-
   /**
    * Answer the default output format of the test report. This implementation returns xml as the default output. It
    * is possible to set the output format by using the <code>output</code> request parameter. Overwrite this method
@@ -25,6 +23,7 @@ public class JUnitEEXMLServlet extends JUnitEEServlet {
    *
    * @return OUTPUT_XML
    */
+  @Override
   protected String getDefaultOutput() {
     return OUTPUT_XML;
   }
