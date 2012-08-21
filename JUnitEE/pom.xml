@@ -1,9 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>junitee</groupId>
+  <groupId>org.junitee</groupId>
   <artifactId>junitee</artifactId>
   <version>1.12</version>
+  <packaging>jar</packaging>
   <name>JUnitEE</name>
+  <description>JUnitEE provides a TestRunner and a servlet which will run JUnit test suites inside an application server</description>
+  <url>http://www.junitee.org</url>
+  <licenses>
+    <license>
+      <name>GNU General Public License (GPL), Public Domain</name>
+	  <url>http://www.gnu.org/copyleft/gpl.html</url>
+	  <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/orionll/JUnitEE</url>
+    <connection>https://github.com/orionll/JUnitEE.git</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>orionll</id>
+      <name>John Kozlov</name>
+      <url>https://github.com/orionll</url>
+    </developer>
+  </developers>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
