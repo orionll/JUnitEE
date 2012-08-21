@@ -5,6 +5,7 @@
 
 package org.junitee.runner;
 
+import junit.framework.JUnit4TestCaseFacade;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
@@ -25,7 +26,11 @@ public class TestInfo {
 
   public TestInfo(Test test) {
     this.test = test;
-    if (test instanceof TestCase) {
+
+    if (test instanceof JUnit4TestCaseFacade) {
+      testClassName = ((JUnit4TestCaseFacade)test).getDescription().getClassName();
+      testName = ((JUnit4TestCaseFacade)test).getDescription().getMethodName();
+    } else if (test instanceof TestCase) {
       testClassName = test.getClass().getName();
       testName = ((TestCase)test).getName();
     }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.JUnit4TestCaseFacade;
 import junit.framework.Test;
 
 /**
@@ -168,7 +169,14 @@ public class TestRunnerResults implements TestRunnerListener {
   }
 
   protected synchronized void addToSuite(TestInfo info) {
-    String className = info.getTest().getClass().getName();
+    Test test = info.getTest();
+    String className;
+    if (test instanceof JUnit4TestCaseFacade) {
+      className = ((JUnit4TestCaseFacade)test).getDescription().getClassName();
+    } else {
+      className = test.getClass().getName();
+    }
+
     TestSuiteInfo suite = suites.get(className);
 
     if (suite == null) {

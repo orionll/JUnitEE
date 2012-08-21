@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import junit.extensions.TestSetup;
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.JUnit4TestCaseFacade;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -289,7 +292,7 @@ public class JUnitEEServlet extends HttpServlet {
   }
 
   /**
-   * Filter class which are not a subclass of TestCase and suites with no tests
+   * Filter suites with no tests and classes that do not have test methods
    *
    * @param tests
    * @return
@@ -307,21 +310,46 @@ public class JUnitEEServlet extends HttpServlet {
         Class<?> clazz = loader.loadClass(name);
 
         if (!Test.class.isAssignableFrom(clazz)) {
-          iterator.remove();
-        } else {
-          Test test = tester.getTest(name);
+          int modifiers = clazz.getModifiers();
+          if (clazz.isInterface() || Modifier.isAbstract(modifiers) || !Modifier.isPublic(modifiers)) {
+            iterator.remove();
+          } else {
+            JUnit4TestAdapter adapter = new JUnit4TestAdapter(clazz);
 
-          if (test instanceof TestSuite) {
-            TestSuite suite = (TestSuite)test;
-
-            if (suite.testCount() == 0) {
+            if (adapter.countTestCases() == 0) {
               iterator.remove();
-            } else if (suite.testCount() == 1) {
-              Test singleTest = suite.testAt(0);
+            }
 
-              if (singleTest.getClass().getName().equals("junit.framework.TestSuite$1")) {
-                // no test method found
+            // Filter bad classes (e.g. with only one test method which has @Ignore annotation)
+            for (Test test : adapter.getTests()) {
+              if (test instanceof JUnit4TestCaseFacade) {
+                String methodName = ((JUnit4TestCaseFacade)test).getDescription().getMethodName();
+
+                if (methodName == null || methodName.equals("initializationError")) {
+                  iterator.remove();
+                  break;
+                }
+              }
+            }
+          }
+        } else {
+          if (!name.endsWith("Test") && !name.endsWith("Tests")) {
+            iterator.remove();
+          } else {
+            Test test = tester.getTest(name);
+
+            if (test instanceof TestSuite) {
+              TestSuite suite = (TestSuite)test;
+
+              if (suite.testCount() == 0) {
                 iterator.remove();
+              } else if (suite.testCount() == 1) {
+                Test singleTest = suite.testAt(0);
+
+                if (singleTest.getClass().getName().equals("junit.framework.TestSuite$1")) {
+                  // no test method found
+                  iterator.remove();
+                }
               }
             }
           }
@@ -371,7 +399,7 @@ public class JUnitEEServlet extends HttpServlet {
             while ((entry = jar.getNextJarEntry()) != null) {
               String name = entry.getName();
 
-              if (name.endsWith("Tests.class") || name.endsWith("Test.class")) {
+              if (name.endsWith(".class")) {
                 tests.add(name.substring(0, name.length() - 6).replace('/', '.'));
               }
             }
@@ -575,25 +603,43 @@ public class JUnitEEServlet extends HttpServlet {
   protected String[] getTestClassMethods(String testClass) {
     TestRunnerResults results = new TestRunnerResults();
     TestRunner tester = new TestRunner(results, false);
-    Test test = tester.getTest(testClass);
     ArrayList<String> testMethodList = new ArrayList<String>();
 
-    // unwrap TestSetup
-    if (test instanceof TestSetup) {
-      TestSetup testSetup = (TestSetup)test;
-      test = testSetup.getTest();
-    }
+    try {
+      Class<?> clazz = Class.forName(testClass);
+      if (Test.class.isAssignableFrom(clazz)) {
+        Test test = tester.getTest(testClass);
 
-    if (test instanceof TestSuite) {
-      TestSuite suite = (TestSuite)test;
+        // unwrap TestSetup
+        if (test instanceof TestSetup) {
+          TestSetup testSetup = (TestSetup)test;
+          test = testSetup.getTest();
+        }
 
-      for (int i = 0; i < suite.testCount(); i++) {
-        Test testMethod = suite.testAt(i);
+        if (test instanceof TestSuite) {
+          TestSuite suite = (TestSuite)test;
 
-        if (testMethod instanceof TestCase) {
-          testMethodList.add(((TestCase)testMethod).getName());
+          for (int i = 0; i < suite.testCount(); i++) {
+            Test testMethod = suite.testAt(i);
+
+            if (testMethod instanceof TestCase) {
+              testMethodList.add(((TestCase)testMethod).getName());
+            }
+          }
+        }
+      } else {
+        JUnit4TestAdapter adapter = new JUnit4TestAdapter(clazz);
+        for (Test testMethod : adapter.getTests()) {
+          if (testMethod instanceof JUnit4TestCaseFacade) {
+            String testMethodName = ((JUnit4TestCaseFacade)testMethod).getDescription().getMethodName();
+            if (testMethodName != null) {
+              testMethodList.add(testMethodName);
+            }
+          }
         }
       }
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
     }
 
     String[] testMethodArray = new String[testMethodList.size()];

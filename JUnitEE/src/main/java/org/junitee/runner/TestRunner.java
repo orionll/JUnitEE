@@ -12,9 +12,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
+
+import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 
 /**
  * This is the JUnitEE testrunner.
@@ -60,21 +65,34 @@ public class TestRunner extends BaseTestRunner {
         listener.start(false);
 
         for (int i = 0; i < testClassNames.length; i++) {
-          Test test = getTest(testClassNames[i]);
-          if (test != null) {
-            test.run(result);
-          }
+          String testClassName = testClassNames[i];
           try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            // back to work
-          }
-          if (!run) {
-            // if this was not the last test
-            if (i != testClassNames.length - 1) {
-              runFailed("Execution was stopped");
-              break;
+            Class<?> clazz = loadSuiteClass(testClassName);
+
+            Test test;
+            if (Test.class.isAssignableFrom(clazz)) {
+              test = getTest(testClassNames[i]);
+            } else {
+              test = new JUnit4TestAdapter(clazz);
             }
+
+            if (test != null) {
+              test.run(result);
+            }
+            try {
+              Thread.sleep(10);
+            } catch (InterruptedException e) {
+              // back to work
+            }
+            if (!run) {
+              // if this was not the last test
+              if (i != testClassNames.length - 1) {
+                runFailed("Execution was stopped");
+                break;
+              }
+            }
+          } catch (ClassNotFoundException e) {
+            runFailed("Class not found \"" + testClassName + "\"");
           }
         }
         listener.finish();
@@ -108,16 +126,36 @@ public class TestRunner extends BaseTestRunner {
     listener.runFailed(className);
   }
 
-  protected Test getTest(String suiteClassName, String testName) {
+  protected Test getTest(String suiteClassName, final String testName) {
     try {
       Class<?> clazz = loadSuiteClass(suiteClassName);
-      Constructor<?> constructor = clazz.getConstructor(new Class[] { String.class });
-      Test test = (Test)constructor.newInstance(new Object[] { testName });
 
-      if (test instanceof RequiresDecoration) {
-        test = ((RequiresDecoration)test).decorate();
+      if (Test.class.isAssignableFrom(clazz)) {
+        Constructor<?> constructor = clazz.getConstructor(new Class[] { String.class });
+        Test test = (Test)constructor.newInstance(new Object[] { testName });
+
+        if (test instanceof RequiresDecoration) {
+          test = ((RequiresDecoration)test).decorate();
+        }
+        return test;
       }
-      return test;
+
+      JUnit4TestAdapter adapter = new JUnit4TestAdapter(clazz);
+
+      adapter.filter(new Filter() {
+        @Override
+        public boolean shouldRun(Description description) {
+          return description.getMethodName().equals(testName);
+        }
+
+        @Override
+        public String describe() {
+          return null;
+        }
+
+      });
+
+      return adapter;
     } catch (ClassNotFoundException e) {
       runFailed("Class not found \"" + suiteClassName + "\"");
     } catch (InstantiationException e) {
@@ -128,6 +166,8 @@ public class TestRunner extends BaseTestRunner {
       runFailed("Could not create instance of class \"" + suiteClassName + "\" (" + e.getMessage() + ")");
     } catch (NoSuchMethodException e) {
       runFailed("Missing constructor \"" + suiteClassName + "\"(String) in class \"" + suiteClassName + "\"");
+    } catch (NoTestsRemainException e) {
+      runFailed("Class \"" + suiteClassName + "\" does not have test \"" + testName + "\"");
     }
     return null;
   }

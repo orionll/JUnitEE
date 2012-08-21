@@ -22,7 +22,7 @@ public class StringUtils {
       "java.lang.reflect.Method.invoke(", "org.apache.tools.ant." };
 
   private static final String[] DEFAULT_STOP_FILTERS = new String[] { "junit.framework.TestCase.runTest",
-      "junit.framework.TestSuite.runTest" };
+      "junit.framework.TestSuite.runTest", "junit.framework.JUnit4TestAdapter.run" };
 
   /**
    * This method converts texts to be displayed on
