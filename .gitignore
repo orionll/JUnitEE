@@ -6,7 +6,7 @@
 *.ear
 
 # Target Directories #
-JUnitEE/target
+junitee/target
 JUnitEE-anttask/target
 
 # Eclipse Directories #
