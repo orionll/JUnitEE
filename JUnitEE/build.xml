@@ -20,7 +20,7 @@
 
   <property name="lib.dir" value="${basedir}/3rdparty"/>
 
-  <property name="junit.library" value="${lib.dir}/junit.jar"/>
+  <property name="junit.library" value="${lib.dir}/junit-4.0.jar"/>
   <property name="servlet.library" value="${lib.dir}/servlet.jar"/>
   <property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar"/>
   <property name="xml.library" value="${lib.dir}/xerces.jar"/>
@@ -174,7 +174,7 @@
         <include name="example/**/*.xml"/>
         <include name="example/**/*.html"/>
         <include name="example/**/*.jsp"/>
-        <include name="3rdparty/junit.jar"/>
+        <include name="3rdparty/junit-4.0.jar"/>
 	<include name="3rdparty/servlet.jar"/>
 	<include name="3rdparty/jboss-j2ee.jar"/>
         <include name="doc/**"/>
