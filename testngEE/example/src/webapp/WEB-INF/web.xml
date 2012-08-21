@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!--
+/*
+ * $Id: web.xml,v 1.2 2005-10-19 23:36:15 o_rossmueller Exp $
+ *
+ * Copyright 2005 Oliver Rossmueller
+ *
+ * This file is part of testngEE.
+ *
+ * testngEE is free software; you can redistribute it and/or modify
+ * it under the terms of version 2 of the GNU General Public License
+ * as published by the Free Software Foundation.
+ *
+ * testngEE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with testngEE; if not, mailto:oliver@tuxerra.com or have a look at
+ * http://www.gnu.org/licenses/licenses.html#GPL
+ */
+ -->
+<web-app>
+
+  <filter>
+    <filter-name>probeFilter</filter-name>
+    <filter-class>org.junitee.probe.web.WebContainerProbeFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>probeFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <servlet>
+    <servlet-name>testngEEServlet</servlet-name>
+    <servlet-class>org.junitee.testngee.servlet.TestNGEEServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>exampleApp</servlet-name>
+    <servlet-class>org.junitee.testngee.example.app.ExampleAppServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>testngEEServlet</servlet-name>
+    <url-pattern>/testng/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>exampleApp</servlet-name>
+    <url-pattern>/exampleApp/*</url-pattern>
+  </servlet-mapping>
+
+
+</web-app>

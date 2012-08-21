@@ -1,0 +1,174 @@
+/*
+ * $Id: stylesheet.css,v 1.3 2002-09-22 22:32:41 o_rossmueller Exp $
+ * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/stylesheet.css,v $
+ */
+
+body {
+	font-family: lucida, verdana, sans-serif;
+	font-size: 10pt;
+	line-height: 120%;
+	color: #000000;
+	background-color: #FFFFFF
+}
+
+a:link		{ color: #CC4444 }
+a:active	{ color: #4444FF }
+a:visited	{ color: #994444 }
+a:hover		{ color: #FF4444 }
+a:hover img	{ background-color: #FFFFFF }
+
+pre {
+  background-color: #FFFFFF;
+}
+
+.ul {
+  padding-left: 20pt;
+}
+
+.list {
+  padding-left: 20pt;
+}
+
+
+.pageTitle {
+	font-size: 2em;
+	font-weight: bold;
+	line-height: 125%;
+	letter-spacing: 0.25em;
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #980000
+}
+
+.documentTitle {
+	font-size: 1.25em;
+	font-weight: bold;
+	font-weight: bold;
+	line-height: 150%;
+	color: #000000;
+	background-color: #F4E5E5;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.sectionTitle {
+	font-weight: bold;
+	line-height: 150%;
+	color: #000000;
+	background-color: #F4E5E5;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.noteTable {
+	color: #FFFFFF;
+	background-color: #980000;
+}
+
+.tablehead {
+	color: #000000;
+	background-color: #F4E5E5;
+	border-top-width: 0px;
+	border-bottom-width: 1px;
+	border-left-width: 0px;
+	border-right-width: 0px;
+	border-style: solid;
+	border-color: #980000;
+}
+
+.tabletitle {
+	color: #000000;
+	background-color: #F4E5E5;
+    font-weight: bold;
+	border-top-width: 1px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	border-right-width: 0px;
+	border-style: solid;
+	border-color: #980000;
+}
+
+.coloredrow {
+	color: #000000;
+	background-color: #F4E5E5;
+	text-align: left;
+	vertical-align: top;
+}
+
+.whiterow {
+	text-align: left;
+	vertical-align: top;
+}
+
+
+.menuTable {
+    line-height: 100%;
+	color: #FFFFFF;
+	background-image:url(menuback.png);
+	border-top-width: 1px;
+	border-bottom-width: 0px;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-style: solid;
+	border-color: #980000;
+}
+
+.menuSelected {
+    line-height: 100%;
+	color: #980000;
+  text-decoration: underline;
+}
+
+.menuSelected:link		{ color: #000000; text-decoration: none }
+.menuSelected:active	{ color: #000000; text-decoration: none }
+.menuSelected:visited	{ color: #000000; text-decoration: none }
+.menuSelected:hover		{ color: #FF4444; text-decoration: underline }
+
+.menu {
+    line-height: 100%;
+	color: #000000;
+}
+
+.menu:link		{ color: #000000; text-decoration: none }
+.menu:active	{ color: #000000; text-decoration: none }
+.menu:visited	{ color: #000000; text-decoration: none }
+.menu:hover		{ color: #FF4444; text-decoration: none }
+
+
+.footer {
+	color: #000000;
+	border-top-width: 1px;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.top {
+	color: #000000;
+	border-top-width: 0;
+	border-bottom-width: 1px;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #980000
+}
+
+.code {
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-style: solid;
+	border-color: #980000;
+	padding-left: 6px;
+}

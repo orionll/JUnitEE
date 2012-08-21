@@ -1,0 +1,54 @@
+Buildfile: build.xml
+
+run-tests:
+   [delete] Deleting 8 files from /home/oliver/projects/junitee/JUnitEE/example/build
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.033 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.000 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.038 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.000 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.001 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.045 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.045 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.032 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.LongRunningTest (runs: 1 errors: 0 failures: 0 time: 15.018 sec)
+  [junitee] Test successful
+
+  [junitee] org.junitee.ejb.einstein.test.SetupExceptionTest (runs: 1 errors: 0 failures: 1 time: 0.001 sec)
+  [junitee] TEST FAILED
+
+  [junitee] junit.framework.TestSuite$1 (runs: 2 errors: 0 failures: 2 time: 0.000 sec)
+  [junitee] TEST FAILED
+
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.043 sec)
+  [junitee] TEST FAILED
+
+     [echo] Property test.failure: true
+     [echo] Property test.error: true
+
+BUILD SUCCESSFUL
+Total time: 51 seconds

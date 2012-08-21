@@ -1,0 +1,8 @@
+Buildfile: build.xml
+
+run-tests-error:
+
+BUILD FAILED
+file:/home/oliver/projects/junitee/JUnitEE/example/build.xml:213: Test org.junitee.ejb.einstein.test.EinsteinTest failed.
+
+Total time: 18 seconds

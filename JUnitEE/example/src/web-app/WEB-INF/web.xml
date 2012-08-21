@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<!--
+	$Id: web.xml,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/web-app/WEB-INF/web.xml,v $
+-->
+
+<web-app>
+	<display-name>Einstein Web Application</display-name>
+
+ 	<ejb-ref>
+		<ejb-ref-name>ejb/EinsteinEJB</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type>
+		<home>org.infohazard.ejb.einstein.EinsteinHome</home>
+		<remote>org.infohazard.ejb.einstein.Einstein</remote>
+    <ejb-link>EinsteinEJB</ejb-link>
+	</ejb-ref>
+
+</web-app>

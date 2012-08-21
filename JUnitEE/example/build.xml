@@ -1,0 +1,373 @@
+<?xml version="1.0"?>
+
+<!--
+	$Id: build.xml,v 1.22 2006-04-09 14:14:08 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/build.xml,v $
+-->
+
+<project name="junitee-example" default="all" basedir=".">
+
+  <property name="name" value="junitee-example"/>
+
+  <property name="lib.dir" value="${basedir}/../3rdparty"/>
+  <property name="junitee.dir" value="${basedir}/../lib"/>
+
+  <property name="junit.library" value="${lib.dir}/junit-4.0.jar"/>
+  <property name="servlet.library" value="${lib.dir}/servlet.jar"/>
+  <property name="j2ee.library" value="${lib.dir}/jboss-j2ee.jar"/>
+  <property name="junitee.library" value="${junitee.dir}/junitee.jar"/>
+  <property name="junitee-anttask.library" value="${junitee.dir}/junitee-anttask.jar"/>
+
+  <property name="build.dir" value="build"/>
+  <property name="build.classes" value="${build.dir}/classes"/>
+
+  <property name="src.dir" value="src"/>
+  <property name="src.java" value="${src.dir}/java"/>
+  <property name="src.deploy" value="${src.dir}/deploy"/>
+  <property name="src.webapp" value="${src.dir}/web-app"/>
+
+  <property name="src.app-ear" value="${src.deploy}/app-ear"/>
+  <property name="app-ear.product" value="${build.dir}/${name}.ear"/>
+
+  <property name="src.ejb-jar" value="${src.deploy}/ejb-jar"/>
+  <property name="ejb-jar.file" value="${name}-ejb.jar"/>
+  <property name="ejb-jar.product" value="${build.dir}/${ejb-jar.file}"/>
+
+  <property name="web-war.file" value="${name}-web.war"/>
+  <property name="web-war.product" value="${build.dir}/${web-war.file}"/>
+
+  <property name="test-war.file" value="${name}-test.war"/>
+  <property name="test-war.product" value="${build.dir}/${test-war.file}"/>
+  <property name="test-war-xml.file" value="${name}-test-xml.war"/>
+  <property name="test-war-xml.product" value="${build.dir}/${test-war-xml.file}"/>
+  <property name="test-jar.file" value="${name}-test.jar"/>
+  <property name="test-jar.product" value="${build.dir}/${test-jar.file}"/>
+  <property name="test-qa.file" value="${name}-qa.war"/>
+  <property name="test-qa.product" value="${build.dir}/${test-qa.file}"/>
+
+  <property name="javac.debug" value="on"/>
+
+
+  <path id="master-classpath">
+    <pathelement location="${junit.library}"/>
+    <pathelement location="${servlet.library}"/>
+    <pathelement location="${j2ee.library}"/>
+    <pathelement location="${junitee.library}"/>
+    <pathelement location="${junitee-anttask.library}"/>
+  </path>
+
+
+  <taskdef name="junitee" classname="org.junitee.anttask.JUnitEETask" classpath="${junitee-anttask.library}"/>
+
+
+  <!-- targets   -->
+  <!-- ========= -->
+
+  <target name="clean" description="Cleanup all generated files">
+    <delete dir="${build.dir}"/>
+  </target>
+
+
+  <!-- create all necessary directories -->
+
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.classes}"/>
+  </target>
+
+
+  <!-- compile the sources -->
+
+  <target name="compile" depends="prepare" description="Compile all sources">
+    <javac srcdir="${src.java}" destdir="${build.classes}" debug="${javac.debug}"
+            source="1.5" target="1.5">
+      <classpath refid="master-classpath"/>
+    </javac>
+  </target>
+
+
+  <!-- create all products -->
+
+  <target name="ejb-jar" depends="compile">
+    <jar jarfile="${ejb-jar.product}">
+      <!-- deployment descriptor -->
+      <zipfileset dir="${src.ejb-jar}" prefix="META-INF" includes="*.xml"/>
+      <!-- classes -->
+      <fileset dir="${build.classes}">
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/test/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="test-jar" depends="compile">
+    <jar jarfile="${test-jar.product}">
+      <fileset dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="web-war" depends="compile">
+    <war warfile="${web-war.product}" webxml="${src.webapp}/WEB-INF/web.xml">
+      <fileset dir="${src.webapp}" excludes="WEB-INF/**"/>
+
+      <classes dir="${build.classes}">
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+
+    </war>
+  </target>
+
+  <target name="test-war" depends="compile">
+    <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
+
+    <juniteewar destFile="${test-war.product}" testjarname="test.jar" htmlRefreshDelay="5">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit-*.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+      <ejbRef ejbRefName="ejb/EinsteinEJB"
+        ejbRefType="Session"
+        home="org.junitee.ejb.einstein.EinsteinHome"
+        remote="org.junitee.ejb.einstein.Einstein"
+        ejbLink="EinsteinEJB"/>
+    </juniteewar>
+
+    <juniteewar destFile="${test-war-xml.product}" servletclass="org.junitee.servlet.JUnitEEXMLServlet">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit-*.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+      <ejbRef ejbRefName="ejb/EinsteinEJB"
+        ejbRefType="Session"
+        home="org.junitee.ejb.einstein.EinsteinHome"
+        remote="org.junitee.ejb.einstein.Einstein"
+        ejbLink="EinsteinEJB"/>
+    </juniteewar>
+  </target>
+
+  <target name="app-ear" depends="ejb-jar, web-war, test-war" description="Build the application ear">
+    <jar jarfile="${app-ear.product}">
+      <!-- deployment descriptor -->
+      <zipfileset dir="${src.app-ear}" includes="*.xml" prefix="META-INF"/>
+      <!-- modules -->
+      <fileset dir="${build.dir}">
+        <include name="${ejb-jar.file}"/>
+        <include name="${web-war.file}"/>
+        <include name="${test-war-xml.file}"/>
+        <include name="${test-war.file}"/>
+      </fileset>
+    </jar>
+  </target>
+
+
+  <!-- execute the tests -->
+
+  <target name="run-tests" description="Run the tests">
+    <delete>
+      <fileset dir="${build.dir}">
+        <include name="TEST*"/>
+      </fileset>
+    </delete>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true" threaded="false">
+     <test runall="true" todir="${build.dir}">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
+      <test runall="true" resource="/WEB-INF/lib/test.jar"/>
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" failureproperty="test.failure"/>
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" errorproperty="test.error"/>
+
+      <test runall="true" outfile="TEST_ALL-" todir="${build.dir}">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
+
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" outfile="TEST" todir="/tmp">
+        <formatter type="plain"/>
+      </test>
+
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" filtertrace="false">
+        <formatter type="xml"/>
+        <formatter type="plain"/>
+      </test>
+    </junitee>
+
+    <available file="${build.dir}/TEST_ALL-org.junitee.ejb.einstein.test.EinsteinTest.xml" property="formatter-output.available"/>
+    <fail message="formatter output not in build dir" unless="formatter-output.available"/>
+
+    <echo message="Property test.failure: ${test.failure}"/>
+    <echo message="Property test.error: ${test.error}"/>
+  </target>
+
+  <target name="run-tests-fail" description="Run the tests and halt on failure">
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test runall="true" haltonfailure="true"/>
+    </junitee>
+
+    <echo message="Did not halt on failure"/>
+  </target>
+
+
+  <target name="run-tests-error" description="Run the tests and halt on error">
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="false">
+      <test runall="true" haltonerror="true"/>
+    </junitee>
+
+    <echo message="Did not halt on error"/>
+  </target>
+
+  <target name="run-tests-unless" description="Run the tests using unless condition">
+    <echo message="property is not set, so run the tests ..."/>
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" unless="test.unless"/>
+    </junitee>
+
+    <property name="test.unless" value="true"/>
+    <echo message="property is set, so do not run the tests ..."/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" unless="test.unless"/>
+    </junitee>
+  </target>
+
+  <target name="run-tests-if" description="Run the tests using if condition">
+    <echo message="property is not set, so do not run the tests ..."/>
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" if="test.if">
+        <formatter type="xml"/>
+      </test>
+    </junitee>
+
+    <property name="test.if" value="true"/>
+    <echo message="property is set, so run the tests ..."/>
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTest" if="test.if">
+        <formatter type="xml"/>
+      </test>
+    </junitee>
+  </target>
+
+
+  <target name="run-tests-invalid" description="Try to run invalid tests">
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+      <test name="org.junitee.ejb.einstein.test.EinsteinTestInvalid"/>
+    </junitee>
+  </target>
+
+    <target name="run-test-formatter" description="Run the tests">
+
+    <junitee url="http://localhost:8080/exampletest/TestServlet" printsummary="true">
+     <test runall="true" todir="${build.dir}">
+        <formatter type="xml" usefile ="false"/>
+      </test>
+    </junitee>
+  </target>
+
+
+  <target name="testreport" depends="run-tests">
+    <junitreport>
+      <fileset dir="." includes="TEST_ALL-*.xml"/>
+      <report/>
+    </junitreport>
+  </target>
+
+  <target name="deploy" depends="app-ear">
+    <!-- deploy the ear -->
+    <echo message="Please implement this target to deploy the application ear to your application server"/>
+  </target>
+
+
+  <target name="all" depends="app-ear" description="Build the example application"/>
+
+
+
+
+  <!-- qa targets -->
+
+  <!-- test simple war construction -->
+  <target name="qa-war-1" depends="compile">
+    <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
+
+    <juniteewar destFile="${test-qa.product}">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+    </juniteewar>
+
+    <exec executable="../qa/scripts/war-qa.sh">
+      <arg line="qa1" />
+    </exec>
+  </target>
+
+  <!-- test simple war construction with testjarname-->
+
+ <target name="qa-war-2" depends="compile">
+    <taskdef name="juniteewar" classname="org.junitee.anttask.JUnitEEWarTask">
+      <classpath>
+        <pathelement location="../lib/junitee-anttask.jar"/>
+      </classpath>
+    </taskdef>
+
+    <juniteewar destFile="${test-qa.product}" testjarname="testclasses.jar">
+      <lib dir="${junitee.dir}" includes="junitee.jar"/>
+      <lib dir="${lib.dir}" includes="junit.jar"/>
+      <classes dir="${build.classes}">
+        <include name="**/test/**/*.class"/>
+        <include name="**/ejb/**/*.class"/>
+        <exclude name="**/ejb/**/*EJB.class"/>
+      </classes>
+      <testcases dir="${build.classes}">
+        <include name="**/test/**/*Test.class"/>
+      </testcases>
+    </juniteewar>
+
+    <exec executable="../qa/scripts/war-qa.sh">
+      <arg line="qa2" />
+    </exec>
+  </target>
+
+
+  <target name="junit" depends="compile">
+    <junit>
+      <classpath>
+        <pathelement path="${build.classes}"/>
+      </classpath>
+
+      <formatter type="plain"/>
+      <test todir="/tmp" outfile="XYZ-test" name="org.junitee.ejb.einstein.test.JUnitTest"/>
+    </junit>
+  </target>
+</project>
+

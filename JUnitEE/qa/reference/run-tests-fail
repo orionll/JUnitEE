@@ -1,0 +1,11 @@
+Buildfile: build.xml
+
+run-tests-fail:
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.063 sec)
+  [junitee] TEST FAILED
+
+
+BUILD FAILED
+file:/home/oliver/projects/junitee/JUnitEE/example/build.xml:216: Test org.junitee.ejb.einstein.test.EinsteinTest failed.
+
+Total time: 18 seconds

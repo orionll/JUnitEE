@@ -1,0 +1,74 @@
+JUnitEE Quality Assurance
+=========================
+
+Preparation
+-----------
+
+1. Build JUnitEE
+2. Build the JUnitEE example
+
+
+juniteewar task
+---------------
+
+in the example directory call
+
+1. ant qa-war-1 => there may be no diff output
+
+2. ant qa-war-2 => there may be no diff output
+
+
+junitee task
+------------
+
+deploy junitee-example.ear
+
+in the example directory call
+
+1. ant run-tests &> /dev/stdout | diff - ../qa/reference/run-tests  => there may be a diff in execution time only
+2. ant run-tests-fail &> /dev/stdout | diff - ../qa/reference/run-tests-fail => there may be a diff in execution time only
+3. ant run-tests-error &> /dev/stdout | diff - ../qa/reference/run-tests-error => there may be a diff in execution time only
+4. ant run-tests-unless &> /dev/stdout | diff - ../qa/reference/run-tests-unless => there may be a diff in execution time only
+5. ant run-tests-if &> /dev/stdout | diff - ../qa/reference/run-tests-if => there may be a diff in execution time only
+
+
+JUnitEE servlet
+---------------
+
+deploy junitee-example.ear
+
+basic functions:
+
+1. qa.html: http://localhost:8080/exampletest  => index.html should be displayed (qa.html)
+2. qa.html: http://localhost:8080/exampletest/TestServlet  => list of test cases should be displayed
+3. select 'Run all tests' and click 'Run' => after some time test results are displayed
+4. click the info icon for org.junitee.ejb.einstein.test.EinsteinTest => page scrolls to the suite details
+5. click the info icon for 'testEmc2' => page scrolls to test details
+6. click the back button in the browser => page scrolls to the suite details
+7. click the back button in the browser => page scrolls to top
+8. click the 'x' to run org.junitee.ejb.einstein.test.EinsteinTest suite again => results of the single suite are displayed
+9. click the info icon for 'testEmc2' => page scrolls to test details
+10. click the back button in the browser => page scrolls to the suite details
+11. click the 'x' to run 'testEmc2' again => result of the single test is displayed
+
+
+search parameter:
+
+1. qa.html: http://localhost:8080/exampletest/TestServlet?search=test2.jar => empty list of tests is displayed
+2. qa.html: http://localhost:8080/exampletest/TestServlet?search=test.jar => list of available tests is displayed
+3. qa.html: http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true => after some time test results are displayed
+
+thread parameter:
+
+1. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
+2. http://localhost:8080/exampletest/TestServlet?search=test.jar&all=true&thread=true => stop button is displayed; page is refreshed periodically
+3. click the stop button => 'Execution will be stopped ...' is displayed; Execution was stopped in the test report
+
+
+Distribution
+------------
+
+build the distribution, extract the distribution packages
+
+test if the src distribution builds
+test if the example distribution builds and runs as expected by repeating the tests above

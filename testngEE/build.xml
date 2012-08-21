@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+ * $Id: build.xml,v 1.2 2005-10-19 23:36:15 o_rossmueller Exp $
+ *
+ * Copyright 2005 Oliver Rossmueller
+ *
+ * This file is part of testngEE.
+ *
+ * testngEE is free software; you can redistribute it and/or modify
+ * it under the terms of version 2 of the GNU General Public License
+ * as published by the Free Software Foundation.
+ *
+ * testngEE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with testngEE; if not, mailto:oliver@tuxerra.com or have a look at
+ * http://www.gnu.org/licenses/licenses.html#GPL
+ */
+ -->
+
+<project name="testngee" default="all" basedir=".">
+
+  <property name="name" value="testngee"/>
+  <property name="version" value="1.0"/>
+  <property name="distname" value="${name}-${version}"/>
+  <property name="jar.name" value="${distname}.jar"/>
+  <property name="jar.name.ant" value="${name}-ant-${version}.jar"/>
+  <property name="jar.name.probe" value="${name}-probe-${version}.jar"/>
+  <property name="srcdistname" value="${name}-src-${version}"/>
+  <property name="exampledistname" value="${name}-example-${version}"/>
+
+  <property name="lib.dir" value="${basedir}/lib"/>
+
+  <property name="src.dir" value="src"/>
+  <property name="src.testrunner" value="${src.dir}/testrunner"/>
+  <property name="src.anttask" value="${src.dir}/anttask"/>
+  <property name="src.probe" value="${src.dir}/probe"/>
+  <property name="build.dir" value="build"/>
+  <property name="build.lib" value="${build.dir}"/>
+  <property name="build.testrunner" value="${build.dir}/testrunner"/>
+  <property name="build.anttask" value="${build.dir}/anttask"/>
+  <property name="dist.dir" value="dist"/>
+  <property name="dist.root" value="${dist.dir}/${distname}"/>
+  <property name="srcdist.root" value="${dist.dir}/${srcdistname}"/>
+  <property name="exampledist.root" value="${dist.dir}/${exampledistname}"/>
+  <property name="dist.lib" value="${dist.root}/lib"/>
+  <property name="dist.doc" value="${dist.root}/doc"/>
+  <property name="dist.src" value="${dist.root}/src"/>
+  <property name="doc.dir" value="doc"/>
+  <property name="example.dir" value="example"/>
+  <property name="resource.dir" value="resource"/>
+
+  <property name="build.doc" value="${build.dir}/doc"/>
+  <property name="build.javadoc" value="${build.doc}/javadoc"/>
+
+
+  <path id="compile.classpath">
+    <fileset dir="${lib.dir}" includes="*.jar"/>
+  </path>
+
+  <target name="clean">
+    <delete dir="${build.dir}" quiet="true"/>
+    <delete dir="${build.lib}" quiet="true"/>
+    <delete dir="${build.javadoc}" quiet="true"/>
+    <delete dir="${dist.dir}" quiet="true"/>
+  </target>
+
+
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.lib}"/>
+    <mkdir dir="${build.testrunner}"/>
+    <mkdir dir="${build.anttask}"/>
+    <mkdir dir="${build.doc}"/>
+    <mkdir dir="${build.javadoc}"/>
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.root}"/>
+    <mkdir dir="${srcdist.root}"/>
+    <mkdir dir="${exampledist.root}"/>
+    <mkdir dir="${dist.lib}"/>
+    <mkdir dir="${dist.doc}"/>
+    <mkdir dir="${dist.src}"/>
+  </target>
+
+
+  <target name="compile" depends="prepare">
+    <javac debug="on"
+      destdir="${build.testrunner}"
+      classpathref="compile.classpath">
+      <src path="${src.testrunner}"/>
+    </javac>
+    <javac srcdir="${src.probe}" debug="on"
+      destdir="${build.testrunner}"
+      classpathref="compile.classpath"/>
+    <javac srcdir="${src.anttask}" debug="on"
+      destdir="${build.anttask}"
+      classpathref="compile.classpath"/>
+    <javac srcdir="${src.probe}" debug="on"
+      destdir="${build.testrunner}"
+      classpathref="compile.classpath"/>
+  </target>
+
+
+  <target name="jar" depends="compile">
+    <jar jarfile="${build.lib}/${jar.name}"
+      basedir="${build.testrunner}">
+      <!--<zipfileset dir="${resource.dir}" includes="*.gif, *.png" prefix="resource"/>-->
+      <!--<zipfileset dir="${src.testrunner}" includes="*.html" prefix="resource"/>-->
+    </jar>
+    <jar jarfile="${build.lib}/${jar.name.ant}"
+      basedir="${build.anttask}">
+      <!--<zipfileset dir="${src.anttask}" includes="index.html"/>-->
+    </jar>
+
+  </target>
+
+  <target name="doc" depends="prepare">
+    <copy todir="${build.doc}">
+      <fileset dir="${doc.dir}" includes="**/*.html, **/*.png, **/*.css"/>
+    </copy>
+    <javadoc destdir="${build.javadoc}">
+      <packageset dir="${src.testrunner}"/>
+      <packageset dir="${src.anttask}"/>
+    </javadoc>
+
+  </target>
+
+  <target name="dist" depends="clean, src-dist, binary-dist, example-dist, doc.tgz"/>
+
+
+  <target name="src-dist">
+    <copy todir="${srcdist.root}">
+      <fileset dir="${basedir}">
+        <include name="example/**/*.java"/>
+        <include name="example/**/*.xml"/>
+        <include name="example/**/*.html"/>
+        <include name="src/**/*.java"/>
+	<include name="src/**/*.html"/>
+        <include name="doc/**"/>
+        <include name="3rdparty/**"/>
+	<include name="resource/**/*.png"/>
+        <include name="build.xml"/>
+        <include name="Readme.txt"/>
+      </fileset>
+    </copy>
+
+    <zip zipfile="${dist.dir}/${srcdistname}.zip">
+      <zipfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </zip>
+
+    <tar destfile="${dist.dir}/${srcdistname}.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${srcdistname}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${dist.dir}" includes="${srcdistname}/**"/>
+    </tar>
+  </target>
+
+  <target name="binary-dist" depends="jar, doc" description="Build the distribution">
+    <zip zipfile="${dist.dir}/${distname}.zip">
+      <zipfileset dir="${basedir}" includes="Readme.txt" prefix="${distname}"/>
+      <zipfileset dir="${build.doc}" prefix="${distname}/doc"/>
+      <zipfileset dir="${build.lib}" includes="*.jar" prefix="${distname}/lib"/>
+    </zip>
+
+    <tar destfile="${dist.dir}/${distname}.tar.gz" compression="gzip">
+      <tarfileset dir="${basedir}" includes="Readme.txt" prefix="${distname}"/>
+      <tarfileset dir="${build.doc}" prefix="${distname}/doc"/>
+      <tarfileset dir="${build.lib}" includes="*.jar" prefix="${distname}/lib"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${distname}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${basedir}" includes="Readme.txt" prefix="${distname}"/>
+      <tarfileset dir="${build.doc}" prefix="${distname}/doc"/>
+      <tarfileset dir="${build.lib}" includes="*.jar" prefix="${distname}/lib"/>
+    </tar>
+  </target>
+
+  <target name="example-dist" depends="prepare" description="Build the distribution">
+     <copy todir="${exampledist.root}/lib">
+      <fileset dir="${build.lib}" includes="*.jar"/>
+    </copy>
+
+   <copy todir="${exampledist.root}">
+      <fileset dir="${basedir}">
+        <include name="example/**/*.java"/>
+        <include name="example/**/*.xml"/>
+        <include name="example/**/*.html"/>
+        <include name="example/**/*.jsp"/>
+        <include name="3rdparty/junit.jar"/>
+	<include name="3rdparty/servlet.jar"/>
+	<include name="3rdparty/jboss-j2ee.jar"/>
+        <include name="doc/**"/>
+        <include name="Readme.txt"/>
+      </fileset>
+    </copy>
+
+    <zip zipfile="${dist.dir}/${exampledistname}.zip">
+      <zipfileset dir="${dist.dir}" includes="${exampledistname}/**"/>
+    </zip>
+
+    <tar destfile="${dist.dir}/${exampledistname}.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.dir}" includes="${exampledistname}/**"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${exampledistname}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${dist.dir}" includes="${exampledistname}/**"/>
+    </tar>
+  </target>
+
+  <target name="doc.tgz">
+     <replace dir="${build.doc}">
+         <include name="*.html"/>
+
+        <replacetoken><![CDATA[<!-- ads -->]]></replacetoken>
+        <replacevalue><![CDATA[
+      <tr><td colspan="3" align="center">
+      <script type="text/javascript">
+        google_ad_client = "pub-6547819708707132";
+        google_ad_width = 728;
+        google_ad_height = 90;
+        google_ad_format = "728x90_as";
+        google_ad_channel ="9408961084";
+        google_color_border = "DDB7BA";
+        google_color_bg = "FFF5F6";
+        google_color_link = "0000CC";
+        google_color_url = "008000";
+        google_color_text = "6F6F6F";
+    </script>
+    <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+   </td></tr>]]></replacevalue>
+         </replace>
+
+     <replace dir="${build.doc}">
+         <include name="*.html"/>
+
+        <replacetoken><![CDATA[<!-- ads_index -->]]></replacetoken>
+        <replacevalue><![CDATA[
+      <script type="text/javascript">
+        google_ad_client = "pub-6547819708707132";
+        google_ad_width = 120;
+        google_ad_height = 600;
+        google_ad_format = "120x600_as";
+        google_ad_channel ="5960565721";
+        google_color_border = "DDB7BA";
+        google_color_bg = "FFF5F6";
+        google_color_link = "0000CC";
+        google_color_url = "008000";
+        google_color_text = "6F6F6F";
+    </script>
+    <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>]]></replacevalue>
+         </replace>
+
+
+    <tar destfile="${dist.dir}/docs.tgz" compression="gzip">
+      <tarfileset dir="${build.doc}"/>
+    </tar>
+  </target>
+
+
+   <target name="dist-upload" depends="dist">
+      <ftp server="upload.sourceforge.net"
+         remotedir="/incoming"
+         userid="anonymous"
+         password="o_rossmueller@users.sourceforge.net"
+         depends="yes"
+         binary="yes"
+         >
+         <fileset dir="${dist.dir}">
+            <include name="**/*.zip"/>
+         </fileset>
+      </ftp>
+   </target>
+
+  <target name="all" depends="jar" description="Build the JUnitEE library and ant task"/>
+</project>
+

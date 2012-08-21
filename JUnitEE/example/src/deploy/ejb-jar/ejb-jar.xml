@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN" "http://java.sun.com/j2ee/dtds/ejb-jar_1_1.dtd">
+
+<!--
+	$Id: ejb-jar.xml,v 1.1 2002-09-22 21:46:48 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/example/src/deploy/ejb-jar/ejb-jar.xml,v $
+-->
+
+<ejb-jar>
+
+	<enterprise-beans>
+		<session>
+			<description>
+				The Einstein session bean is capable of adding two numbers
+				together (well, it tries).
+			</description>
+			
+			<ejb-name>EinsteinEJB</ejb-name>
+			
+			<home>org.junitee.ejb.einstein.EinsteinHome</home>
+			<remote>org.junitee.ejb.einstein.Einstein</remote>
+			<ejb-class>org.junitee.ejb.einstein.EinsteinEJB</ejb-class>
+			
+			<session-type>Stateless</session-type>
+			<transaction-type>Container</transaction-type>
+		</session>
+	</enterprise-beans>
+
+	<assembly-descriptor>
+	</assembly-descriptor>
+	
+</ejb-jar>

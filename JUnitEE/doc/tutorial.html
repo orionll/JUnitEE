@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: tutorial.html,v 1.10 2004-05-28 11:00:17 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial.html,v $
+-->
+
+<html>
+	<head>
+		<title>JUnitEE Tutorial</title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+    <table>
+
+      <!-- ads -->
+      <tr><td colspan="3">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr> <td class="pageTitle"> JUnitEE </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.10 $ </small> </td> </tr>
+        </table>
+      </td></tr>
+      <tr><td valign="top" align="left">
+        <table width="100%" height="100%" border="0" cellspacing="4" cellpadding="1" class="menuTable">
+          <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="releasenotes.html"><nobr>Release Notes</nobr></a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menu"><a class="menu" href="usersguide.html"><nobr>User's Guide</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="antguide.html"><nobr>Ant HowTo<nobr></a></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="tutorial.html">Tutorial</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="javadoc/index.html">JavaDoc</a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=31476">Download</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/projects/junitee"><nobr>Project page</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="contact.html">Contact</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe"><nobr>JUnitEE Wiki</nobr></a></td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
+
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+		<tr><td class="documentTitle">Tutorial</td></tr>
+	  </table>
+
+	  <p>This tutorial will show you how to use JUnitEE to unit test an Enterprise JavaBean. All sources are included in the <code>example</code>
+	  directory of the JUnitEE distribution and are also <a href="tutorial/index.html" target="_sources_">
+	  <img src="extwindow.png" width="10" height="10" border="0" hspace="2" alt="external window">browsable</a> online.
+	  </p>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	    <tr><td class="sectionTitle">Implement the EJB</td></tr>
+      </table>
+
+	  <p>As this is a tutorial on testing and not on implementing EJBs I will not go into details on how to write Enterprise JavaBeans.
+	  I assume that you already have some knowledge about this kind of stuff, otherwise you would not be interested in testing EJBs.
+	  </p>
+
+	  <p>The EJB used for this tutorial is a simple session bean which adds two numbers. Have a look at the sources in the package
+	  <code>org.junitee.ejb.einstein</code> to see what is going on in the bean. The method <code>addTwoNumbers</code> is a little bit buggy
+	  to show the effect of a test failure, the method <code>emc2</code> just throws an exception to cause a test error.
+      </p>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	    <tr><td class="sectionTitle">Write the test case</td></tr>
+		</table>
+
+		<p>
+			The test case is a standard JUnit TestCase.  For the fixture, you can
+			use the default JNDI InitialContext to get a reference to the EJB like
+			this:
+
+        <div class="code"><code>
+			<pre>protected void setUp() throws Exception {
+  Context jndiContext = new InitialContext();
+
+  Object einRef = jndiContext.lookup("java:comp/env/ejb/EinsteinEJB");
+  EinsteinHome home = 
+      (EinsteinHome)PortableRemoteObject.narrow(einRef, EinsteinHome.class);
+
+  this.ein = home.create();
+}</pre></code>
+		</div>
+		</p>
+
+		<p>
+			And the test methods themselves look like this:
+
+        <div class="code"><code>
+			<pre>public void testSimpleAddition() throws RemoteException {
+	String result = this.ein.addTwoNumbers("7", "10");
+	assert(result.equals("17"));
+}</pre></code>
+	    </div>
+        </p>
+
+		<p>The full source of the test case is included in the example - see package <code>org.junitee.ejb.einstein.test</code>.
+		</p>
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+			<tr> <td class="sectionTitle">Create the frontend web form </td> </tr>
+		</table>
+
+		<p>
+			The JUnitEEServlet will execute test cases specified by the "suite"
+			form parameter, which can appear multiple times.  It's
+			nice to have a simple form to start the tests:
+
+        <div class="code"><code>
+			<pre>&lt;html&gt;
+&lt;body&gt;
+&lt;p&gt;
+	You may type in the name of a test suite:
+	&lt;br/&gt;
+	&lt;form action="TestServlet" method="get" name="youTypeItForm"&gt;
+		&lt;input type="text" name="suite" size=60 /&gt;
+		&lt;input type="submit" value="Run" /&gt;
+	&lt;/form&gt;
+&lt;/p&gt;
+&lt;hr/&gt;
+&lt;p&gt;
+	You may pick one or more of the following test suites:
+	&lt;br/&gt;
+	&lt;form action="TestServlet" method="get" name="youPickItForm"&gt;
+		&lt;select name="suite" size="2" multiple&gt;
+			&lt;option value="org.infohazard.test.EinsteinTest"&gt;
+				org.infohazard.test.EinsteinTest
+			&lt;/option&gt;
+			&lt;option value="some.other.Test"&gt;
+				some.other.Test
+			&lt;/option&gt;
+		&lt;/select&gt;
+		&lt;input type="submit" value="Run" /&gt;
+	&lt;/form&gt;
+&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></code>
+		</div>
+        </p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		  <tr><td class="sectionTitle">Create the web.xml deployment descriptor</td></tr>
+		</table>
+
+		<p>The web application must have a deployment descriptor which provides
+			the ejb-ref mapping so that the "java:comp/env/ejb/EinsteinEJB" JNDI
+			lookup will work. And the JUnitEEServlet and it's URL mapping is also required in the <code>web.xml</code>.
+			Here is an example of how it should look like:
+		</p>
+
+        <div class="code"><code>
+			<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app PUBLIC 
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" 
+        "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test framework&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+  &lt;ejb-ref&gt;
+    &lt;ejb-ref-name&gt;ejb/EinsteinEJB&lt;/ejb-ref-name&gt;
+    &lt;ejb-ref-type&gt;Session&lt;/ejb-ref-type&gt;
+    &lt;home&gt;org.infohazard.ejb.einstein.EinsteinHome&lt;/home&gt;
+    &lt;remote&gt;org.infohazard.ejb.einstein.Einstein&lt;/remote&gt;
+  &lt;/ejb-ref&gt;
+&lt;/web-app&gt;</pre></code>
+		</div>
+
+   <p>
+    <b>IMPORTANT NOTE:</b> Orion Application Server has a bug in it's url pattern matching algorithm that
+    causes some problems for JUnitEE. If you are using Orion please change the servlet mapping in the deployment descriptor to
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;</pre></code>
+    </div>
+    </p>
+
+
+
+	<table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+      <tr><td class="sectionTitle">Package the test WAR</td></tr>
+	</table>
+
+    <p>
+    Now you have everything ready to package the test web application. You have to put
+    <ul>
+    <li><code>junit.jar</code> and <code>junitee.jar</code> to <code>WEB-INF/lib</code></li>
+    <li>your test classes to <code>WEB-INF/classes</code> or a jar containing the test classes to <code>WEB-INF/lib</code></li>
+    <li>the test frontend form to <code>index.html</code></li>
+    <li>and the <code>web.xml</code> to <code>WEB-INF</code>
+    </ul>
+    </p>
+
+    <p>Finally, jar everything into the <code>test.war</code> and and create an EAR which contains <code>test.war</code> and the ejb-jar
+    containing the Einstein bean.
+    </p>
+
+    <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">Run the tests</td></tr>
+	</table>
+
+    <p>After deploying the EAR point your browser to the <code>index.html</code> included in the <code>test.war</code> and select the <code>
+    EinsteinTest</code> to be executed. After a few seconds your browser will display the test report showing successful and not so successful tests.
+    </p>
+
+    <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">Make your life easier</td></tr>
+	</table>
+
+	<p>Now you have seen how to create a .war file containing the JUnitEE servlet and your test classes. It requires some steps to create
+	the war, but fortunately there is a way to automate these steps: use the JUnitEEWarTask created for use with Ant. Have a look at the
+	<a href="antguide.html">Ant HowTo</a> to learn more about this task.
+	</p>
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+			<tr> <td class="sectionTitle"> Notes </td> </tr>
+		</table>
+
+		<p>
+			Some things you might want to keep in mind when unit testing EJBs:
+		</p>
+		<ul>
+			<li>
+				Unless you (and everyone else on the project) are extremely
+				careful writing your unit tests, they are very likely going
+				to seriously mess up your database.  You should probably never
+				run tests against a production system, and for this (and other
+				security reasons) you should not enable the test web application
+				on the production machine.
+			</li>
+			<li>
+				The testing of getters and setters is probably a waste of time.
+			</li>
+		</ul>
+
+		<a name="refs"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="sectionTitle"> References </td> </tr>
+		</table>
+
+		<p>
+			Stuff you might find interesting and/or useful:
+		</p>
+
+		<ul>
+			<li>
+				For information about JUnit, you naturally want to visit the
+				<a href="http://www.junit.org/"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">JUnit home page</a>.
+			</li>
+			<li>
+				For an introduction to extreme programming, you should read
+				<a href="http://www.extremeprogramming.org/"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">Extreme Programming: A Gentle Introduction</a>
+				and then go to <a href="http://www.xprogramming.com/"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">XProgramming.com</a>.
+			</li>
+			<li>
+				A fantastic resource for patterns, anecdotes, and other useful
+				information is the
+				<a href="http://www.c2.com/cgi/wiki?WelcomeVisitors"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">Portland Pattern Repostory</a>.
+				You might want to start with the
+				<a href="http://www.c2.com/cgi/wiki?EjbUnitTest"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">EjbUnitTest</a>
+				page or the
+				<a href="http://www.c2.com/cgi/wiki?JunitEe"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">JunitEe</a> page.
+			</li>
+		</ul>
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
+			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
+      <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">  
+			</a></td></tr>
+					<tr><td align="right" width="50%">Web hosting provided by&nbsp; </td>
+		<td align="left"><a href="http://www.rossmueller.com">Oliver Rossmueller</a></td></tr>
+
+		</table>
+
+      </td></tr>
+    </table>
+	</body>
+</html>

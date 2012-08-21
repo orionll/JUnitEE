@@ -1,0 +1,669 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: usersguide.html,v 1.19 2004-05-27 22:56:16 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/usersguide.html,v $
+-->
+
+<html>
+	<head>
+		<title>JUnitEE User's Guide</title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+    <table>
+
+      <!-- ads -->
+      <tr><td colspan="3">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr> <td class="pageTitle"> JUnitEE </td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.19 $ </small> </td> </tr>
+        </table>
+      </td></tr>
+      <tr><td valign="top" align="left">
+        <table width="100%" height="100%" border="0" cellspacing="4" cellpadding="1" class="menuTable">
+          <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="releasenotes.html"><nobr>Release Notes</nobr></a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="usersguide.html"><nobr>User's Guide</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="antguide.html"><nobr>Ant HowTo<nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="tutorial.html">Tutorial</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="javadoc/index.html">JavaDoc</a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=31476">Download</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/projects/junitee"><nobr>Project page</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="contact.html">Contact</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe"><nobr>JUnitEE Wiki</nobr></a></td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+			<tr> <td class="documentTitle"> User's Guide </td> </tr>
+		</table>
+
+		<p>
+    JUnitEE is an extension to the <a href="http://www.junit.org"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">JUnit test framework</a>. JUnit provides the framework for writing
+    your unit tests, and JUnitEE gives you the possibility to run these tests inside your application server. This has the advantage
+    of testing your EJB/servlet-based application in the same environment it will run when in production.
+    <p>
+
+    <p>You may operate the JUnit TestRunner in one of two different modes:
+    <ul>
+    <li>in <code>Basic Test Mode</code> the TestRunner will execute a set of test suites which has to be defined manually</li>
+    <li>in <code>Smart Test Mode</code> the TestRunner will try to find all test suites available in one or more jar files included in the .war file
+    and will allow you to choose which of the tests should be run</li>
+    </ul>
+    </p>
+
+    <p>This guide will tell you how to <a href="#package">package JUnitEE</a> and your test cases to a deployable web archive. It will also describe the
+    user interface of the <a href="#runner">JUnitEE TestRunner</a> and how to integrate JUnitEE with your Ant build process by using the
+    <a href="#anttask">JUnitEE Ant tasks</a>. Finally there are some <a href="#security">SecurityManager issues</a> related to the deployment of JUnitEE.
+    </p>
+
+    <a name="package"></a>
+
+	<table cellspacing="0" cellpadding="0" width="100%">
+	  <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">Packaging JUnitEE</td></tr>
+	</table>
+
+    <p>Adding JUnitEE to your server application is quite easy. You just have to create a web application which contains the
+    JUnitEE Test Servlet and your test classes. Place <code>junitee.jar</code> and <code>junit.jar</code> and the jar containing your tests
+    in the <code>WEB-INF/lib</code> directory of the web archive. The minimal deployment descriptor contains the declaration of the JUnitEE servlet and
+    the corresponding servlet mapping. JUnitEE provides three servlets which differ in the format of the test report they generate by default and the thread
+    mode they use. In general you will use <code>org.junitee.servlet.JUnitEEServlet</code>:
+    </p>
+
+    <p>
+    <div class="code"><code>
+			<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;</pre></code>
+    </div>
+    </p>
+    <p>
+    <b>IMPORTANT NOTE:</b> Orion Application Server has a bug in it's url pattern matching algorithm that
+    causes some problems for JUnitEE. If you are using Orion please change the servlet mapping in the deployment descriptor to
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>This servlet generates html output by default and does not fork a new thread for test execution.</p>
+    <p>Another servlet provided by JUnitEE is <code>org.junitee.servlet.JUnitEEThreadedServlet</code> which by default forks a new thread for
+    test execution. This is usefull if test execution takes a long time and therefore could be interrupted by socket or browser timeouts. For the other
+    servlets you get the same behaviour by using the <a href="#parameters"><code>thread</code></a> parameter in the request. To use this servlet the
+    deployment descriptor looks like this:
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEThreadedServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>In case you prefer xml output you use <code>org.junitee.servlet.JUnitEEXMLServlet</code>:
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd"&gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt; Einstein Unit Tester Web Application &lt;/display-name&gt;
+
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEXMLServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/TestServlet/*&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>All three servlets support the <a href="#parameters"><code>output</code></a> request parameter to overwrite the default behaviour, so it is possible
+    to use the <code>org.junitee.servlet.JUnitEEServlet</code> to produce xml output and to get html output out of the <code>org.junitee.servlet.JUnitEEXMLServlet</code>.</p>
+
+    <p>To use the <code>Smart Test Mode</code> of JUnitEE you have to tell the servlet which jar file in the <code>WEB-INF/lib</code> folder of your
+    war file contains your test cases. Therefore you have to add an init parameter named <code>searchResources</code> to the servlet declaration. Considering
+    that the jar file <code>WEB-INF/lib/test.jar</code> contains the test classes, this looks like
+    </p>
+
+    <p>
+    <div class="code"><code>
+			<pre>&lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;searchResources&lt;/param-name&gt;
+      &lt;param-value&gt;test.jar&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/servlet&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>Note that the parameter value is the name of the jar file relative to <code>WEB-INF/lib</code>. You may also tell JUnitEE to search more than one
+    file for your tests. In this case the parameter value is a comma-separated list of file names like in this example:
+
+    <p>
+    <div class="code"><code>
+			<pre>&lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junite.servlet.JUnitEEServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;searchResources&lt;/param-name&gt;
+      &lt;param-value&gt;unit-test.jar, functional-test.jar&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/servlet&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>JUnitEE will look for classes with a name ending with <code>Test</code> or <code>Tests</code> in the jar files you specified.
+    </p>
+    <p>An alternative way to use the <code>Smart Test Mode</code> is to add a text file named <code>WEB-INF/testCase.txt</code> to your .war file.
+    If no jar files are specified, JUnitEE will look for that file and use the list of test case names declared in <code>testCase.txt</code> instead.
+    <code>testCase.txt</code> has to be a simple text file containing one test class name per line like in this example:
+    </p>
+
+    <p>
+    <div class="code"><code>
+			<pre># This is a comment
+org.junitee.example.SimpleUnitTests
+org.junitee.example.ComplexUnitTests</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>A convenient way to create the <code>testCase.txt</code> file is by using the <a href="#juniteewar">JUnitEEWar Ant task</a>.</p>
+
+    <p>Finally there is the option to use the <a href="#parameters"><code>search</code></a> request parameter to specify the resources.</p>
+
+
+    <p>In case you want your test servlet to generate xml output it is possible to define the URL of a stylesheet by using the init parameter named
+    <code>xslStylesheet</code>:
+    </p>
+
+    <p>
+    <div class="code"><code>
+			<pre>&lt;servlet&gt;
+    &lt;servlet-name&gt;JUnitEETestServlet&lt;/servlet-name&gt;
+    &lt;description&gt;JUnitEE test runner&lt;/description&gt;
+    &lt;servlet-class&gt;org.junitee.servlet.JUnitEEXMLServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;xslStylesheet&lt;/param-name&gt;
+      &lt;param-value&gt;myStylesheet&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/servlet&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+    <p>JUnitEE will use this information to add a stylesheet instruction to the generated xml. Another way to obtain the same result is to use the
+    <a href="#parameters"><code>xsl</code></a> request parameter.</p>
+
+    <p>The final step is to package the <code>test.war</code> together with your application in an EAR and to deploy it to your application server.
+    Now you may start your tests from any browser you like.
+    </p>
+
+    <p>The JUnitEE distribution contains an <a href="#anttask">Ant task</a> which automates the creation of the
+    <code>test.war</code> including the deployment descriptor and <code>testCase.txt</code>, so you don't have to create the web archive manually.
+    But anyway it's good to know what's going on behind the scenes.
+    </p>
+
+
+
+    <a name="runner"></a>
+
+	<table cellspacing="0" cellpadding="0" width="100%">
+	  <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">JUnitEE TestRunner</td></tr>
+	</table>
+
+    <p>After deploying your <code>test.war</code> the JUnitEE TestRunner is ready to execute your tests. Enter the URL to the JUnitEE servlet in your
+    browser - for the example above this would be <code>http://my.host:port/test/TestServlet</code> where <code>test</code> is the name of the .war and
+    <code>TestServlet</code> is the URL pattern the JUnitEE servlet is mapped to. Your browser should now display the user interface of the JUnitEE TestRunner:
+    </p>
+
+    <p>
+    <table cellspacing="0" cellpadding="0" width="100%">
+    <tr><td>&nbsp;</td></tr>
+    <tr><td width="100%" align="center"><img src="runner.png" widht="600" height="469" alt="Screenshot JUnitEE TestRunner"></td></tr>
+    <tr><td>&nbsp;</td></tr>
+    </table>
+    </p>
+
+    <p>You may now enter the name of your test class in the text field or choose from the list of available test cases. In any case press the
+    corresponding <code>Run</code> button to start execution of the tests. (Note that the lis of available test cases is shown only if the
+    servlet is configured for the <code>Smart Test Mode</code>).
+    </p>
+
+    <p>It is also possible to expand all the view to display all available tests. Use the link labeled &quot;show tests&quot;
+    to list all tests:
+    </p>
+
+    <p>
+    <table cellspacing="0" cellpadding="0" width="100%">
+    <tr><td>&nbsp;</td></tr>
+    <tr><td width="100%" align="center"><img src="runner_methods.png" widht="600" height="469" alt="Screenshot JUnitEE TestRunner"></td></tr>
+    <tr><td>&nbsp;</td></tr>
+    </table>
+    </p>
+
+    <p>Now it is possible to select a single test for execution. Use the link labeled &quot;hide tests&quot;
+    to toggle the view back to display test suites only.
+    </p>
+
+    <p>After some time - it depends on how long the selected tests will run - your browser will display the test report generated by the JUnitEE TestRunner
+    like in this example:
+    </p>
+
+    <p>
+    <table cellspacing="0" cellpadding="0" width="100%">
+    <tr><td>&nbsp;</td></tr>
+    <tr><td width="100%" align="center"><img src="result.png" widht="601" height="428" alt="Screenshot JUnitEE TestRunner"></td></tr>
+    <tr><td>&nbsp;</td></tr>
+    </table>
+    </p>
+
+    <p>The test report is separated in three parts:
+    <ul>
+    <li>the summary shows the list of all executed test suites and their test result</li>
+    <li>for each test suite there is a list of executed tests with their respective test results</li>
+    <li>for each failed test there is a detailed description of the reason for the failure</li>
+    </ul>
+    </p>
+    <p>The icons showing the result of a test suite/test have the following meaning:
+    <div class="list">
+    <table>
+      <tr><td><img src="bullets_green_hook.png" width="14" height="14" alt="success icon"></td><td>test suite/test successful</td></tr>
+      <tr><td><img src="bullets_orange_x.png" width="14" height="14" alt="failure icon"></td><td>test suite/test failed because an assertion failed</td></tr>
+      <tr><td><img src="bullets_red_x.png" width="14" height="14" alt="error icon"></td><td>test suite/test failed because of an error</td></tr>
+    </table>
+    </div>
+    </p>
+    <p>By clicking on one of this icons the corresponding test suite or test will be executed again which is useful if you would like to debug failed tests.
+    </p>
+    <p>By clicking on the <img src="info.png" height="14" width="14" alt="info icon"> icon in the summary the browser will scroll to the list of corresponding
+    tests. By clicking on the <img src="info.png" height="14" width="14" alt="info icon"> icon in the list of executed tests (available only for failed tests)
+    the browser will scroll to the description of the failure/error.
+    </p>
+
+    <a name="parameters"></a>
+    <p>Here is a description of all request parameters the JUnitEE servlet will accept:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">JUnitEE servlet request parameters</td></tr>
+        <tr><td class="tablehead">Parameter</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">suite</td><td class="whiterow">Defines the class name of the test suite to be executed by the test servlet.
+        This parameter may be used multiple times in one request.</td><td class="whiterow">YES</td></tr>
+        <tr><td class="coloredrow">all</td><td class="coloredrow">Tell the servlet to run all tests it has found. This will work only if one of the
+        following conditions is true:
+        <ul>
+        <li>the init parameter <code>searchResources</code> of the servlet is set</li>
+        <li>the file <code>WEB-INF/testCase.txt</code> is available</li>
+        <li>the <code>search</code> request parameter is set</li>
+        </ul>
+        </td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">search</td><td class="whiterow">Define the resource the servlet should use to search for test classes.</td>
+        <td class="whiterow">If there is no <code>searchResource</code> init parameter and no <code>WEB-INF/testCase.txt</code></td></tr>
+        <tr><td class="coloredrow">output</td><td class="coloredrow">Tell the servlet to generate the test report in the given format. JUnitEE supports
+        <ul>
+        <li><code>html</code> for the html test report described above</li>
+        <li><code>xml</code> for a test report in xml format</li>
+        </ul>
+        </td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">xsl</td><td class="whiterow">Define the URL of an xsl stylesheet. This URL will be used to generate a stylesheet
+        instruction at the beginning of the xml output (in case xml output is active).</td>
+        <td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">thread</td><td class="coloredrow">Tell the servlet to fork a new thread to run the tests. A thread will be
+        forked if this parameter is <code>true</code> and two or more <code>suite</code> parameters or <code>all</code> is set.<br><br>You should use
+        this feature for <code>html</code> output only, because in this case the output will be refreshed in the browser until all tests are
+        finished or test execution is stopped by the user. For <code>xml</code> output there is not way for an automatic refresh.</td><td class="coloredrow">No</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+    </table>
+    </div>
+    </p>
+
+
+   <a name="anttask"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+		  <tr><td>&nbsp;</td></tr>
+			<tr> <td class="sectionTitle">JUnitEE Ant Task</td> </tr>
+		</table>
+
+    <p>JUnitEE provides two Ant task to integrate execution of your JUnitEE tests with your build process:
+      <ul>
+        <li>the JUnitEEWar task creates the .war file you need to run your tests inside a servlet container
+        (similar to the War task included in the standard Ant distribution)</li>
+        <li>the JUnitEE task allows you to start execution of your server-side tests from within your ant build script
+        (similar to the JUnit task included in the standard Ant distribution)</li>
+      </ul>
+    </p>
+
+    <p>To use these tasks you have to declare them as external tasks in your build script:
+      <div class="code"><code>
+	    <pre>&lt;taskdef name=&quot;junitee&quot; classname=&quot;org.junitee.anttask.JUnitEETask&quot;&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;
+
+&lt;taskdef name=&quot;juniteewar&quot; classname=&quot;org.junitee.anttask.JUnitEEWarTask&quot;&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;</pre></code>
+      </div>
+    </p>
+    <br>
+    <p>The <code>JUnitEETask</code> supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">JUnitEETask attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">url</td><td class="whiterow">URL of the JUnitEE Test Servlet</td><td class="whiterow">YES</td></tr>
+        <tr><td class="coloredrow">haltonfailure</td><td class="coloredrow">Stop the build if a failure occurs</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">printsummary</td><td class="coloredrow">Print a summary of all executed tests</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">filtertrace</td><td class="whiterow">Filter the stack trace in case of an error/failure. This removes JUnit methods from the stack trace.</td><td class="whiterow">No; default is true</td></tr>
+        <tr><td class="coloredrow">threaded</td><td class="coloredrow">Run tests in threaded mode to avoid HTTP timeouts</td><td class="coloredrow">No; default is true</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+    <p>The results of the tests can be printed in different formats. To specify the format of the output <code>&lt;junitee&gt;</code> may contain
+    nested <code>&lt;formatter&gt;</code> elements. The output of a formatter will always be sent to a file, unless you set the <code>usefile</code>
+    attribute to <code>false</code>. The name of the file is determined by the name of the test and can be set by the <code>outfile</code> attribute of <code>&lt;test&gt;</code>.
+    </p>
+    <p>There are two predefined formatters - one prints the test results in XML format, the other emits plain text. The formatter named <code>plain</code>
+    will only print detailed information for testcases that failed, while <code>plain</code> gives a little statistics for all test cases.
+    Custom formatters that need to implement <code>org.junitee.anttask.JUnitEEResultFormatter</code> can be specified using the <code>classname</code> attribute.
+    </p>
+    <p>The <code>formatter</code> element supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">Formatter attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">type</td><td class="whiterow">Use a predefined formatter (either <code>xml</code>, <code>plain</code>, or <code>brief</code>).</td><td class="whiterow">YES, if <code>classname</code> is not set.</td></tr>
+        <tr><td class="coloredrow">classname</td><td class="coloredrow">Name of a custom formatter class.</td><td class="coloredrow">YES, if <code>type</code> is not set.</td></tr>
+        <tr><td class="whiterow">extension</td><td class="whiterow">Extension to append to the output filename.</td><td class="whiterow">YES, if <code>classname</code> has been specified.</td></tr>
+        <tr><td class="coloredrow">usefile</td><td class="coloredrow">Boolean that determines whether output should be sent to a file.</td><td class="coloredrow">No; default is <code>true</code></td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+	<p>The task requires a set of nested <code>&lt;test&gt;</code> elements to define which tests to run. Each <code>&lt;test&gt;</code> may contain nested <code>&lt;formatter&gt;</code> elements which are added
+	to the list of formatters specified by <code>&lt;junitee&gt;</code>. The following attributes are supported by <code>&lt;test&gt;</code>:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">Test attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">name</td><td class="whiterow">Name of the test class to be executed</td><td class="whiterow">If <code>runall</code> is not set</td></tr>
+        <tr><td class="coloredrow">runall</td><td class="coloredrow">Execute all tests</td><td class="coloredrow">If <code>name</code> is not set</td></tr>
+        <tr><td class="whiterow">resource</td><td class="whiterow">Comma-separated list of all resources containing test classes</td>
+        <td class="whiterow">If <code>runall</code> is set and the test servlet is not configured for <code>Smart Test Mode</code>. This attribute will overwrite the configuration of the servlet.</td></tr>
+        <tr><td class="coloredrow">failureproperty</td><td class="coloredrow">Specify a property that will be set in case a this test failes</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">errorproperty</td><td class="whiterow">Specify a property that will be set in case an error caused this test to fail</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">haltonfailure</td><td class="coloredrow">Stop the build if this test fails</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">haltonerror</td><td class="whiterow">Stop the build if an error or a failure occurs while running this test</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">filtertrace</td><td class="coloredrow">Filter the stack trace in case of an error/failure. This overwrites the setting of the
+        task.</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">outfile</td><td class="whiterow">Base name of the test result. The full filename is determined by this attribute, the name of the test and the extension of the formatter.</td>
+        <td class="whiterow">No; default is <code>TEST-</code>, or <code>TEST-ALL-</code> if <code>runall</code> is set for this test.</td></tr>
+        <tr><td class="coloredrow">todir</td><td class="coloredrow">Directory to write the reports to.</td><td class="coloredrow">No; default is the current directory.</td></tr>
+        <tr><td class="whiterow">if</td><td class="whiterow">Only run test if the named property is set.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">unless</td><td class="coloredrow">Only run test if the named property is <b>not</b> set.</td><td class="coloredrow">No</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+
+    <p>The following example will run the test suite <code>org.infohazard.test.EinsteinTest</code> and halt the build if a failure occurs.
+    <div class="code"><code>
+      <pre>&lt;target name="run-tests"&gt;
+  &lt;junitee url="http://localhost:8080/exampletest/TestServlet"&gt;
+    &lt;test name="org.infohazard.test.EinsteinTest" haltonfailure="true" /&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;
+</pre></code>
+    </div>
+    </p>
+    <p>
+    The next example will run all tests available in <code>WEB-INF/lib/mytests.jar</code>.
+    <div class="code"><code>
+      <pre>&lt;target name="run-tests"&gt;
+  &lt;junitee url="http://localhost:8080/exampletest/TestServlet"&gt;
+    &lt;test runall="true" resource="WEB-INF/lib/mytests.jar" /&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;</pre></code>
+    </div>
+    </p>
+    <br>
+
+    <a name="juniteewar"></a>
+    <p>The <code>JUnitEEWarTask</code> is an extension of the <code>War</code> task available in the standard Ant distribution. In addition to the
+    attributes of the <code>War</code> task the <code>JUnitEEWarTask</code> supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">JUnitEEWarTask attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <tr><td class="whiterow">testjarname</td><td class="whiterow">This parameter defines the name of the <code>.jar</code>
+              file which will contain all the test classes defined in the nested <code>&lt;classes&gt;</code> element.
+              This file will then be placed in the <code>WEB-INF/lib</code> directory of the <code>war</code> file.
+              If this parameter is not set, the test classes will be stored in the <code>WEB-INF/classes</code> directory of the <code>war</code>
+              file.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">servletclass</td><td class="coloredrow">Specify the servlet class which will be used to generate the <code>web.xml</code>.</td><td class="coloredrow">No</td></tr>
+        <tr><td class="whiterow">webxml</td><td class="whiterow">The deployment descriptor to use (WEB-INF/web.xml). This attribute workes like in the <code>War</code> task, except that
+        if not set, <code>web.xml</code> will be generated.</td><td class="whiterow">No</td></tr>
+        <tr><td class="coloredrow">htmlRefreshDelay</td><td class="coloredrow">Specify the interval the result page will be reloaded in threaded mode.</td><td class="coloredrow">No; default is 2 seconds.</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+    <p>In addition to the <code>War</code> task, the <code>JUnitEEWarTask</code> supports nested <code>&lt;testcase&gt;</code> elements which specify a
+    FileSet. All files included in this fileset are the Junit test cases which will be executed if <code>all=true</code> is used when calling the JUnitEE servlet.
+    </p>
+
+    <p>To use EJBs from your test cases it is possible to declare EJB references which should be included
+    in the generated deployment descriptor of the <code>war</code> file using nested <code>&lt;ejbRef&gt;</code> elements. An <code>&lt;ejbRef&gt;</code> element supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">ejbRef attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <td class="whiterow">ejbRefName</td><td class="whiterow">set <code>&lt;ejb-ref-name&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">ejbRefType</td><td class="coloredrow">set <code>&lt;ejb-ref-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">home</td><td class="whiterow">set <code>&lt;home&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">remote</td><td class="coloredrow">set <code>&lt;remote&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">ejbLink</td><td class="whiterow">set <code>&lt;ejbLink&gt;</code> value</td><td class="whiterow">No</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+
+    <p>To use local EJBs from your test cases it is possible to declare EJB local references which should be included
+    in the generated deployment descriptor of the <code>war</code> file using nested <code>&lt;ejbLocalRef&gt;</code> elements. An <code>&lt;ejbLocalRef&gt;</code> element supports the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">ejbLocalRef attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <td class="whiterow">ejbRefName</td><td class="whiterow">set <code>&lt;ejb-ref-name&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">ejbRefType</td><td class="coloredrow">set <code>&lt;ejb-ref-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">localhome</td><td class="whiterow">set <code>&lt;local-home&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">local</td><td class="coloredrow">set <code>&lt;local&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">ejbLink</td><td class="whiterow">set <code>&lt;ejbLink&gt;</code> value</td><td class="whiterow">No</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+
+    <p>Finally the <code>JUnitEEWarTask</code> supports nested <code>&lt;resourceRef&gt;</code> elements to delcare resource reference entries to be included
+    in the generated deployment descriptor of the <code>war</code> file. <code>&lt;resourceRef&gt;</code> elements provide the following attributes:
+    <div>
+      <table align="center" width="100%" cellspacing="2" cellpadding="2">
+        <tr><td colspan="3" class="tabletitle">resourceRef attributes</td></tr>
+        <tr><td class="tablehead">Attribute</td><td class="tablehead">Description</td><td class="tablehead">Required</td></tr>
+        <td class="whiterow">resRefName</td><td class="whiterow">set <code>&lt;res-ref-name&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <td class="coloredrow">resType</td><td class="coloredrow">set <code>&lt;res-type&gt;</code> value</td><td class="coloredrow">Yes</td></tr>
+        <td class="whiterow">resAuth</td><td class="whiterow">set <code>&lt;res-auth&gt;</code> value</td><td class="whiterow">Yes</td></tr>
+        <tr><td colspan="3" class="footer">&nbsp;</td></tr>
+      </table>
+    </div>
+    </p>
+
+
+
+      <p>Consider for the following example that you have a project with the following characteristics:
+        <ul>
+          <li>the classes to test are located in the directory <code>build/classes</code></li>
+          <li>the test classes are compiled to the directory <code>build/test</code></li>
+          <li>the test classe names have <code>Test</code> as their prefix</li>
+          <li>the <code>.jar</code> files you need are stored in the <code>lib</code> directory</li>
+        </ul>
+      </p>
+
+      <p>In this case the following Ant target will build a file called <code>myTest.war</code> which contains
+        <ul>
+          <li><code>junit.jar</code> and <code>junitee.jar</code> under <code>WEB-INF/lib</code></li>
+          <li>the classes to test and all test cases under <code>WEB-INF/classes</code></li>
+          <li>a file named <code>WEB-INF/testCase.txt</code> which contains a list of all test case names</li>
+          <li>a file named <code>index.html</code> which allows you to run tests manually using your browser</li>
+          <li>the deployment descriptor <code>WEB-INF/web.xml</code> which makes  <code>myTest.war</code> a deployable web archive</li>
+        </ul>
+      </p>
+
+      <p>
+      <div class="code"><code>
+        <pre>&lt;juniteewar destFile=&quot;myTest.war&quot;&gt;
+  &lt;lib dir=&quot;lib&quot; includes=&quot;junitee.jar&quot;/&gt;
+  &lt;lib dir=&quot;lib&quot; includes=&quot;junit.jar&quot;/&gt;
+  &lt;classes dir=&quot;build/classes&quot;&gt;
+    &lt;include name=&quot;**/*.class&quot;/&gt;
+  &lt;/classes&gt;
+  &lt;classes dir=&quot;build/test&quot;&gt;
+    &lt;include name=&quot;**/*.class&quot;/&gt;
+  &lt;/classes&gt;
+  &lt;testcases dir=&quot;build/test&quot;&gt;
+    &lt;include name=&quot;**/Test*.class&quot;/&gt;
+  &lt;/testcases&gt;
+&lt;/juniteewar&gt;</pre></code>
+      </div>
+      </p>
+<br>
+   <a name="cactus"></a>
+		<table cellspacing="0" cellpadding="0" width="100%">
+		  <tr><td>&nbsp;</td></tr>
+			<tr> <td class="sectionTitle">Jakarta Cactus support</td> </tr>
+		</table>
+
+    <p>All JUnitEE servlets set the system property
+    <code>cactus.contextURL</code> to the context of the web application the JUnitEE servlet is part of. Therefore you don't have to specify
+    this property another way (e.g. by providing a <code>client.properties</code> file as part of your web application) when using JUnitEE to run
+    Cactus tests.
+    </p>
+
+    <a name="security"></a>
+
+	<table cellspacing="0" cellpadding="0" width="100%">
+	  <tr><td>&nbsp;</td></tr>
+	  <tr><td class="sectionTitle">SecurityManager issues</td></tr>
+	</table>
+
+    <p>JUnitEE takes some actions which are under control of the Java security manager:
+    <ul>
+    <li>set the system property <code>cactus.contextURL</code></li>
+    <li>read the file <code>junit.properties</code> from user home
+    </ul>
+    In case the security manager is enabled in your J2EE environment (which for example is the case for the J2EE reference
+    implementation provided by Sun) you have to grant permission for these actions in your security policy:
+    </p>
+    <p>
+    <div class="code"><code>
+			<pre>grant {
+    permission java.util.PropertyPermission &quot;cactus.contextURL&quot;, &quot;read,write&quot;;
+    // replace <code>&lt;USERHOME&gt;</code> with your home directory
+    permission java.io.FilePermission &quot;&lt;USERHOME&gt;\junit.properties&quot;, &quot;read&quot;;
+};</pre></code>
+    </div>
+    </p>
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
+			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
+      <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">
+			</a></td></tr>
+		<tr><td align="right" width="50%">Web hosting provided by&nbsp; </td>
+		<td align="left"><a href="http://www.rossmueller.com">Oliver Rossmueller</a></td></tr>
+		</table>
+
+      </td></tr>
+    </table>
+	</body>
+</html>

@@ -1,0 +1,11 @@
+Buildfile: build.xml
+
+run-tests-if:
+     [echo] property is not set, so do not run the tests ...
+     [echo] property is set, so run the tests ...
+  [junitee] org.junitee.ejb.einstein.test.EinsteinTest (runs: 3 errors: 1 failures: 1 time: 0.046 sec)
+  [junitee] TEST FAILED
+
+
+BUILD SUCCESSFUL
+Total time: 3 seconds

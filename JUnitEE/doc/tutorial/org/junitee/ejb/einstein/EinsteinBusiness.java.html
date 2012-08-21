@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.0.9">
+<TITLE>org.junitee.ejb.einstein.EinsteinBusiness (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinBusiness</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="MultiLineComment">/*
+<A NAME="2"></A> * $Id: EinsteinBusiness.java.html,v 1.1 2002-09-22 22:32:41 o_rossmueller Exp $
+<A NAME="3"></A> * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/tutorial/org/junitee/ejb/einstein/EinsteinBusiness.java.html,v $
+<A NAME="4"></A> */</FONT>
+<A NAME="5"></A>
+<A NAME="6"></A><FONT ID="Package">package</FONT> <A HREF="../../../../org.junitee.ejb.einstein.index.html" target="packageFrame">org.junitee.ejb.einstein</A>;
+<A NAME="7"></A>
+<A NAME="8"></A><FONT ID="Import">import</FONT> java.rmi.RemoteException;
+<A NAME="9"></A>
+<A NAME="10"></A><FONT ID="Import">import</FONT> <A HREF="../../../../org/junitee/ejb/einstein/BadNumberException.java.html">org.junitee.ejb.einstein.BadNumberException</A>;
+<A NAME="11"></A>
+<A NAME="12"></A><FONT ID="FormalComment">/**
+<A NAME="13"></A> * EinsteinBusiness defines the business methods of the Einstein bean
+<A NAME="14"></A> */</FONT>
+<A NAME="15"></A><FONT ID="Public">public</FONT> <FONT ID="Interface">interface</FONT> EinsteinBusiness
+<A NAME="16"></A>{
+<A NAME="17"></A>    <FONT ID="FormalComment">/**
+<A NAME="18"></A>     * Adds two decimal numbers (in string form) and returns the result as a String.
+<A NAME="19"></A>     *
+<A NAME="20"></A>     * @throws org.junitee.ejb.einstein.BadNumberException if a parameter couldn't be converted to a number.
+<A NAME="21"></A>     *         This is used instead of NumberFormatException because NFE is a
+<A NAME="22"></A>     *         RuntimeException and triggers a RemoteException (rollback) in some
+<A NAME="23"></A>     *         containers.
+<A NAME="24"></A>     */</FONT>
+<A NAME="25"></A>    <FONT ID="Public">public</FONT> String addTwoNumbers(String first, String second) <FONT ID="Throws">throws</FONT> <A HREF="../../../../org/junitee/ejb/einstein/BadNumberException.java.html">BadNumberException</A>, RemoteException;
+<A NAME="26"></A>
+<A NAME="27"></A>    <FONT ID="FormalComment">/**
+<A NAME="28"></A>     * Calculate e = mc2
+<A NAME="29"></A>     * @throws java.rmi.RemoteException
+<A NAME="30"></A>     */</FONT>
+<A NAME="31"></A>    <FONT ID="Public">public</FONT> <FONT ID="Double">double</FONT> emc2(<FONT ID="Double">double</FONT> m, <FONT ID="Double">double</FONT> c) <FONT ID="Throws">throws</FONT> RemoteException;
+<A NAME="32"></A>
+<A NAME="33"></A>}
+<A NAME="34"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">EinsteinBusiness</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

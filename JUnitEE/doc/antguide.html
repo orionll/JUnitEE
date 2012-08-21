@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+	$Id: antguide.html,v 1.7 2004-05-28 11:15:19 o_rossmueller Exp $
+	$Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/doc/antguide.html,v $
+-->
+
+<html>
+	<head>
+		<title>JUnitEE Ant HowTo</title>
+
+		<link rel="stylesheet" href="stylesheet.css" type="text/css">
+	</head>
+
+	<body>
+    <table>
+
+      <!-- ads -->
+      <tr><td colspan="3">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr> <td class="pageTitle">JUnitEE</td> </tr>
+          <tr> <td align="right"> <small> $Revision: 1.7 $ </small> </td> </tr>
+        </table>
+      </td></tr>
+      <tr><td valign="top" align="left">
+        <table width="100%" height="100%" border="0" cellspacing="4" cellpadding="1" class="menuTable">
+          <tr><td class="menu"><a class="menu" href="index.html">Home</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="news.html">News</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="releasenotes.html"><nobr>Release Notes</nobr></a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menu"><a class="menu" href="usersguide.html"><nobr>User's Guide</nobr></a></td></tr>
+          <tr><td class="menuSelected"><a class="menuSelected" href="antguide.html"><nobr>Ant HowTo<nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="tutorial.html">Tutorial</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="javadoc/index.html">JavaDoc</a></td></tr>
+          <tr><td class="menu"></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/project/showfiles.php?group_id=31476">Download</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://sourceforge.net/projects/junitee"><nobr>Project page</nobr></a></td></tr>
+          <tr><td class="menu"><a class="menu" href="contact.html">Contact</a></td></tr>
+          <tr><td class="menu"><a class="menu" href="http://www.c2.com/cgi/wiki?JunitEe"><nobr>JUnitEE Wiki</nobr></a></td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width="100%" valign="top">
+
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td class="documentTitle">Ant HowTo</td></tr>
+	  </table>
+
+      <p>JUnitEE allows you to manually run test cases inside your application server. This guide will show you
+      how to integrate the creation of the test.war and execution of your server test cases into your Ant build scripts. By doing so you will be
+      able to automatically run - or better let Ant run - your test cases as part of your build process.
+      </p>
+      <p>For this purpose JUnitEE contains two Ant tasks:
+      <ul>
+      <li>the JUnitEEWar task creates the .war file you need to run your tests inside a servlet container
+      (similar to the War task included in the standard Ant distribution)</li>
+      <li>the JUnitEE task allows you to start execution of your server-side tests from within your ant build script
+      (similar to the JUnit task included in the standard Ant distribution)</li>
+      </ul>
+      </p>
+      <p>This HowTo will describe these tasks in more detail and show you how to use them to automate your server-side test execution.
+      </p>
+
+      <p>We assume that you have your application and your JUnitEE test cases up and running. And we also assume that you
+      already use Ant as your build system. Otherwise please check the <a href="http://jakarta.apache.org/ant/"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">Ant documentation</a>
+      to learn more about this great and useful build tool.
+      </p>
+      <p>Before we start, you will need another software package in addition to your app server, your application, JUnit, JUnitEE, Ant,
+      and the appropriate JDK: the
+      <a href="http://jakarta.apache.org/cactus/index.html"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">Cactus test framework</a>
+      </p>
+      <p>Cactus also provides a way for testing server-side functionality of your applications. But as this is a JUnitEE guide, we will not use
+      Cactus as our test framework (Cactus is a little bit more complex in usage than JUnitEE but has also some nice features, so it might be
+      worth a closer look), but will reuse a very usefull Ant task that ships with Cactus. Details will follow soon.
+      </p>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		<tr><td class="sectionTitle">Declare the JUnitEE Ant tasks</td></tr>
+	  </table>
+    
+	  <p>The first step in using the JUnitEE tasks is to declare them in your build script:
+	  </p>
+      <div class="code"><code>
+	    <pre>&lt;taskdef name=&quot;junitee&quot; classname=&quot;org.junitee.anttask.JUnitEETask&quot;&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;
+
+&lt;taskdef name=&quot;juniteewar&quot; classname=&quot;org.junitee.anttask.JUnitEEWarTask&quot;&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;</pre></code>
+      </div>
+
+      <p>You have to replace <code>lib/junitee-anttaks.jar</code> in this example with the location of the
+      <code>junitee-anttask.jar</code> in your directory structure.
+	  </p>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		<tr><td class="sectionTitle">Build the test.war</td></tr>
+	  </table>
+
+      <p>Now that Ant knows about the JUnitEE tasks we will first use the JUnitEEWar task to create the <code>test.war</code>.
+      Consider that you have a project with the following characteristics:
+      </p>
+
+      <p><ul>
+        <li>the classes to test are located in <code>build/classes</code></li>
+        <li>the test classes are compiled in the directory <code>build/test</code></li>
+        <li>the test classes names have <code>Test</code> as a prefix</li>
+        <li>the <code>.jar</code> files you need are stored in the  <code>lib</code> directory</li>
+      </ul></p>
+
+      <p>The following Ant task</p>
+
+
+
+      <div class="code"><code>
+        <pre>&lt;juniteewar destFile=&quot;myTest.war&quot;&gt;
+  &lt;lib dir=&quot;lib&quot; includes=&quot;junitee.jar&quot;/&gt;
+  &lt;lib dir=&quot;lib&quot; includes=&quot;junit.jar&quot;/&gt;
+  &lt;classes dir=&quot;build/classes&quot;&gt;
+    &lt;include name=&quot;**/*.class&quot;/&gt;
+  &lt;/classes&gt;
+  &lt;classes dir=&quot;build/test&quot;&gt;
+    &lt;include name=&quot;**/*.class&quot;/&gt;
+  &lt;/classes&gt;
+  &lt;testcases dir=&quot;build/test&quot;&gt;
+    &lt;include name=&quot;**/Test*.class&quot;/&gt;
+  &lt;/testcases&gt;
+&lt;/juniteewar&gt;</pre></code>
+      </div>
+
+      <p>will build a file called <code>myTest.war</code> which contains
+        <ul>
+          <li><code>junit.jar</code> and <code>junitee.jar</code> under <code>WEB-INF/lib</code></li>
+          <li>the classes to test and all test cases under <code>WEB-INF/classes</code></li>
+          <li>a file named <code>WEB-INF/testCase.txt</code> which contains a list of all test case names</li>
+          <li>a file named <code>index.html</code> which allows you to run tests manually using your browser</li>
+          <li>the deployment descriptor <code>WEB-INF/web.xml</code> which makes  <code>myTest.war</code> a deployable web archive</li>
+        </ul>
+      </p>
+
+      <p>It would be possible to deploy <code>myTest.war</code> and run your tests manually by pointing your browser to the URL
+      <code>http://your.server:port/myTest/index.html</code>. But we will automate these steps, too, so stay tuned.
+      </p>
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		<tr><td class="sectionTitle">Deploy the test.war and run the tests</td></tr>
+	  </table>
+
+	  <p>At this point we have a deployable .war file, so in the next step we have to tell Ant how to deploy the war and
+	  how to run the tests. Let's start with the second step and define a target named <code>do-run-tests</code>:
+      </p>
+
+      <div class="code"><code>
+			<pre>&lt;target name="do-run-tests"&gt;
+  &lt;junitee url="http://your.server:port/myTest/TestServlet" printsummary="true"&gt;
+    &lt;test runall="true"/&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;</pre></code>
+      </div>
+
+      <p>Executing this target will run all test cases included in <code>myTest.war</code> and print a summary of the test results to the console window.
+      </p>
+
+      <p>Now we have a deployable war file and an Ant target to run the tests. The last missing step is to automate the deploy-run-undeploy
+      cycle, and this is the moment when Jakarta Cactus enters the stage. Cactus provides an Ant task that does the following:
+      </p>
+      <ul>
+        <li>deploy your application and wait until deployment is finished by the application server</li>
+        <li>run your tests</li>
+        <li>and finally undeploy your application</li>
+      </ul>
+
+      <p>This is exactly what we need to reach our goal. Therefore we define another external task:
+      </p>
+
+      <div class="code"><code>
+        <pre>&lt;taskdef name="runservertests"
+  classname="org.apache.cactus.ant.RunServerTestsTask"
+  classpath="lib/cactus-ant.jar"/&gt;</pre></code>
+      </div>
+
+      <p>Now we are able to define our <tt>run-tests</tt> target:
+      </p>
+
+      <div class="code"><code>
+        <pre>&lt;target name="run-tests"&gt;
+  &lt;runservertests
+    testURL="http://your.server:port/myTest/TestServlet"
+    startTarget="deploy-test-ear"
+    stopTarget="undeploy-test-ear"
+    testTarget="do-run-tests" /&gt;
+&lt;/target&gt;</pre></code>
+      </div>
+
+    <p>
+    The testURL attribute has the same value as the url attribute of the <code>junitee</code> task in the <code>do-run-tests</code> target. The Cactus task will use this URL
+    to check wether deployment of the application is finished.
+    </p>
+    <p>
+    We do not show the <tt>deploy-test-ear</tt> and <tt>undeploy-test-ear</tt> targets here. Their purpose is - what a surprise :-) -
+    to deploy/undeploy <code>myTest.war</code>. There are different ways to get this done depending on your application server. Some servers
+    support hot deployment of applications, so it is enough to copy your application to some deploy directory. Others lack this feature
+    and therefore you have to restart the server to get your application (re)deployed. Or you have to use a command line tool to deploy
+    the application. We can not give a general example for this step, so it is up to you to get these two targets up and running. But
+    as you are working with your application server day by day, this shouldn't be too difficult.
+    </p>
+
+    <p>That's it! Whenever you execute the <tt>run-tests</tt> target, Ant will deploy your application, run the tests and undeploy the
+    application. And if there was a failure or error in one of the tests, the build process will be stopped with an error message.
+    </p>
+
+
+      <table cellspacing="0" cellpadding="0" width="100%">
+	    <tr><td>&nbsp;</td></tr>
+		<tr><td class="sectionTitle">Deploy the test.war and run the tests using hot deploy</td></tr>
+	  </table>
+
+	  <p>In case you are using an application server which supports hot deploy of your applications, things are a little
+	  bit easier. You just have to hot deploy the test.war by copying the file to the deploy directory, wait for deployment and then
+	  run the tests. Here is the ant task (thanks to Gregory Joseph):
+	  </p>
+
+ <div class="code"><code>
+        <pre>&lt;target name="run-tests"&gt;
+  &lt;taskdef name=&quot;junitee&quot; classname=&quot;org.junitee.anttask.JUnitEETask&quot;&gt;
+    &lt;classpath&gt;
+      &lt;pathelement location=&quot;lib/junitee-anttask.jar&quot;/&gt;
+    &lt;/classpath&gt;
+  &lt;/taskdef&gt;
+
+  &lt;copy file="myTest.war" todir="${test.deploy.dir}"/&gt;
+
+  &lt;waitfor maxwait="10000"&gt;
+    &lt;http url="http://your.server:port/myTest/TestServlet&gt;
+  &lt;/waitfor&gt;
+
+  &lt;echo&gt;Running JUnitEE tests&lt;/ant:echo&gt;
+
+  &lt;junitee url="http://your.server:port/myTest/TestServlet" printsummary="true"&gt;
+     &lt;test runall="true"/&gt;
+  &lt;/junitee&gt;
+&lt;/target&gt;</pre></code>
+      </div>
+
+   <p></p>
+
+
+    <table cellspacing="0" cellpadding="0" width="100%">
+	  <tr><td>&nbsp;</td></tr>
+	  <tr> <td class="sectionTitle"> Final considerations </td> </tr>
+    </table>
+
+    <p>This was a small and simple example to show you how to use JUnitEE in combination with Ant. Please have a look at the <a href="usersguide.html">JUnitEE User's Guide</a>
+    for a full documentation of the JUnitEE servlet and the JUnitEE Ant tasks, and also check the <a href="http://jakarta.apache.org/cactus/howto_ant_cactus.html"><img src="extlink.png" width="10" height="10" hspace="2" border="0" alt="external link">Cactus Ant HowTo</a>
+    for a more detailed description of the <tt>runservertests</tt> task.
+    </p>
+      
+
+
+		<table cellspacing="0" cellpadding="0" width="100%">
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" colspan="2">&nbsp;</td></tr>
+      <tr><td align="right" valign="middle" class="footer" colspan="2">&nbsp;</td></tr>
+			<tr><td align="right" valign="middle" width="50%">This project is hosted by&nbsp;</td>
+      <td align="left" valign="middle" width="50%"><a href="http://sourceforge.net">
+				<img src="http://sourceforge.net/sflogo.php?group_id=31476" width="88" height="31" border="0" alt="SourceForge Logo">  
+			</a></td></tr>
+		<tr><td align="right" width="50%">Web hosting provided by&nbsp; </td>
+		<td align="left"><a href="http://www.rossmueller.com">Oliver Rossmueller</a></td></tr>
+			
+		</table>
+
+      </td></tr>
+    </table>
+	</body>
+</html>
