@@ -8,3 +8,8 @@
 # Target Directories #
 JUnitEE/target
 JUnitEE-anttask/target
+
+# Eclipse Directories #
+.classpath
+.project
+.settings
