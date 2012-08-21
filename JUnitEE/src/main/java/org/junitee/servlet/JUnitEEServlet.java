@@ -71,8 +71,6 @@ public class JUnitEEServlet extends HttpServlet {
   public static final String OUTPUT_HTML = "html";
   public static final String OUTPUT_XML = "xml";
 
-  private static final String RESOURCE_PREFIX = "resource";
-
   private static final String TESTRUNNER_KEY = "testrunner";
   private static final String TESTRESULT_KEY = "testresult";
 
@@ -238,7 +236,14 @@ public class JUnitEEServlet extends HttpServlet {
 
 
   private void streamResource(String resource, HttpServletResponse response) throws IOException {
-    InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + resource);
+    if (resource.startsWith("/")) {
+      resource = resource.substring(1);
+    }
+    InputStream in = getClass().getClassLoader().getResourceAsStream(resource);
+    if (in == null)
+    {
+        throw new IllegalStateException("Resource not found: " + resource);
+    }
     OutputStream out = response.getOutputStream();
     byte[] buffer = new byte[1024];
     int r = 0;
@@ -491,7 +496,7 @@ public class JUnitEEServlet extends HttpServlet {
 
 
   protected void printIndexHtml(String[] testCases, String servletPath, String message, PrintWriter pw, boolean showMethods) throws IOException {
-    InputStream in = getClass().getClassLoader().getResourceAsStream(RESOURCE_PREFIX + "/runner.html");
+    InputStream in = getClass().getClassLoader().getResourceAsStream("runner.html");
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
     String line;
     StringBuffer bufferList = null;
