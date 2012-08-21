@@ -4,3 +4,7 @@
 *.jar
 *.war
 *.ear
+
+# Target Directories #
+JUnitEE/target
+JUnitEE-anttask/target
