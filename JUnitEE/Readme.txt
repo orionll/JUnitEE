@@ -10,6 +10,7 @@ Contact
 
 junitee-user mailing list (subscribe at http://lists.sourceforge.net/lists/listinfo/junitee-user)
 Oliver Rossmueller (oliver@rossmueller.com)
+John Kozlov (https://github.com/orionll)
 
 
 Change log
