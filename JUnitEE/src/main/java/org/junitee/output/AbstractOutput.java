@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junitee.runner.TestInfo;
 import org.junitee.runner.TestRunnerResults;
+import org.junitee.runner.TestSuiteInfo;
 
 /**
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
@@ -41,7 +42,7 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-  protected List getSuiteInfo() {
+  protected List<TestSuiteInfo> getSuiteInfo() {
     synchronized (results) {
       return results.getSuiteInfo();
     }
@@ -75,7 +76,7 @@ public abstract class AbstractOutput implements OutputProducer {
     }
   }
 
-  protected List getErrorMessages() {
+  protected List<String> getErrorMessages() {
     synchronized (results) {
       return results.getErrorMessages();
     }
@@ -93,7 +94,7 @@ public abstract class AbstractOutput implements OutputProducer {
    * an EJBException, and if it is, prints the nested
    * exception inside the EJBException.  This is necessary
    * because the EJBException.printStackTrace() method isn't
-   * intelligent enough to print the nexted exception.
+   * intelligent enough to print the nested exception.
    */
   protected String getEJBExceptionDetail(Throwable t) {
     if (t instanceof java.rmi.RemoteException) {

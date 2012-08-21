@@ -14,6 +14,7 @@ package org.junitee.servlet;
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
 public class JUnitEEThreadedServlet extends JUnitEEServlet {
+  private static final long serialVersionUID = 1L;
 
   @Override
   protected boolean getDefaultThreadMode() {

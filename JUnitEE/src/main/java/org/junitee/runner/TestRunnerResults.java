@@ -17,13 +17,13 @@ import junit.framework.Test;
  */
 public class TestRunnerResults implements TestRunnerListener {
 
-  private ThreadLocal currentInfo = new ThreadLocal();
+  private ThreadLocal<TestInfo> currentInfo = new ThreadLocal<TestInfo>();
   private long timestamp;
-  private ArrayList suiteInfo = new ArrayList();
-  private HashMap suites = new HashMap();
+  private ArrayList<TestSuiteInfo> suiteInfo = new ArrayList<TestSuiteInfo>();
+  private HashMap<String, TestSuiteInfo> suites = new HashMap<String, TestSuiteInfo>();
   private boolean failure = false;
   private boolean singleTest = false;
-  private ArrayList errorMessages = new ArrayList();
+  private ArrayList<String> errorMessages = new ArrayList<String>();
   private boolean filterTrace = true;
   private boolean finished = false;
   private boolean stopped = false;
@@ -114,16 +114,16 @@ public class TestRunnerResults implements TestRunnerListener {
     this.timestamp = timestamp;
   }
 
-  public synchronized List getSuiteInfo() {
-    return (List)suiteInfo.clone();
+  public synchronized List<TestSuiteInfo> getSuiteInfo() {
+    return (List<TestSuiteInfo>)suiteInfo.clone();
   }
 
-  public synchronized void setSuiteInfo(List suiteInfo) {
-    this.suiteInfo = new ArrayList(suiteInfo);
+  public synchronized void setSuiteInfo(List<TestSuiteInfo> suiteInfo) {
+    this.suiteInfo = new ArrayList<TestSuiteInfo>(suiteInfo);
   }
 
   public synchronized TestInfo getCurrentInfo() {
-    return (TestInfo)currentInfo.get();
+    return currentInfo.get();
   }
 
   public synchronized void setCurrentInfo(TestInfo currentInfo) {
@@ -154,7 +154,7 @@ public class TestRunnerResults implements TestRunnerListener {
     this.singleTest = singleTest;
   }
 
-  public synchronized List getErrorMessages() {
+  public synchronized List<String> getErrorMessages() {
     return errorMessages;
   }
 
@@ -169,7 +169,7 @@ public class TestRunnerResults implements TestRunnerListener {
 
   protected synchronized void addToSuite(TestInfo info) {
     String className = info.getTest().getClass().getName();
-    TestSuiteInfo suite = (TestSuiteInfo)suites.get(className);
+    TestSuiteInfo suite = suites.get(className);
 
     if (suite == null) {
       suite = new TestSuiteInfo(className);

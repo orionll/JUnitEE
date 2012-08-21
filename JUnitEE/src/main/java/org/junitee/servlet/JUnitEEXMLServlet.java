@@ -15,6 +15,7 @@ package org.junitee.servlet;
  * @since   1.5
  */
 public class JUnitEEXMLServlet extends JUnitEEServlet {
+  private static final long serialVersionUID = 1L;
 
   /**
    * Answer the default output format of the test report. This implementation returns xml as the default output. It

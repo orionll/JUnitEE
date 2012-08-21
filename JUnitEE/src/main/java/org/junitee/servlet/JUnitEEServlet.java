@@ -48,6 +48,7 @@ import org.junitee.runner.TestRunnerResults;
  * @since 1.5
  */
 public class JUnitEEServlet extends HttpServlet {
+  private static final long serialVersionUID = 1L;
 
   /**
    * The form parameter which defines the name of the suite
@@ -297,13 +298,13 @@ public class JUnitEEServlet extends HttpServlet {
     ClassLoader loader = getDynamicClassLoader();
     TestRunnerResults testResults = new TestRunnerResults();
     TestRunner tester = new TestRunner(testResults, false);
-    List names = new ArrayList(Arrays.asList(tests));
-    Iterator iterator = names.iterator();
+    List<String> names = new ArrayList<String>(Arrays.asList(tests));
+    Iterator<String> iterator = names.iterator();
 
     while (iterator.hasNext()) {
-      String name = (String)iterator.next();
+      String name = iterator.next();
       try {
-        Class clazz = loader.loadClass(name);
+        Class<?> clazz = loader.loadClass(name);
 
         if (!Test.class.isAssignableFrom(clazz)) {
           iterator.remove();
@@ -331,7 +332,7 @@ public class JUnitEEServlet extends HttpServlet {
         // ignore, just avoid HTTP 500 -> will cause an error again in test runner
       }
     }
-    return (String[])names.toArray(new String[names.size()]);
+    return names.toArray(new String[names.size()]);
   }
 
   /**
@@ -350,7 +351,7 @@ public class JUnitEEServlet extends HttpServlet {
       tokenizer = new StringTokenizer(searchResources, ",");
     }
 
-    List tests = new ArrayList();
+    List<String> tests = new ArrayList<String>();
 
     while (tokenizer.hasMoreTokens()) {
       String token = tokenizer.nextToken().trim();
@@ -376,11 +377,9 @@ public class JUnitEEServlet extends HttpServlet {
             }
           } catch (EOFException e) {
           } finally {
-            if (jar != null) {
-              try {
-                jar.close();
-              } catch (IOException e) {
-              }
+            try {
+              jar.close();
+            } catch (IOException e) {
             }
           }
 
@@ -414,7 +413,7 @@ public class JUnitEEServlet extends HttpServlet {
   protected String[] parseTestCaseList(InputStream stream) throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(stream));
     String line;
-    ArrayList list = new ArrayList();
+    List<String> list = new ArrayList<String>();
 
     while ((line = in.readLine()) != null) {
       line = line.trim();
@@ -577,7 +576,7 @@ public class JUnitEEServlet extends HttpServlet {
     TestRunnerResults results = new TestRunnerResults();
     TestRunner tester = new TestRunner(results, false);
     Test test = tester.getTest(testClass);
-    ArrayList testMethodList = new ArrayList();
+    ArrayList<String> testMethodList = new ArrayList<String>();
 
     // unwrap TestSetup
     if (test instanceof TestSetup) {
@@ -599,6 +598,6 @@ public class JUnitEEServlet extends HttpServlet {
 
     String[] testMethodArray = new String[testMethodList.size()];
 
-    return (String[])testMethodList.toArray(testMethodArray);
+    return testMethodList.toArray(testMethodArray);
   }
 }

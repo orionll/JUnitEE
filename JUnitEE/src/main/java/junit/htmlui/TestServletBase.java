@@ -17,4 +17,5 @@ import org.junitee.servlet.JUnitEEServlet;
  */
 @Deprecated
 public class TestServletBase extends JUnitEEServlet {
+  private static final long serialVersionUID = 1L;
 }

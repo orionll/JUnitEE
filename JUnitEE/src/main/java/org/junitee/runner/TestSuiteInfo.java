@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class TestSuiteInfo {
   private String testClassName;
-  private ArrayList tests = new ArrayList();
-  private ArrayList errors = new ArrayList();
-  private ArrayList failures = new ArrayList();
+  private ArrayList<TestInfo> tests = new ArrayList<TestInfo>();
+  private ArrayList<TestInfo> errors = new ArrayList<TestInfo>();
+  private ArrayList<TestInfo> failures = new ArrayList<TestInfo>();
   private long elapsedTime = 0L;
 
   public TestSuiteInfo(String className) {
@@ -37,8 +37,8 @@ public class TestSuiteInfo {
     elapsedTime = elapsedTime + info.getElapsedTime();
   }
 
-  public synchronized Collection getTests() {
-    return (Collection)tests.clone();
+  public synchronized Collection<TestInfo> getTests() {
+    return (Collection<TestInfo>)tests.clone();
   }
 
   public synchronized boolean hasFailure() {
@@ -61,12 +61,11 @@ public class TestSuiteInfo {
     return elapsedTime;
   }
 
-  public synchronized List getFailures() {
-    return (List)failures.clone();
+  public synchronized List<TestInfo> getFailures() {
+    return (List<TestInfo>)failures.clone();
   }
 
-  public synchronized List getErrors() {
-    return (List)errors.clone();
+  public synchronized List<TestInfo> getErrors() {
+    return (List<TestInfo>)errors.clone();
   }
-
 }

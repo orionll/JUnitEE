@@ -8,7 +8,6 @@ package org.junitee.output;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.Iterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,6 @@ public class XMLOutput extends AbstractOutput {
 
   private NumberFormat numberFormat;
   private PrintWriter pw;
-  private HttpServletResponse response;
   private String xsl;
 
   /**
@@ -40,7 +38,6 @@ public class XMLOutput extends AbstractOutput {
     response.setContentType("text/xml;charset=UTF-8");
 
     pw = response.getWriter();
-    this.response = response;
     this.xsl = xsl;
     numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
     numberFormat.setMaximumFractionDigits(3);
@@ -77,10 +74,7 @@ public class XMLOutput extends AbstractOutput {
   }
 
   protected void printErrorMessages() {
-    Iterator iterator = getErrorMessages().iterator();
-
-    while (iterator.hasNext()) {
-      String message = (String)iterator.next();
+    for (String message : getErrorMessages()) {
       pw.print("  <errorMessage><![CDATA[");
       pw.print(message);
       pw.println("]]></errorMessage>");
@@ -88,11 +82,7 @@ public class XMLOutput extends AbstractOutput {
   }
 
   protected void printResults() {
-    Iterator suites = getSuiteInfo().iterator();
-
-    while (suites.hasNext()) {
-      TestSuiteInfo suite = (TestSuiteInfo)suites.next();
-
+    for (TestSuiteInfo suite : getSuiteInfo()) {
       String fullName = suite.getTestClassName();
       int pos = fullName.lastIndexOf(".");
 
@@ -113,11 +103,7 @@ public class XMLOutput extends AbstractOutput {
       pw.print(elapsedTimeAsString(suite.getElapsedTime()));
       pw.println("\">");
 
-      Iterator tests = suite.getTests().iterator();
-
-      while (tests.hasNext()) {
-        TestInfo test = (TestInfo)tests.next();
-
+      for (TestInfo test : suite.getTests()) {
         pw.print("    <testcase name=\"");
         pw.print(test.getTestName());
         pw.print("\" time=\"");

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -166,10 +165,10 @@ public class HTMLOutput extends AbstractOutput {
       pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
     } else {
       pw.print("<tr><td class=\"failedcell\"><input type=\"submit\" name=\"stop\" value=\"Stop execution\"></td>");
-      Enumeration enumeration = request.getParameterNames();
+      Enumeration<String> enumeration = request.getParameterNames();
 
       while (enumeration.hasMoreElements()) {
-        String name = (String)enumeration.nextElement();
+        String name = enumeration.nextElement();
         String[] values = request.getParameterValues(name);
 
         for (int i = 0; i < values.length; i++) {
@@ -197,13 +196,9 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2>Errors while running tests</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator errors = getErrorMessages().iterator();
-
     pw.println("<tr><td colspan=\"3\" class=\"sectionTitle\">&nbsp;</td></tr>");
 
-    while (errors.hasNext()) {
-      String message = (String)errors.next();
-
+    for (String message : getErrorMessages()) {
       pw.println("<tr><td class=\"failedcell\">" + image(RESOURCE_RED_BULLET, "Error") + "</td>");
       pw.print("<td class=\"cell\">&nbsp;</td>");
       pw.println("<td width=\"100%\" class=\"cell\">" + message + "</td></tr>");
@@ -221,13 +216,9 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> Summary of test results </h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().iterator();
-
     pw.println("<tr><td colspan=\"4\" class=\"sectionTitle\">&nbsp;</td></tr>");
 
-    while (suites.hasNext()) {
-      TestSuiteInfo suite = (TestSuiteInfo)suites.next();
-
+    for (TestSuiteInfo suite : getSuiteInfo()) {
       if (createInfoAndLinks) {
         if (suite.successful()) {
           pw.println("<tr><td class=\"passedcell\">"
@@ -279,19 +270,12 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> List of executed tests</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().iterator();
-    while (suites.hasNext()) {
-      TestSuiteInfo suite = (TestSuiteInfo)suites.next();
-
+    for (TestSuiteInfo suite : getSuiteInfo()) {
       pw.print("<tr><td colspan=\"4\" class=\"sectionTitle\">");
       pw.print("<a name=\"" + suite.getTestClassName() + "\"></a>");
       pw.println(suite.getTestClassName() + "</td></tr>");
 
-      Iterator tests = suite.getTests().iterator();
-
-      while (tests.hasNext()) {
-        TestInfo test = (TestInfo)tests.next();
-
+      for (TestInfo test : suite.getTests()) {
         if (test.successful()) {
           pw.println("<tr><td class=\"passedcell\">"
               + singleTestLink(test, image(RESOURCE_GREEN_BULLET, "Success (Run again)")) + "</td>");
@@ -355,15 +339,8 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<h2> List of errors and failures</h2>");
     pw.println("<p> <table border=\"0\" cellspacing=\"2\" cellpadding=\"3\" width=\"100%\">");
 
-    Iterator suites = getSuiteInfo().iterator();
-    while (suites.hasNext()) {
-      TestSuiteInfo suite = (TestSuiteInfo)suites.next();
-
-      Iterator tests = suite.getTests().iterator();
-
-      while (tests.hasNext()) {
-        TestInfo test = (TestInfo)tests.next();
-
+    for (TestSuiteInfo suite : getSuiteInfo()) {
+      for (TestInfo test : suite.getTests()) {
         if (!test.successful()) {
           pw.print("<tr><td class=\"sectionTitle\">");
           pw.print("<a name=\"" + test + "\"></a>");

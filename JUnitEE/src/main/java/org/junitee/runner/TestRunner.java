@@ -110,8 +110,8 @@ public class TestRunner extends BaseTestRunner {
 
   protected Test getTest(String suiteClassName, String testName) {
     try {
-      Class clazz = loadSuiteClass(suiteClassName);
-      Constructor constructor = clazz.getConstructor(new Class[] { String.class });
+      Class<?> clazz = loadSuiteClass(suiteClassName);
+      Constructor<?> constructor = clazz.getConstructor(new Class[] { String.class });
       Test test = (Test)constructor.newInstance(new Object[] { testName });
 
       if (test instanceof RequiresDecoration) {
@@ -134,19 +134,19 @@ public class TestRunner extends BaseTestRunner {
 
   // TestListener methods; we do nothing here as the events are handled by the listener
   @Override
-  public void addError(Test test, Throwable throwable) {
+  public synchronized void addError(Test test, Throwable throwable) {
   }
 
   @Override
-  public void addFailure(Test test, AssertionFailedError assertionFailedError) {
+  public synchronized void addFailure(Test test, AssertionFailedError assertionFailedError) {
   }
 
   @Override
-  public void endTest(Test test) {
+  public synchronized void endTest(Test test) {
   }
 
   @Override
-  public void startTest(Test test) {
+  public synchronized void startTest(Test test) {
   }
 
   @Override
