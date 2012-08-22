@@ -285,8 +285,8 @@ public class JUnitEEServlet extends HttpServlet {
     if (param == null) {
       return filterTests(searchForTests((String)null));
     }
-    for (int i = 0; i < param.length; i++) {
-      buffer.append(param[i]).append(",");
+    for (String element : param) {
+      buffer.append(element).append(",");
     }
     return filterTests(searchForTests(buffer.toString()));
   }
@@ -528,12 +528,28 @@ public class JUnitEEServlet extends HttpServlet {
     if (testCases != null) {
       bufferList = new StringBuffer();
 
-      for (int i = 0; i < testCases.length; i++) {
-        bufferList.append("        <tr><td class=\"cell\"><input type=\"checkbox\" name=\"suite\" value=\"");
-        bufferList.append(testCases[i]).append("\">&nbsp;&nbsp;").append(testCases[i]).append("</td></tr>\n");
+      for (String testCase : testCases) {
+        bufferList.append("<tr><td class=\"cell\">");
+
+        bufferList.append("<input type=\"checkbox\" name=\"suite\" value=\"");
+        bufferList.append(testCase);
+        bufferList.append("\">&nbsp;&nbsp;");
+
+        // Add link to run this test case
+        bufferList.append("<a href=\"");
+        bufferList.append(servletPath);
+        bufferList.append("?");
+        bufferList.append(PARAM_SUITE);
+        bufferList.append("=");
+        bufferList.append(testCase);
+        bufferList.append("\">");
+        bufferList.append(testCase);
+        bufferList.append("</a>");
+
+        bufferList.append("</td></tr>\n");
 
         if (showMethods) {
-          printIndexHtmlTestMethods(bufferList, testCases[i], servletPath);
+          printIndexHtmlTestMethods(bufferList, testCase, servletPath);
         }
       }
     }
@@ -582,11 +598,11 @@ public class JUnitEEServlet extends HttpServlet {
 
     if (methods.length > 0) {
 
-      for (int j = 0; j < methods.length; j++) {
+      for (String method : methods) {
         bufferList.append("        <tr><td class=\"methodcell\">");
         bufferList.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" + servletPath + "?"
-            + PARAM_SUITE + "=" + testCase + "&" + PARAM_TEST + "=" + methods[j] + "\">");
-        bufferList.append(methods[j]);
+            + PARAM_SUITE + "=" + testCase + "&" + PARAM_TEST + "=" + method + "\">");
+        bufferList.append(method);
         bufferList.append("</a></td></tr>");
       }
     }
