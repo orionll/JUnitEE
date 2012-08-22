@@ -1,8 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.junitee</groupId>
   <artifactId>junitee</artifactId>
-  <version>1.12</version>
+  <version>1.12-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JUnitEE</name>
   <description>JUnitEE provides a TestRunner and a servlet which will run JUnit test suites inside an application server</description>
@@ -10,13 +15,14 @@
   <licenses>
     <license>
       <name>GNU General Public License (GPL), Public Domain</name>
-	  <url>http://www.gnu.org/copyleft/gpl.html</url>
-	  <distribution>repo</distribution>
+      <url>http://www.gnu.org/copyleft/gpl.html</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
   <scm>
     <url>https://github.com/orionll/JUnitEE</url>
     <connection>https://github.com/orionll/JUnitEE.git</connection>
+    <developerConnection>https://github.com/orionll/JUnitEE.git</developerConnection>
   </scm>
   <developers>
     <developer>
