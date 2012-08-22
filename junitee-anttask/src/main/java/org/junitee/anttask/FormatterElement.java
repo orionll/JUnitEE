@@ -78,7 +78,7 @@ public class FormatterElement {
     }
 
     try {
-      Class clazz = Class.forName(getClassname());
+      Class<?> clazz = Class.forName(getClassname());
       Object instance = clazz.newInstance();
 
       if (instance instanceof JUnitEEResultFormatter) {

@@ -16,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -42,9 +41,9 @@ public class JUnitEETask extends Task {
 
   private String url;
   private boolean threaded = true;
-  private Vector tests = new Vector();
+  private Vector<JUnitEETest> tests = new Vector<JUnitEETest>();
   private boolean printSummary = false;
-  private Vector formatters = new Vector();
+  private Vector<FormatterElement> formatters = new Vector<FormatterElement>();
   private String user;
   private String password;
 
@@ -80,10 +79,8 @@ public class JUnitEETask extends Task {
   }
 
   public void setFiltertrace(boolean filtertrace) {
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      ((JUnitEETest)enumeration.nextElement()).setFiltertrace(filtertrace);
+    for (JUnitEETest test : tests) {
+      test.setFiltertrace(filtertrace);
     }
   }
 
@@ -94,10 +91,8 @@ public class JUnitEETask extends Task {
    * @param value true, if the task should stop execution on test failures and errors
    */
   public void setHaltonfailure(boolean value) {
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      ((JUnitEETest)enumeration.nextElement()).setHaltonfailure(value);
+    for (JUnitEETest test : tests) {
+      test.setHaltonfailure(value);
     }
   }
 
@@ -108,10 +103,8 @@ public class JUnitEETask extends Task {
    * @param value true, if the task should stop execution on errors
    */
   public void setHaltonerror(boolean value) {
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      ((JUnitEETest)enumeration.nextElement()).setHaltonerror(value);
+    for (JUnitEETest test : tests) {
+      test.setHaltonerror(value);
     }
   }
 
@@ -128,10 +121,8 @@ public class JUnitEETask extends Task {
    * @param value name of the property to set in case of an error
    */
   public void setErrorproperty(String value) {
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      ((JUnitEETest)enumeration.nextElement()).setErrorproperty(value);
+    for (JUnitEETest test : tests) {
+      test.setErrorproperty(value);
     }
   }
 
@@ -141,10 +132,8 @@ public class JUnitEETask extends Task {
    * @param value name of the property to set in case of an error or test failure
    */
   public void setFailureproperty(String value) {
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      ((JUnitEETest)enumeration.nextElement()).setFailureproperty(value);
+    for (JUnitEETest test : tests) {
+      test.setFailureproperty(value);
     }
   }
 
@@ -175,11 +164,7 @@ public class JUnitEETask extends Task {
       throw new BuildException(url + " is no valid URL");
     }
 
-    Enumeration enumeration = tests.elements();
-
-    while (enumeration.hasMoreElements()) {
-      JUnitEETest test = (JUnitEETest)enumeration.nextElement();
-
+    for (JUnitEETest test : tests) {
       if (test.shouldExecute(getProject())) {
         execute(test);
       }
@@ -304,7 +289,7 @@ public class JUnitEETask extends Task {
     root.normalize();
 
     NodeList testcases = root.getElementsByTagName("testsuite");
-    Vector resultFormatters = createFormatters(test);
+    Vector<JUnitEEResultFormatter> resultFormatters = createFormatters(test);
 
     for (int i = 0; i < testcases.getLength(); i++) {
       Node node = testcases.item(i);
@@ -320,10 +305,8 @@ public class JUnitEETask extends Task {
       } else {
         testName = testClass;
       }
-      Enumeration enumerationeration = resultFormatters.elements();
 
-      while (enumerationeration.hasMoreElements()) {
-        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumerationeration.nextElement();
+      for (JUnitEEResultFormatter formatter : resultFormatters) {
         log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
         formatter.format(node);
         formatter.flush();
@@ -360,7 +343,7 @@ public class JUnitEETask extends Task {
     return true;
   }
 
-  private byte[] readInput(InputStream in) throws IOException {
+  private static byte[] readInput(InputStream in) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     int r;
     byte[] buffer = new byte[2048];
@@ -371,25 +354,22 @@ public class JUnitEETask extends Task {
     return out.toByteArray();
   }
 
-  private Vector createFormatters(JUnitEETest test) {
-    Vector answer = new Vector();
-    Enumeration enumerationeration = formatters.elements();
+  private Vector<JUnitEEResultFormatter> createFormatters(JUnitEETest test) {
+    Vector<JUnitEEResultFormatter> answer = new Vector<JUnitEEResultFormatter>();
 
-    while (enumerationeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement)enumerationeration.nextElement();
+    for (FormatterElement element : formatters) {
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
     }
 
-    enumerationeration = test.getFormatters();
-    while (enumerationeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement)enumerationeration.nextElement();
+    for (FormatterElement element : test.getFormatters()) {
       log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
     }
+
     if (printSummary) {
       log("Adding summary formatter", Project.MSG_DEBUG);
       SummaryResultFormatter summary = new SummaryResultFormatter();

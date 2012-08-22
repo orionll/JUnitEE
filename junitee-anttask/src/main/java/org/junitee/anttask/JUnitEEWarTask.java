@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.BuildException;
@@ -42,11 +41,11 @@ public class JUnitEEWarTask extends War {
   private int htmlRefreshDelay = DEFAULT_HTML_REFRESH_DELAY;
   private String testjarname;
   private String servletclass = WEBXML_SERVLET_CLASS;
-  private List testCases = new ArrayList();
-  private List classes = new ArrayList();
-  private List ejbRefs = new ArrayList();
-  private List ejbLocalRefs = new ArrayList();
-  private List resRefs = new ArrayList();
+  private List<FileSet> testCases = new ArrayList<FileSet>();
+  private List<ZipFileSet> classes = new ArrayList<ZipFileSet>();
+  private List<EjbRef> ejbRefs = new ArrayList<EjbRef>();
+  private List<EjbLocalRef> ejbLocalRefs = new ArrayList<EjbLocalRef>();
+  private List<ResRef> resRefs = new ArrayList<ResRef>();
   private File deploymentDescriptor;
 
   /**
@@ -156,8 +155,7 @@ public class JUnitEEWarTask extends War {
     }
 
     // check ejbRef configuration
-    for (Iterator i = ejbRefs.iterator(); i.hasNext();) {
-      EjbRef ejbRef = (EjbRef)i.next();
+    for (EjbRef ejbRef : ejbRefs) {
       ejbRef.check();
     }
   }
@@ -194,10 +192,7 @@ public class JUnitEEWarTask extends War {
         fs.setFullpath("WEB-INF/lib/" + testjarname);
         addFileset(fs);
       } else {
-        Iterator iterator = classes.iterator();
-
-        while (iterator.hasNext()) {
-          ZipFileSet zipFileSet = (ZipFileSet)iterator.next();
+        for (ZipFileSet zipFileSet : classes) {
           super.addClasses(zipFileSet);
         }
       }
@@ -246,8 +241,7 @@ public class JUnitEEWarTask extends War {
       File jarFile = File.createTempFile("classes", "jar");
       Jar jar = (Jar)getProject().createTask("jar");
       jar.setDestFile(jarFile);
-      for (Iterator i = classes.iterator(); i.hasNext();) {
-        ZipFileSet fs = (ZipFileSet)i.next();
+      for (ZipFileSet fs : classes) {
         jar.addFileset(fs);
       }
       jar.execute();
@@ -288,8 +282,7 @@ public class JUnitEEWarTask extends War {
       pw.println("    <url-pattern>" + WEBXML_URLPATTERN + "</url-pattern>");
       pw.println("  </servlet-mapping>");
       pw.println("");
-      for (Iterator i = resRefs.iterator(); i.hasNext();) {
-        ResRef ref = (ResRef)i.next();
+      for (ResRef ref : resRefs) {
         pw.println("");
         pw.println("  <resource-ref>");
         pw.println("    <res-ref-name>" + ref.getResRefName() + "</res-ref-name>");
@@ -298,8 +291,7 @@ public class JUnitEEWarTask extends War {
         pw.println("  </resource-ref>");
       }
 
-      for (Iterator i = ejbRefs.iterator(); i.hasNext();) {
-        EjbRef ejbRef = (EjbRef)i.next();
+      for (EjbRef ejbRef : ejbRefs) {
         pw.println("");
         pw.println("  <ejb-ref>");
         pw.println("    <ejb-ref-name>" + ejbRef.getEjbRefName() + "</ejb-ref-name>");
@@ -311,8 +303,7 @@ public class JUnitEEWarTask extends War {
         }
         pw.println("  </ejb-ref>");
       }
-      for (Iterator i = ejbLocalRefs.iterator(); i.hasNext();) {
-        EjbLocalRef ejbRef = (EjbLocalRef)i.next();
+      for (EjbLocalRef ejbRef : ejbLocalRefs) {
         pw.println("");
         pw.println("  <ejb-local-ref>");
         pw.println("    <ejb-ref-name>" + ejbRef.getEjbRefName() + "</ejb-ref-name>");
@@ -342,13 +333,11 @@ public class JUnitEEWarTask extends War {
       String line;
 
       StringBuffer bufferList = new StringBuffer();
-      for (Iterator i = testCases.iterator(); i.hasNext();) {
-        FileSet fs = (FileSet)i.next();
-
+      for (FileSet fs : testCases) {
         FileScanner scanner = fs.getDirectoryScanner(project);
         String[] files = scanner.getIncludedFiles();
-        for (int j = 0; j < files.length; j++) {
-          String className = getTestCaseClassName(files[j]);
+        for (String fileName : files) {
+          String className = getTestCaseClassName(fileName);
           bufferList.append("        <tr><td class=\"cell\"><input type=\"checkbox\" name=\"suite\" value=\"");
           bufferList.append(className).append("\">&nbsp;&nbsp;").append(className).append("</td></tr>\n");
         }
@@ -382,13 +371,11 @@ public class JUnitEEWarTask extends War {
       PrintWriter pw = new PrintWriter(new FileOutputStream(file));
       pw.println("# JunitServletRunner");
 
-      for (Iterator i = testCases.iterator(); i.hasNext();) {
-        FileSet fs = (FileSet)i.next();
-
+      for (FileSet fs : testCases) {
         FileScanner scanner = fs.getDirectoryScanner(project);
         String[] files = scanner.getIncludedFiles();
-        for (int j = 0; j < files.length; j++) {
-          String className = getTestCaseClassName(files[j]);
+        for (String fileName : files) {
+          String className = getTestCaseClassName(fileName);
           pw.println(className);
         }
       }
@@ -402,7 +389,7 @@ public class JUnitEEWarTask extends War {
   /**
    * extract the name of a class from the name of the file
    */
-  private String getTestCaseClassName(String fileName) throws BuildException {
+  private static String getTestCaseClassName(String fileName) throws BuildException {
     String name = fileName.replace(File.separatorChar, '.');
     int lenSuffix;
     if (name.endsWith(".class")) {

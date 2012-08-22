@@ -9,7 +9,6 @@
 package org.junitee.anttask;
 
 import java.io.File;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.tools.ant.Project;
@@ -32,7 +31,7 @@ public class JUnitEETest {
   private boolean runAll;
   private String outfile;
   private File toDir;
-  private Vector formatters = new Vector();
+  private Vector<FormatterElement> formatters = new Vector<FormatterElement>();
   private boolean filterTrace = true;
   private String ifProperty;
   private String unlessProperty;
@@ -159,8 +158,8 @@ public class JUnitEETest {
     this.filterTrace = filterTrace;
   }
 
-  public Enumeration getFormatters() {
-    return formatters.elements();
+  public Iterable<FormatterElement> getFormatters() {
+    return formatters;
   }
 
   private String getFileName() {

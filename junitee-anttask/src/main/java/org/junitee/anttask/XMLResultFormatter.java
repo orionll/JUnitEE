@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
  * @version $Revision: 1.4 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
-public class XMLResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
+public class XMLResultFormatter extends AbstractResultFormatter {
 
   @Override
   public void format(Node testSuiteNode) throws IOException {
@@ -62,7 +62,7 @@ public class XMLResultFormatter extends AbstractResultFormatter implements JUnit
     }
   }
 
-  private DocumentBuilder getDocumentBuilder() {
+  private static DocumentBuilder getDocumentBuilder() {
     try {
       return DocumentBuilderFactory.newInstance().newDocumentBuilder();
     } catch (Exception exc) {

@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
  * @version $Revision: 1.2 $
  * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
  */
-public class SummaryResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
+public class SummaryResultFormatter extends AbstractResultFormatter {
 
   private OutputStreamWriter writer;
 
