@@ -6,12 +6,11 @@
  */
 package org.junitee.anttask;
 
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-
 
 /**
  * This interface is the equivalent to <code>JUnitResultFormatter</code> provided by the JUnit task.
@@ -28,18 +27,13 @@ public interface JUnitEEResultFormatter {
    */
   public void format(Node testSuiteNode) throws IOException;
 
-  
   public void setOut(OutputStream out);
-
 
   public void setOutfile(File file);
 
-
   public void setExtension(String extension);
 
-
   public void setFilterTrace(boolean filter);
-
 
   void flush() throws IOException;
 }

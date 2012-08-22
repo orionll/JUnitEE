@@ -3,9 +3,15 @@
  */
 package org.junitee.anttask;
 
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.FileScanner;
@@ -14,7 +20,6 @@ import org.apache.tools.ant.taskdefs.Jar;
 import org.apache.tools.ant.taskdefs.War;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ZipFileSet;
-
 
 /**
  * This ant task builds the .war file which will contains the server-side unit tests.
@@ -27,16 +32,12 @@ public class JUnitEEWarTask extends War {
   private static final String URLPATTERN_TOKEN = "@urlPattern@";
   private static final String URLPATTERN_REPLACEMENT = "TestServlet";
   private static final String WEBXML_URLPATTERN = "/" + URLPATTERN_REPLACEMENT + "/*";
-  private final static String WEBXML_DOCTYPE_2_2 =
-    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
-  private final static String WEBXML_DOCTYPE_2_3 =
-    "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\" \"http://java.sun.com/dtd/web-app_2_3.dtd\"";
+  private final static String WEBXML_DOCTYPE_2_2 = "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\"";
+  private final static String WEBXML_DOCTYPE_2_3 = "web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\" \"http://java.sun.com/dtd/web-app_2_3.dtd\"";
   private final static String WEBXML_DISPLAY_NAME = "JunitServletRunner Application";
   private final static String WEBXML_SERVLET_NAME = "JUnitEETestServlet";
   private final static String WEBXML_SERVLET_CLASS = "org.junitee.servlet.JUnitEEServlet";
   private final static int DEFAULT_HTML_REFRESH_DELAY = 2;
-
-
 
   private int htmlRefreshDelay = DEFAULT_HTML_REFRESH_DELAY;
   private String testjarname;
@@ -48,19 +49,17 @@ public class JUnitEEWarTask extends War {
   private List resRefs = new ArrayList();
   private File deploymentDescriptor;
 
-
-   /**
-    * This optional parameter defines the delay for HTML page refreshes when run as a separate
-    * thread. The default value is <code>2</code>.
-    */
-   public void setHtmlRefreshDelay( String htmlRefreshDelay) {
-       try {
-         this.htmlRefreshDelay = Integer.parseInt( htmlRefreshDelay);
-       } catch (NumberFormatException e) {
-         this.htmlRefreshDelay = 2;
-       }
-   }
-
+  /**
+   * This optional parameter defines the delay for HTML page refreshes when run as a separate
+   * thread. The default value is <code>2</code>.
+   */
+  public void setHtmlRefreshDelay(String htmlRefreshDelay) {
+    try {
+      this.htmlRefreshDelay = Integer.parseInt(htmlRefreshDelay);
+    } catch (NumberFormatException e) {
+      this.htmlRefreshDelay = 2;
+    }
+  }
 
   /**
    * This optional parameter define the name of the .jar file
@@ -72,9 +71,8 @@ public class JUnitEEWarTask extends War {
    * file stored in WEB-INF/lib/<testjarname>
    */
   public void setTestjarname(String name) {
-    this.testjarname = name;
+    testjarname = name;
   }
-
 
   /**
    * Set the name of the servlet used in the generated deployment descriptor.
@@ -85,17 +83,16 @@ public class JUnitEEWarTask extends War {
     this.servletclass = servletclass;
   }
 
-
+  @Override
   public void setWebxml(File descr) {
     deploymentDescriptor = descr;
     super.setWebxml(descr);
   }
 
-
+  @Override
   public void addClasses(ZipFileSet fs) {
     classes.add(fs);
   }
-
 
   /**
    * The nested testCases element specifies a FileSet.
@@ -105,9 +102,8 @@ public class JUnitEEWarTask extends War {
    * @param fs nested classes element
    */
   public void addTestCases(FileSet fs) {
-    this.testCases.add(fs);
+    testCases.add(fs);
   }
-
 
   /**
    * Create a nested ejbRef element.
@@ -123,7 +119,6 @@ public class JUnitEEWarTask extends War {
     return ejbRef;
   }
 
-
   /**
    * Create a nested ejbLocalRef element.
    * An EjbLocalRef describes a <ejb-local-ref>
@@ -138,7 +133,6 @@ public class JUnitEEWarTask extends War {
     return ejbRef;
   }
 
-
   /**
    * Create a nested resourceRef element.
    * @return
@@ -150,29 +144,28 @@ public class JUnitEEWarTask extends War {
     return ref;
   }
 
-
   /**
    * Check that all the required parameters have been properly set.
    * A BuildException is thrown if the task is not properly configured
    */
   private void check() throws BuildException {
-    if (this.testjarname != null) {
-      if (!this.testjarname.endsWith(".jar")) {
+    if (testjarname != null) {
+      if (!testjarname.endsWith(".jar")) {
         testjarname = testjarname + ".jar";
       }
     }
 
     // check ejbRef configuration
-    for (Iterator i = this.ejbRefs.iterator(); i.hasNext();) {
+    for (Iterator i = ejbRefs.iterator(); i.hasNext();) {
       EjbRef ejbRef = (EjbRef)i.next();
       ejbRef.check();
     }
   }
 
-
   /**
    * Entry point when the task is ran from ant
    */
+  @Override
   public void execute() throws BuildException {
     File webXmlFile = null;
     File indexHtmlFile = null;
@@ -185,21 +178,20 @@ public class JUnitEEWarTask extends War {
 
     // do the real work now
 
-
     try {
       if (deploymentDescriptor == null) {
         webXmlFile = createWebXml();
         setWebxml(webXmlFile);
       }
 
-      if (this.testjarname != null) {
+      if (testjarname != null) {
         // if testjarname attribute is set, the classes are bundled
         // in a jar file which is stored the WEB-INF/lib directory
         jarFile = buildClassesJar();
         fs = new ZipFileSet();
         fs.setDir(new File(jarFile.getParent()));
         fs.setIncludes(jarFile.getName());
-        fs.setFullpath("WEB-INF/lib/" + this.testjarname);
+        fs.setFullpath("WEB-INF/lib/" + testjarname);
         addFileset(fs);
       } else {
         Iterator iterator = classes.iterator();
@@ -245,7 +237,6 @@ public class JUnitEEWarTask extends War {
     }
   }
 
-
   /**
    * Create jar file containing the classes
    */
@@ -255,7 +246,7 @@ public class JUnitEEWarTask extends War {
       File jarFile = File.createTempFile("classes", "jar");
       Jar jar = (Jar)getProject().createTask("jar");
       jar.setDestFile(jarFile);
-      for (Iterator i = this.classes.iterator(); i.hasNext();) {
+      for (Iterator i = classes.iterator(); i.hasNext();) {
         ZipFileSet fs = (ZipFileSet)i.next();
         jar.addFileset(fs);
       }
@@ -265,7 +256,6 @@ public class JUnitEEWarTask extends War {
       throw new BuildException("Error creating web.xml", ex);
     }
   }
-
 
   private File createWebXml() throws BuildException {
     try {
@@ -342,7 +332,6 @@ public class JUnitEEWarTask extends War {
     }
   }
 
-
   private File createIndexHtml() throws BuildException {
     try {
       File file = File.createTempFile("index", "html");
@@ -353,7 +342,7 @@ public class JUnitEEWarTask extends War {
       String line;
 
       StringBuffer bufferList = new StringBuffer();
-      for (Iterator i = this.testCases.iterator(); i.hasNext();) {
+      for (Iterator i = testCases.iterator(); i.hasNext();) {
         FileSet fs = (FileSet)i.next();
 
         FileScanner scanner = fs.getDirectoryScanner(project);
@@ -386,7 +375,6 @@ public class JUnitEEWarTask extends War {
     }
   }
 
-
   private File createTestCaseList() throws BuildException {
     try {
       File file = File.createTempFile("testcase", "txt");
@@ -394,7 +382,7 @@ public class JUnitEEWarTask extends War {
       PrintWriter pw = new PrintWriter(new FileOutputStream(file));
       pw.println("# JunitServletRunner");
 
-      for (Iterator i = this.testCases.iterator(); i.hasNext();) {
+      for (Iterator i = testCases.iterator(); i.hasNext();) {
         FileSet fs = (FileSet)i.next();
 
         FileScanner scanner = fs.getDirectoryScanner(project);
@@ -410,7 +398,6 @@ public class JUnitEEWarTask extends War {
       throw new BuildException("Error creating test case list", ex);
     }
   }
-
 
   /**
    * extract the name of a class from the name of the file
@@ -429,125 +416,107 @@ public class JUnitEEWarTask extends War {
     return (className);
   }
 
-
   public abstract class AbstractEjbRef {
 
     private String ejbRefName;
     private String ejbRefType;
     private String ejbLink;
 
-
     String getEjbRefName() {
-      return (this.ejbRefName);
+      return (ejbRefName);
     }
-
 
     public void setEjbRefName(String ejbRefName) {
       this.ejbRefName = ejbRefName;
     }
 
-
     String getEjbRefType() {
-      return (this.ejbRefType);
+      return (ejbRefType);
     }
-
 
     public void setEjbRefType(String ejbRefType) {
       this.ejbRefType = ejbRefType;
     }
 
-
     String getEjbLink() {
-      return (this.ejbLink);
+      return (ejbLink);
     }
-
 
     public void setEjbLink(String ejbLink) {
       this.ejbLink = ejbLink;
     }
 
-
     public void check() throws BuildException {
-      if (this.ejbRefName == null) {
+      if (ejbRefName == null) {
         throw new BuildException("You must specify the ejbRefName attribute", location);
       }
-      if (this.ejbRefType == null) {
+      if (ejbRefType == null) {
         throw new BuildException("You must specify the ejbRefType attribute", location);
       }
     }
   }
-
 
   public class EjbRef extends AbstractEjbRef {
 
     private String home;
     private String remote;
 
-
     String getHome() {
-      return (this.home);
+      return (home);
     }
-
 
     public void setHome(String home) {
       this.home = home;
     }
 
-
     String getRemote() {
-      return (this.remote);
+      return (remote);
     }
-
 
     public void setRemote(String remote) {
       this.remote = remote;
     }
 
-
+    @Override
     public void check() throws BuildException {
       super.check();
-      if (this.home == null) {
+      if (home == null) {
         throw new BuildException("You must specify the home attribute", location);
       }
-      if (this.remote == null) {
+      if (remote == null) {
         throw new BuildException("You must specify the remote attribute", location);
       }
     }
   }
-
 
   public class EjbLocalRef extends AbstractEjbRef {
 
     private String localHome;
     private String local;
 
-
     public String getLocalHome() {
       return localHome;
     }
-
 
     public void setLocalHome(String localHome) {
       this.localHome = localHome;
     }
 
-
     public String getLocal() {
       return local;
     }
-
 
     public void setLocal(String local) {
       this.local = local;
     }
 
-
+    @Override
     public void check() throws BuildException {
       super.check();
-      if (this.localHome == null) {
+      if (localHome == null) {
         throw new BuildException("You must specify the localhome attribute", location);
       }
-      if (this.local == null) {
+      if (local == null) {
         throw new BuildException("You must specify the local attribute", location);
       }
     }
@@ -559,31 +528,25 @@ public class JUnitEEWarTask extends War {
     private String resType;
     private String resAuth;
 
-
     public String getResRefName() {
       return resRefName;
     }
-
 
     public void setResRefName(String resRefName) {
       this.resRefName = resRefName;
     }
 
-
     public String getResType() {
       return resType;
     }
-
 
     public void setResType(String resType) {
       this.resType = resType;
     }
 
-
     public String getResAuth() {
       return resAuth;
     }
-
 
     public void setResAuth(String resAuth) {
       this.resAuth = resAuth;

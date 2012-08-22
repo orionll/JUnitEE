@@ -8,13 +8,16 @@
 
 package org.junitee.anttask;
 
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,9 +25,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 /**
  * This ant task runs server-side unit tests using the JUnitEE test runner.
@@ -73,15 +79,13 @@ public class JUnitEETask extends Task {
     this.threaded = threaded;
   }
 
-
   public void setFiltertrace(boolean filtertrace) {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      ((JUnitEETest) enumeration.nextElement()).setFiltertrace(filtertrace);
+      ((JUnitEETest)enumeration.nextElement()).setFiltertrace(filtertrace);
     }
   }
-
 
   /**
    * Tell the task how to handle test failures. If set to true, the task will stop execution if a test failure or error occurs.
@@ -93,10 +97,9 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      ((JUnitEETest) enumeration.nextElement()).setHaltonfailure(value);
+      ((JUnitEETest)enumeration.nextElement()).setHaltonfailure(value);
     }
   }
-
 
   /**
    * Tell the task how to handle errors. If set to true, the task will stop execution if an error occurs.
@@ -108,10 +111,9 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      ((JUnitEETest) enumeration.nextElement()).setHaltonerror(value);
+      ((JUnitEETest)enumeration.nextElement()).setHaltonerror(value);
     }
   }
-
 
   /**
    * Tell the task to print a verbose test summary.
@@ -119,7 +121,6 @@ public class JUnitEETask extends Task {
   public void setPrintsummary(boolean printSummary) {
     this.printSummary = printSummary;
   }
-
 
   /**
    * Tell the task which property should be set in case of an error.
@@ -130,10 +131,9 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      ((JUnitEETest) enumeration.nextElement()).setErrorproperty(value);
+      ((JUnitEETest)enumeration.nextElement()).setErrorproperty(value);
     }
   }
-
 
   /**
    * Tell the task which property should be set in case of an error or test failure.
@@ -144,10 +144,9 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      ((JUnitEETest) enumeration.nextElement()).setFailureproperty(value);
+      ((JUnitEETest)enumeration.nextElement()).setFailureproperty(value);
     }
   }
-
 
   /**
    * Create a nested test element.
@@ -161,12 +160,11 @@ public class JUnitEETask extends Task {
     return test;
   }
 
-
   public void addFormatter(FormatterElement formatter) {
     formatters.addElement(formatter);
   }
 
-
+  @Override
   public void execute() throws BuildException {
     if (url == null) {
       throw new BuildException("You must specify the url attribute", location);
@@ -180,7 +178,7 @@ public class JUnitEETask extends Task {
     Enumeration enumeration = tests.elements();
 
     while (enumeration.hasMoreElements()) {
-      JUnitEETest test = (JUnitEETest) enumeration.nextElement();
+      JUnitEETest test = (JUnitEETest)enumeration.nextElement();
 
       if (test.shouldExecute(getProject())) {
         execute(test);
@@ -188,7 +186,6 @@ public class JUnitEETask extends Task {
     }
 
   }
-
 
   protected void execute(JUnitEETest test) throws BuildException {
     StringBuffer arguments = new StringBuffer();
@@ -249,8 +246,7 @@ public class JUnitEETask extends Task {
         try {
           in.close();
         } catch (IOException e) {
-        }
-        ;
+        };
       }
     }
 
@@ -274,8 +270,7 @@ public class JUnitEETask extends Task {
           try {
             in.close();
           } catch (IOException e) {
-          }
-          ;
+          };
         }
       }
     } catch (BuildException e) {
@@ -285,7 +280,6 @@ public class JUnitEETask extends Task {
       throw new BuildException(e);
     }
   }
-
 
   private boolean parseResult(InputStream in, JUnitEETest test) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -329,7 +323,7 @@ public class JUnitEETask extends Task {
       Enumeration enumerationeration = resultFormatters.elements();
 
       while (enumerationeration.hasMoreElements()) {
-        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter) enumerationeration.nextElement();
+        JUnitEEResultFormatter formatter = (JUnitEEResultFormatter)enumerationeration.nextElement();
         log("Calling formatter " + formatter + " for node " + node, Project.MSG_DEBUG);
         formatter.format(node);
         formatter.flush();
@@ -366,7 +360,6 @@ public class JUnitEETask extends Task {
     return true;
   }
 
-
   private byte[] readInput(InputStream in) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     int r;
@@ -378,13 +371,12 @@ public class JUnitEETask extends Task {
     return out.toByteArray();
   }
 
-
   private Vector createFormatters(JUnitEETest test) {
     Vector answer = new Vector();
     Enumeration enumerationeration = formatters.elements();
 
     while (enumerationeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement) enumerationeration.nextElement();
+      FormatterElement element = (FormatterElement)enumerationeration.nextElement();
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());
       answer.add(element.createFormatter());
@@ -392,7 +384,7 @@ public class JUnitEETask extends Task {
 
     enumerationeration = test.getFormatters();
     while (enumerationeration.hasMoreElements()) {
-      FormatterElement element = (FormatterElement) enumerationeration.nextElement();
+      FormatterElement element = (FormatterElement)enumerationeration.nextElement();
       log("outfile=" + test.getOutfile(), Project.MSG_DEBUG);
       element.setOutFile(test.getOutfile());
       element.setFilterTrace(test.getFiltertrace());

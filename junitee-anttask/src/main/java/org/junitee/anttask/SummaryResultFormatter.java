@@ -6,12 +6,12 @@
  */
 package org.junitee.anttask;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-
 
 /**
  * @version $Revision: 1.2 $
@@ -21,7 +21,7 @@ public class SummaryResultFormatter extends AbstractResultFormatter implements J
 
   private OutputStreamWriter writer;
 
-
+  @Override
   public void format(Node testNode) throws IOException {
     NamedNodeMap attributes = testNode.getAttributes();
     String testName = getTestName(testNode);
@@ -46,14 +46,13 @@ public class SummaryResultFormatter extends AbstractResultFormatter implements J
     getWriter(testName).write("\n\n");
   }
 
-
+  @Override
   public void flush() throws IOException {
     if (writer != null) {
       writer.flush();
     }
     super.flush();
   }
-
 
   private OutputStreamWriter getWriter(String testName) throws FileNotFoundException {
     if (getOutput(testName) == null) {

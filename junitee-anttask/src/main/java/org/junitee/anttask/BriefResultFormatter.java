@@ -6,16 +6,10 @@
  */
 package org.junitee.anttask;
 
-import java.io.*;
-import java.text.NumberFormat;
-import java.util.*;
+import java.io.IOException;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-import org.apache.tools.ant.BuildException;
-
+import org.w3c.dom.Node;
 
 /**
  * @version $Revision: 1.2 $
@@ -23,7 +17,7 @@ import org.apache.tools.ant.BuildException;
  */
 public class BriefResultFormatter extends PlainResultFormatter {
 
-
+  @Override
   public void format(Node testSuiteNode) throws IOException {
     NamedNodeMap attributes = testSuiteNode.getAttributes();
     int errors = Integer.parseInt(attributes.getNamedItem("errors").getNodeValue());

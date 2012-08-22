@@ -6,17 +6,20 @@
  */
 package org.junitee.anttask;
 
-
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.*;
-import org.apache.tools.ant.util.DOMElementWriter;
-import org.apache.tools.ant.taskdefs.optional.junit.XMLConstants;
 import org.apache.tools.ant.taskdefs.optional.junit.DOMUtil;
-
+import org.apache.tools.ant.taskdefs.optional.junit.XMLConstants;
+import org.apache.tools.ant.util.DOMElementWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * @version $Revision: 1.4 $
@@ -24,7 +27,7 @@ import org.apache.tools.ant.taskdefs.optional.junit.DOMUtil;
  */
 public class XMLResultFormatter extends AbstractResultFormatter implements JUnitEEResultFormatter {
 
-  
+  @Override
   public void format(Node testSuiteNode) throws IOException {
     Document doc = getDocumentBuilder().newDocument();
     Element rootElement = doc.createElement(XMLConstants.TESTSUITE);
@@ -49,17 +52,15 @@ public class XMLResultFormatter extends AbstractResultFormatter implements JUnit
       testcase = testcase.getNextSibling();
     }
 
-
     if (getOutput(testName) != null) {
       Writer writer = null;
-        writer = new OutputStreamWriter(getOutput(testName), "UTF8");
+      writer = new OutputStreamWriter(getOutput(testName), "UTF8");
 
-        writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-        (new DOMElementWriter()).write(rootElement, writer, 0, "  ");
-        writer.flush();
+      writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+      (new DOMElementWriter()).write(rootElement, writer, 0, "  ");
+      writer.flush();
     }
   }
-
 
   private DocumentBuilder getDocumentBuilder() {
     try {

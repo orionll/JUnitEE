@@ -8,11 +8,11 @@
 
 package org.junitee.anttask;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.apache.tools.ant.Project;
-
 
 /**
  * This is a data type used by the JUnitEE task and represents a call to the JUnitEE servlet to run
@@ -37,7 +37,6 @@ public class JUnitEETest {
   private String ifProperty;
   private String unlessProperty;
 
-
   public boolean shouldExecute(Project project) {
     if (ifProperty != null) {
       return project.getProperty(ifProperty) != null;
@@ -52,101 +51,81 @@ public class JUnitEETest {
     formatters.addElement(formatter);
   }
 
-
   public String getIf() {
     return ifProperty;
   }
-
 
   public void setIf(String ifProperty) {
     this.ifProperty = ifProperty;
   }
 
-
   public String getUnless() {
     return unlessProperty;
   }
-
 
   public void setUnless(String unlessProperty) {
     this.unlessProperty = unlessProperty;
   }
 
-
   public void setName(String value) {
     name = value;
   }
-
 
   public String getName() {
     return name;
   }
 
-
   public void setResource(String value) {
     resource = value;
   }
-
 
   public String getResource() {
     return resource;
   }
 
-
   public void setHaltonfailure(boolean value) {
     haltOnFailure = value;
   }
-
 
   public boolean getHaltonfailure() {
     return haltOnFailure;
   }
 
-
   public void setHaltonerror(boolean value) {
     haltOnError = value;
   }
-
 
   public boolean getHaltonerror() {
     return haltOnError;
   }
 
-
   public void setErrorproperty(String value) {
     errorProperty = value;
   }
-
 
   public String getErrorproperty() {
     return errorProperty;
   }
 
-
   public void setFailureproperty(String value) {
     failureProperty = value;
   }
-
 
   public String getFailureproperty() {
     return failureProperty;
   }
 
-
   public void setRunall(boolean value) {
     runAll = value;
   }
-
 
   public boolean getRunall() {
     return runAll;
   }
 
-
   public void setOutfile(String file) {
     outfile = file;
   }
-
 
   public File getOutfile() {
     if (outfile == null) {
@@ -164,26 +143,21 @@ public class JUnitEETest {
     }
   }
 
-
   public File getTodir() {
     return toDir;
   }
-
 
   public void setTodir(File toDir) {
     this.toDir = toDir;
   }
 
-
   public boolean getFiltertrace() {
     return filterTrace;
   }
 
-
   public void setFiltertrace(boolean filterTrace) {
     this.filterTrace = filterTrace;
   }
-
 
   public Enumeration getFormatters() {
     return formatters.elements();

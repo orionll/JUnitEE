@@ -6,11 +6,9 @@
  */
 package org.junitee.anttask;
 
-
-import java.io.*;
+import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-
 
 /**
  * This is the JUnitEE equivalent to the JUnit FormatterElement. Unfortunatelly some methods have package visibility in the original
@@ -27,7 +25,6 @@ public class FormatterElement {
   private String extension;
   private boolean filterTrace;
 
-
   public void setType(String type) {
     if ("xml".equals(type)) {
       setClassname("org.junitee.anttask.XMLResultFormatter");
@@ -43,46 +40,37 @@ public class FormatterElement {
     }
   }
 
-
   public String getClassname() {
     return classname;
   }
-
 
   public void setClassname(String classname) {
     this.classname = classname;
   }
 
-
   public boolean isUseFile() {
     return useFile;
   }
-
 
   public void setUseFile(boolean useFile) {
     this.useFile = useFile;
   }
 
-
   public File getOutFile() {
     return outFile;
   }
-
 
   public void setOutFile(File outFile) {
     this.outFile = outFile;
   }
 
-
   public String getExtension() {
     return extension;
   }
 
-
   public void setExtension(String extension) {
     this.extension = extension;
   }
-
 
   public JUnitEEResultFormatter createFormatter() throws BuildException {
     if (getClassname() == null) {
@@ -116,8 +104,7 @@ public class FormatterElement {
     }
   }
 
-
   public void setFilterTrace(boolean filtertrace) {
-    this.filterTrace = filtertrace;
+    filterTrace = filtertrace;
   }
 }

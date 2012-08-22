@@ -20,15 +20,12 @@
  */
 package org.junitee.anttask;
 
-
-import java.io.*;
-import java.text.NumberFormat;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 
 /**
  * @version $Revision: 1.6 $
@@ -36,6 +33,7 @@ import org.w3c.dom.NodeList;
  */
 public class PlainResultFormatter extends AbstractResultFormatter {
 
+  @Override
   public void format(Node testSuiteNode) throws IOException {
     NamedNodeMap attributes = testSuiteNode.getAttributes();
     String testName = getTestName(testSuiteNode);
