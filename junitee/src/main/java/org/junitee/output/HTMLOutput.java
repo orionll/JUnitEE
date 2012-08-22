@@ -171,11 +171,11 @@ public class HTMLOutput extends AbstractOutput {
         String name = enumeration.nextElement();
         String[] values = request.getParameterValues(name);
 
-        for (int i = 0; i < values.length; i++) {
+        for (String value : values) {
           pw.print("<td><input type=\"hidden\" name=\"");
           pw.print(name);
           pw.print("\" value=\"");
-          pw.print(values[i]);
+          pw.print(value);
           pw.print("\"></td>");
         }
       }
@@ -295,7 +295,8 @@ public class HTMLOutput extends AbstractOutput {
           pw.print("</a>");
         }
         pw.println("</td>");
-        pw.println("<td width=\"100%\" class=\"cell\">" + test + "</td><td class=\"cell\" align=\"right\">");
+        pw.println("<td width=\"100%\" class=\"cell\">" + test.getTestName()
+            + "</td><td class=\"cell\" align=\"right\">");
         pw.println(elapsedTimeAsString(test.getElapsedTime()) + "&nbsp;sec</td></tr>");
       }
       pw.println("<tr><td colspan=\"4\">&nbsp;</td></tr>");
