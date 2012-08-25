@@ -1,8 +1,3 @@
-/**
- * $Id: HTMLOutput.java,v 1.24 2006-04-09 14:14:09 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/HTMLOutput.java,v $
- */
-
 package org.junitee.output;
 
 import java.io.IOException;
@@ -13,18 +8,14 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.runner.notification.Failure;
 import org.junitee.runner.TestInfo;
-import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestRunnerResults;
 import org.junitee.runner.TestSuiteInfo;
 import org.junitee.util.StringUtils;
 
 /**
- * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
- *
- * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.24 $
- * @since   1.5
+ * This class produces an HTML test report.
  */
 public class HTMLOutput extends AbstractOutput {
 
@@ -46,8 +37,6 @@ public class HTMLOutput extends AbstractOutput {
   private HttpServletRequest request;
   private int refreshDelay;
 
-  /**
-   */
   public HTMLOutput(TestRunnerResults results, HttpServletRequest request, HttpServletResponse response, boolean filterTrace, int refreshDelay) throws IOException {
     super(results, filterTrace);
     response.setContentType("text/html;charset=UTF-8");
@@ -159,7 +148,7 @@ public class HTMLOutput extends AbstractOutput {
     pw.println("<tr><td class=\"sectionTitle\">Execution of tests in progress ...</td></tr>");
     TestInfo currentTest = getCurrentInfo();
     if (currentTest != null) {
-      pw.println("<tr><td class=\"failedcell\">Current test: " + currentTest.getTest() + "</td></tr>");
+      pw.println("<tr><td class=\"failedcell\">Current test: " + currentTest.getTestName() + "</td></tr>");
     }
     if (isStopped() && !isFinished()) {
       pw.println("<tr><td class=\"failedcell\">Execution will be stopped ...</td></tr>");
@@ -346,7 +335,6 @@ public class HTMLOutput extends AbstractOutput {
           pw.print("<tr><td class=\"sectionTitle\">");
           pw.print("<a name=\"" + test + "\"></a>");
           pw.println(test + "</td></tr>");
-
           Throwable t = test.getError();
 
           if (t != null) {
@@ -361,24 +349,23 @@ public class HTMLOutput extends AbstractOutput {
 
             pw.println("<tr><td class=\"cell\">");
             pw.println(StringUtils.htmlText(stackTrace));
-            pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }
-          t = test.getFailure();
 
-          if (t != null) {
-            String stackTrace = exceptionToString(t);
+          Failure failure = test.getFailure();
+
+          if (failure != null) {
+            String stackTrace = failure.getTrace();
 
             if (isFilterTrace()) {
               stackTrace = StringUtils.filterStack(stackTrace);
             }
             pw.println("<tr><td class=\"cell\">");
-            pw.println(StringUtils.htmlText(t.getMessage()));
+            pw.println(StringUtils.htmlText(failure.getMessage()));
             pw.println("&nbsp;</td>");
 
             pw.println("<tr><td class=\"cell\">");
             pw.println(StringUtils.htmlText(stackTrace));
-            pw.println(StringUtils.htmlText(getEJBExceptionDetail(t)));
             pw.println("</td></tr>");
           }
           pw.println("<tr><td>&nbsp;</td></tr>");
@@ -387,5 +374,4 @@ public class HTMLOutput extends AbstractOutput {
     }
     pw.println("</table>");
   }
-
 }

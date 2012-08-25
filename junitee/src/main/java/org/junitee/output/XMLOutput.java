@@ -1,8 +1,3 @@
-/**
- * $Id: XMLOutput.java,v 1.14 2003-05-29 10:59:33 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/output/XMLOutput.java,v $
- */
-
 package org.junitee.output;
 
 import java.io.IOException;
@@ -13,26 +8,18 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junitee.runner.TestInfo;
-import org.junitee.runner.TestRunnerListener;
 import org.junitee.runner.TestRunnerResults;
 import org.junitee.runner.TestSuiteInfo;
 import org.junitee.util.StringUtils;
 
 /**
- * This class implements the {@link TestRunnerListener} interface and produces an HTML test report.
- *
- * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.14 $
- * @since   1.5
+ * This class produces an XML test report.
  */
 public class XMLOutput extends AbstractOutput {
-
   private NumberFormat numberFormat;
   private PrintWriter pw;
   private String xsl;
 
-  /**
-   */
   public XMLOutput(TestRunnerResults results, HttpServletResponse response, String xsl, boolean filterTrace) throws IOException {
     super(results, filterTrace);
     response.setContentType("text/xml;charset=UTF-8");
@@ -128,10 +115,9 @@ public class XMLOutput extends AbstractOutput {
           pw.print(test.getError().getClass().getName());
           pw.println("\">");
           pw.println(StringUtils.xmlText(stackTrace));
-          pw.println(StringUtils.xmlText(getEJBExceptionDetail(test.getError())));
           pw.println("      </error>");
         } else if (test.hasFailure()) {
-          String stackTrace = exceptionToString(test.getFailure());
+          String stackTrace = test.getFailure().getTrace();
 
           if (isFilterTrace()) {
             stackTrace = StringUtils.filterStack(stackTrace);

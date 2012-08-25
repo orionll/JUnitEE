@@ -1,23 +1,13 @@
-/*
- * $Id: TestRunnerResults.java,v 1.6 2004-03-21 14:55:03 o_rossmueller Exp $
- */
 package org.junitee.runner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.JUnit4TestCaseFacade;
-import junit.framework.Test;
+import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 
-/**
- * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
- * @since 1.5
- */
-public class TestRunnerResults implements TestRunnerListener {
-
+public class TestRunnerResults {
   private ThreadLocal<TestInfo> currentInfo = new ThreadLocal<TestInfo>();
   private long timestamp;
   private ArrayList<TestSuiteInfo> suiteInfo = new ArrayList<TestSuiteInfo>();
@@ -29,12 +19,10 @@ public class TestRunnerResults implements TestRunnerListener {
   private boolean finished = false;
   private boolean stopped = false;
 
-  @Override
   public void start(boolean singleTest) {
     setSingleTest(singleTest);
   }
 
-  @Override
   public synchronized void setStopped() {
     stopped = true;
   }
@@ -43,7 +31,6 @@ public class TestRunnerResults implements TestRunnerListener {
     return stopped;
   }
 
-  @Override
   public synchronized void finish() {
     finished = true;
   };
@@ -52,19 +39,7 @@ public class TestRunnerResults implements TestRunnerListener {
     return finished;
   }
 
-  @Override
-  public synchronized void addError(Test test, Throwable t) {
-    boolean preRunError = !existsCurrentInfo(test);
-
-    getCurrentInfo().setError(t);
-    setFailure(true);
-
-    if (preRunError) {
-      endTest(test);
-    }
-  }
-
-  public synchronized void addFailure(Test test, Throwable t) {
+  public synchronized void addFailure(Description test, Failure t) {
     boolean preRunError = !existsCurrentInfo(test);
 
     getCurrentInfo().setFailure(t);
@@ -75,20 +50,7 @@ public class TestRunnerResults implements TestRunnerListener {
     }
   }
 
-  @Override
-  public synchronized void addFailure(Test test, AssertionFailedError t) {
-    boolean preRunError = !existsCurrentInfo(test);
-
-    getCurrentInfo().setFailure(t);
-    setFailure(true);
-
-    if (preRunError) {
-      endTest(test);
-    }
-  }
-
-  @Override
-  public synchronized void endTest(Test test) {
+  public synchronized void endTest(Description test) {
     long elapsedTime = System.currentTimeMillis() - getTimestamp();
 
     getCurrentInfo().setElapsedTime(elapsedTime);
@@ -96,13 +58,11 @@ public class TestRunnerResults implements TestRunnerListener {
     setCurrentInfo(null);
   }
 
-  @Override
-  public synchronized void startTest(Test test) {
+  public synchronized void startTest(Description test) {
     setCurrentInfo(new TestInfo(test));
     setTimestamp(System.currentTimeMillis());
   }
 
-  @Override
   public synchronized void runFailed(String message) {
     errorMessages.add(message);
   }
@@ -159,7 +119,7 @@ public class TestRunnerResults implements TestRunnerListener {
     return errorMessages;
   }
 
-  private boolean existsCurrentInfo(Test test) {
+  private boolean existsCurrentInfo(Description test) {
     if (getCurrentInfo() == null) {
       setTimestamp(System.currentTimeMillis());
       setCurrentInfo(new TestInfo(test));
@@ -169,14 +129,7 @@ public class TestRunnerResults implements TestRunnerListener {
   }
 
   protected synchronized void addToSuite(TestInfo info) {
-    Test test = info.getTest();
-    String className;
-    if (test instanceof JUnit4TestCaseFacade) {
-      className = ((JUnit4TestCaseFacade)test).getDescription().getClassName();
-    } else {
-      className = test.getClass().getName();
-    }
-
+    String className = info.getTestClassName();
     TestSuiteInfo suite = suites.get(className);
 
     if (suite == null) {

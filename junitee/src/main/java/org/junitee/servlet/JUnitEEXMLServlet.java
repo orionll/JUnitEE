@@ -1,8 +1,3 @@
-/**
- * $Id: JUnitEEXMLServlet.java,v 1.1 2002-10-01 22:46:19 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/servlet/JUnitEEXMLServlet.java,v $
- */
-
 package org.junitee.servlet;
 
 /**
@@ -10,9 +5,6 @@ package org.junitee.servlet;
  * loading the test classes. This will work in almost any case, but if necessary you can change this behaviour by
  * subclassing this class and overwrite the method {@link #getDynamicClassLoader} to answer the classloader of your
  * choice. By default an xml test report is generated.
- *
- * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @since   1.5
  */
 public class JUnitEEXMLServlet extends JUnitEEServlet {
   private static final long serialVersionUID = 1L;

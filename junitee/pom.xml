@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.junitee</groupId>
   <artifactId>junitee</artifactId>
-  <version>1.12-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JUnitEE</name>
   <description>JUnitEE provides a TestRunner and a servlet which will run JUnit test suites inside an application server</description>
@@ -42,12 +42,6 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jboss</groupId>
-      <artifactId>jboss-j2ee</artifactId>
-      <version>4.2.2.GA</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

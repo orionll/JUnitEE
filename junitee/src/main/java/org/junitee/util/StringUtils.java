@@ -1,6 +1,3 @@
-/*
- * $Id: StringUtils.java,v 1.4 2004-03-21 14:23:20 o_rossmueller Exp $
- */
 package org.junitee.util;
 
 import java.io.BufferedReader;
@@ -8,11 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-/**
- * @author <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.4 $
- * @since 1.5
- */
 public class StringUtils {
 
   private static final String[] DEFAULT_TRACE_FILTERS = new String[] { "junit.framework.TestCase",
@@ -22,7 +14,7 @@ public class StringUtils {
       "java.lang.reflect.Method.invoke(", "org.apache.tools.ant." };
 
   private static final String[] DEFAULT_STOP_FILTERS = new String[] { "junit.framework.TestCase.runTest",
-      "junit.framework.TestSuite.runTest", "junit.framework.JUnit4TestAdapter.run" };
+      "junit.framework.TestSuite.runTest", "org.junit.runner.JUnitCore.run" };
 
   /**
    * This method converts texts to be displayed on
@@ -123,8 +115,8 @@ public class StringUtils {
   }
 
   private static boolean filterLine(String line) {
-    for (int i = 0; i < DEFAULT_TRACE_FILTERS.length; i++) {
-      if (line.indexOf(DEFAULT_TRACE_FILTERS[i]) > 0) {
+    for (String element : DEFAULT_TRACE_FILTERS) {
+      if (line.indexOf(element) > 0) {
         return true;
       }
     }
@@ -132,8 +124,8 @@ public class StringUtils {
   }
 
   private static boolean stopLine(String line) {
-    for (int i = 0; i < DEFAULT_STOP_FILTERS.length; i++) {
-      if (line.indexOf(DEFAULT_STOP_FILTERS[i]) > 0) {
+    for (String element : DEFAULT_STOP_FILTERS) {
+      if (line.indexOf(element) > 0) {
         return true;
       }
     }

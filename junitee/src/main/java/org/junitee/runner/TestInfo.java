@@ -1,43 +1,22 @@
-/**
- * $Id: TestInfo.java,v 1.5 2002-11-03 17:54:06 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestInfo.java,v $
- */
-
 package org.junitee.runner;
 
-import junit.framework.JUnit4TestCaseFacade;
-import junit.framework.Test;
-import junit.framework.TestCase;
+import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 
 /**
  * This class holds information about on test.
- *
- * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.5 $
- * @since   1.5
  */
 public class TestInfo {
-  private Test test;
+
   private String testClassName;
   private String testName;
   private long elapsedTime;
   private Throwable error;
-  private Throwable failure;
+  private Failure failure;
 
-  public TestInfo(Test test) {
-    this.test = test;
-
-    if (test instanceof JUnit4TestCaseFacade) {
-      testClassName = ((JUnit4TestCaseFacade)test).getDescription().getClassName();
-      testName = ((JUnit4TestCaseFacade)test).getDescription().getMethodName();
-    } else if (test instanceof TestCase) {
-      testClassName = test.getClass().getName();
-      testName = ((TestCase)test).getName();
-    }
-  }
-
-  public Test getTest() {
-    return test;
+  public TestInfo(Description desc) {
+    testClassName = desc.getClassName();
+    testName = desc.getMethodName();
   }
 
   public long getElapsedTime() {
@@ -64,7 +43,7 @@ public class TestInfo {
     error = t;
   }
 
-  public void setFailure(Throwable t) {
+  public void setFailure(Failure t) {
     failure = t;
   }
 
@@ -85,7 +64,7 @@ public class TestInfo {
    *
    * @return Throwable instances
    */
-  public Throwable getFailure() {
+  public Failure getFailure() {
     return failure;
   }
 
@@ -100,7 +79,7 @@ public class TestInfo {
 
   @Override
   public String toString() {
-    return test.toString();
+    return getTestName();
   }
 
 }

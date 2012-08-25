@@ -1,8 +1,3 @@
-/**
- * $Id: TestSuiteInfo.java,v 1.6 2003-03-11 19:07:17 o_rossmueller Exp $
- * $Source: C:\Users\Orionll\Desktop\junitee-cvs/JUnitEE/src/testrunner/org/junitee/runner/TestSuiteInfo.java,v $
- */
-
 package org.junitee.runner;
 
 import java.util.ArrayList;
@@ -11,10 +6,6 @@ import java.util.List;
 
 /**
  * This class holds information about on test.
- *
- * @author  <a href="mailto:oliver@oross.net">Oliver Rossmueller</a>
- * @version $Revision: 1.6 $
- * @since   1.5
  */
 public class TestSuiteInfo {
   private String testClassName;
